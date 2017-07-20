@@ -1,9 +1,12 @@
 # Changelog
 
+## v0.5.3
+
+- Added JBoss AS log patterns
+
 ## v0.5.2
 
 - Changed jboss pattern to jboss.wildfly (#1)
-
 
 ## v0.5.1
 
