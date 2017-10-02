@@ -1,5 +1,9 @@
 # Changelog
 
+## v0.6.0
+
+- Added the occurrence listener (`--max` option)
+
 ## v0.5.3
 
 - Added JBoss AS log patterns

@@ -20,6 +20,8 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
 
+require_relative 'entry'
+
 module Sherlog
   class Parser
 
@@ -57,6 +59,7 @@ module Sherlog
 
     def parse(input)
       entry = nil
+      process = ParserProcess::new
       foreach input do |line|
         try_guess_pattern line unless @patterns[:entry]
         if @patterns[:entry] =~ line
@@ -64,6 +67,7 @@ module Sherlog
           # notify the last entry parsed
           notify entry if entry and @filter.accept? entry
           entry = Entry::new entry_data
+          entry.process = process
           entry.raw_content = line.chomp
           entry.exceptions << Regexp.last_match[:exception] if @patterns[:exception] =~ entry.message
         else
@@ -77,6 +81,7 @@ module Sherlog
             entry.raw_content << $/ << line.chomp
           end
         end
+        break if process.stop_requested?
       end
       # notify the last entry parsed
       notify entry if entry and @filter.accept? entry
@@ -93,7 +98,7 @@ module Sherlog
     end
 
     def notify(entry)
-      return unless entry
+      return if entry.process.stop_requested?
       @listeners.each do |listener|
         listener.call entry
       end
@@ -104,6 +109,18 @@ module Sherlog
         patterns[:entry].match line if patterns[:entry]
       end
       @patterns.merge! patterns if patterns
+    end
+
+  end
+
+  class ParserProcess
+
+    def stop
+      @request_stop = true
+    end
+
+    def stop_requested?
+      @request_stop
     end
 
   end

@@ -30,6 +30,7 @@ require_relative 'sherlog_holmes/filter'
 require_relative 'sherlog_holmes/parser'
 require_relative 'sherlog_holmes/listeners/print_listener'
 require_relative 'sherlog_holmes/listeners/count_listener'
+require_relative 'sherlog_holmes/listeners/occurrence_listener'
 
 module Sherlog
 

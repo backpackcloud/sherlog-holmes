@@ -23,10 +23,11 @@
 module Sherlog
   class Entry
 
-    attr_accessor :time, :level, :category, :origin, :message, :exceptions, :stacktrace, :raw_content
+    attr_accessor :process, :time, :level, :category, :origin, :message, :exceptions, :stacktrace, :raw_content
 
     def initialize(params = {})
       params = params.dup
+      @process = ParserProcess::new
       @time = params.delete :time if params[:time]
       @level = params.delete :level if params[:level]
       @category = params.delete :category if params[:category]
