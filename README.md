@@ -159,6 +159,10 @@ $ sherlog --level ERROR --print crazy-log-file.log > sane-log-file.log
 
 This will instruct Sherlog to not print stacktraces for entries. This only has effect if used with `--print`.
 
+`--max N`
+
+This will process only the first `N` filtered entries.
+
 `--count GROUPS...`
 
 Set this and Sherlog will count the number of entries per level, category, origin or exception. The possible parameters are (separated by a `,`):
