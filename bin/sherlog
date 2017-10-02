@@ -124,7 +124,7 @@ end
 
 @opts.separator "\n  Operation Options\n".bold.white
 
-@opts.on '--max NUMBER', 'Filters only the first N occurrences' do |max|
+@opts.on '--max N', 'Filters only the first N occurrences' do |max|
   @listeners[:occurrences] = OccurrenceListener::new max
 end
 
