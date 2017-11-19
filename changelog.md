@@ -1,5 +1,9 @@
 # Changelog
 
+## v0.6.1
+
+- Merged jboss patterns file with java patterns file
+
 ## v0.6.0
 
 - Added the occurrence listener (`--max` option)
