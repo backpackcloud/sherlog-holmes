@@ -152,13 +152,13 @@ func main() {
 					filter = filters.All
 				}
 
-				return commands.Command{
+				return commands.PrintCommand{
 					Filter:        filter,
 					Format:        formatOutput,
 					InputFileName: inputFileName,
 					Layout:        layout,
 					MaxEntries:    maxEntries,
-				}.Print()
+				}.Execute()
 			},
 		},
 	}

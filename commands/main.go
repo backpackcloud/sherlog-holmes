@@ -8,7 +8,13 @@ import (
 	"github.com/devnull-tools/sherlog-holmes/readers"
 )
 
-type Command struct {
+// Interface that defines the commands available
+type Command interface {
+	Execute() error
+}
+
+// A structure that defines the print command
+type PrintCommand struct {
 	Layout        string
 	Format        string
 	InputFileName string
@@ -16,7 +22,8 @@ type Command struct {
 	MaxEntries    int64
 }
 
-func (command Command) Print() error {
+// Prints the filtered entries
+func (command PrintCommand) Execute() error {
 	reader := readers.FileReader{File: command.InputFileName}
 	mapper := mappers.Components[command.Layout]
 	processor := processors.Print(command.Format)
