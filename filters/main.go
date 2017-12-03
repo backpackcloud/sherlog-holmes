@@ -11,6 +11,8 @@ type Extractor func(entry *domain.Entry) []string
 
 type Operation func(value string, extractor func(entry *domain.Entry) []string) func(entry *domain.Entry) bool
 
+type EntryFilter func(entry *domain.Entry) bool
+
 func All(entry *domain.Entry) bool {
 	return true
 }

@@ -2,33 +2,18 @@
 
 *Less data containing useful information is way better than lots of data containing a mess.*
 
-Don't you hate those thousands of lines in a log blowing up with your troubleshooting? Lots of useless data that you have to filter just to turn that 300 MB of madness into a 30 KB of useful information? If you need something that can rip off useless entries so you can have a clue about what is going on with that application, you should give Sherlog Holmes a try.
+Don't you hate those thousands of lines in a log blowing up with your troubleshooting? Lots of useless data that you
+have to filter just to turn that 300 MB of madness into a 30 KB of useful information? If you need something that can
+rip off useless entries so you can have a clue about what is going on with that application, you should give Sherlog
+Holmes a try.
 
 If you are a log detective, then Sherlog Holmes is your best companion!
 
-## Installation
-
-Sherlog can be installed easily through the `gem` command:
-
-```sh
-$ gem install sherlog-holmes
-```
-
-This is the preferable way since Sherlog is basically a console line application. Of course you can add it to your application's Gemfile:
-
-```ruby
-gem 'sherlog_holmes'
-```
-
-And then execute:
-
-```sh
-$ bundle
-```
-
 ## How it works
 
-Sherlog works by grabbing every line of an input and applying a Regular Expression to create an `entry`. This `entry` will be filtered based on a set of given rules and, if it is accepted, will be passed to a set of defined processors so they can do something useful (like printing the output so you can redirect it to a sane log file).
+Sherlog works by grabbing every line of an input and applying a Regular Expression to create an `entry`. This `entry`
+will be filtered based on a set of given rules and, if it is accepted, will be passed to a set of defined processors so
+they can do something useful (like printing the output so you can redirect it to a sane log file).
 
 The attributes are based on the named capture groups:
 
@@ -41,22 +26,24 @@ The attributes are based on the named capture groups:
 ```regexp
 (<?level>\w+)\s(<?category>\s+)\s(<?message>.+)
 ```
-*Any other capture group will be assigned to a set of custom attributes and can be used later.*
 
-Patterns for exception and stacktrace should be defined separately. The exception pattern is used only in the message field and stacktraces. Here is a complete example of a pattern configuration:
+Patterns for exception and stacktrace should be defined separately. The exception pattern is used only in the message
+field and stacktrace. Here is a complete example of a pattern configuration:
 
 ```yaml
-jboss:
+wildfly:
   entry: (?<time>[0-9,.:]+)\s+(?<level>\w+)\s+\[(?<category>\S+)\]\s\((?<origin>[^)]+)\)?\s?(?<message>.+)
   exception: (?<exception>\w+(\.\w+)+(Exception|Error))
   stacktrace: ^(\s+at)|(Caused by\:)|(\s+\.{3}\s\d+\smore)
 ```
 
-The configuration should contain a unique id and at least a pattern for the log **entry**. Place you configuration file in a `*.yml` file inside your `$HOME/.sherlog/patterns` directory and you're ready to go!
+The configuration should contain a unique id and at least a pattern for the log **entry**. Place you configuration file
+in a `*.yml` file inside your `$HOME/.sherlog-holmes/patterns` directory and you're ready to go!
 
 ### Configuration Inheritance
 
-You can create a base configuration and then override some values to create another one. In this case, you need to specify the parent configuration with the `from` key:
+You can create a base configuration and then override some values to create another one. In this case, you need to
+specify the parent configuration with the `from` key:
 
 ```yaml
 base.java:
@@ -69,7 +56,8 @@ jboss:
 
 ## Usage
 
-Shelog Holmes provides the command line tool `sherlog`. You can use this to pass a log, the filters you need to apply and the process that needs to be executed (like showing the filtered entries or counting the exceptions):
+Shelog Holmes provides the command line tool `sherlog-holmes`. You can use this to pass a log, the filters you need to
+apply and the process that needs to be executed (like showing the filtered entries or counting the exceptions):
 
 ### Config Options
 

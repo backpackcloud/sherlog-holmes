@@ -3,11 +3,11 @@ package main
 import (
 	"github.com/urfave/cli"
 
+	"github.com/devnull-tools/sherlog-holmes/commands"
 	"github.com/devnull-tools/sherlog-holmes/domain"
 	"github.com/devnull-tools/sherlog-holmes/filters"
 	"github.com/devnull-tools/sherlog-holmes/mappers"
 	"github.com/devnull-tools/sherlog-holmes/processors"
-	"github.com/devnull-tools/sherlog-holmes/readers"
 
 	"os"
 )
@@ -146,32 +146,19 @@ func main() {
 				},
 			},
 			Action: func(c *cli.Context) error {
-				var reader readers.Reader
-				var mapper mappers.Mapper
-				var processor func(entry *domain.Entry)
-
-				entryChan := make(chan *domain.Entry)
-				lineChan := make(chan string)
-				processChan := make(chan *domain.Entry)
-				done := make(chan bool)
-
 				inputFileName := c.Args().First()
-				reader = readers.FileReader{File: inputFileName}
-				mapper = mappers.Components[layout]
-
-				processor = processors.Print(formatOutput)
 
 				if filter == nil {
 					filter = filters.All
 				}
 
-				go reader.Read(lineChan)
-				go mapper.Map(lineChan, entryChan)
-				go filters.Filter(entryChan, processChan, filter, maxEntries)
-				go processors.Process(processChan, done, processor)
-
-				<-done
-				return nil
+				return commands.Command{
+					Filter:        filter,
+					Format:        formatOutput,
+					InputFileName: inputFileName,
+					Layout:        layout,
+					MaxEntries:    maxEntries,
+				}.Print()
 			},
 		},
 	}

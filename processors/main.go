@@ -12,6 +12,8 @@ const (
 	FORMAT_RAW = "{{.RawContent}}"
 )
 
+type Processor func(entry *domain.Entry)
+
 func Print(format string) func(entry *domain.Entry) {
 	if format == FORMAT_RAW || format == "" {
 		return func(entry *domain.Entry) {
