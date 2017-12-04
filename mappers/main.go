@@ -8,10 +8,6 @@ import (
 
 var Components map[string]Mapper = make(map[string]Mapper)
 
-func init() {
-	Components["wildfly"] = Wildfly()
-}
-
 var FindExceptionsOnStacktrace = false
 
 type Mapper interface {
