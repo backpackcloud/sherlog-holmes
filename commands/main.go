@@ -25,12 +25,18 @@ type PrintCommand struct {
 // Prints the filtered entries
 func (command PrintCommand) Execute() error {
 	reader := readers.FileReader{File: command.InputFileName}
-	mapper := mappers.Components[command.Layout]
+	mapper := mappers.RegisteredMappers[command.Layout]
 	processor := processors.Print(command.Format)
 
 	return Execute(command.MaxEntries, reader, mapper, command.Filter, processor)
 }
 
+// Executes the workflow using the given parameters:
+// maxEntries: the maximum number of processed entries
+// reader: a reader component for reading the input source
+// mapper: a mapper component for extracting the log entries
+// filter: a filter component for filtering the log entries
+// processor: a processor component for processing the filtered entries
 func Execute(maxEntries int64,
 	reader readers.Reader,
 	mapper mappers.Mapper,

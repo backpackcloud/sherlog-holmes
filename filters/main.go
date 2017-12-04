@@ -7,40 +7,52 @@ import (
 	"github.com/devnull-tools/sherlog-holmes/domain"
 )
 
+// Defines an extractor of values to be used by the filter
 type Extractor func(entry *domain.Entry) []string
 
+// Defines the operation that will be used by the filter
+// The operation will be used against the extracted values
 type Operation func(value string, extractor func(entry *domain.Entry) []string) func(entry *domain.Entry) bool
 
+// Defines a filter capable of selecting log entries to be processed
 type EntryFilter func(entry *domain.Entry) bool
 
+// Filters all entries, no matter its attributes
 func All(entry *domain.Entry) bool {
 	return true
 }
 
+// Extracts the level of a log entry
 func Level(entry *domain.Entry) []string {
 	return []string{entry.Level}
 }
 
+// Extracts the category of a log entry
 func Category(entry *domain.Entry) []string {
 	return []string{entry.Category}
 }
 
+// Extracts the origin of a log entry
 func Origin(entry *domain.Entry) []string {
 	return []string{entry.Origin}
 }
 
+// Extracts the message of a log entry
 func Message(entry *domain.Entry) []string {
 	return []string{entry.Message()}
 }
 
+// Extracts the exceptions of a log entry
 func Exception(entry *domain.Entry) []string {
 	return entry.Exceptions
 }
 
+// Extracts the stacktrace of a log entry
 func Stacktrace(entry *domain.Entry) []string {
 	return []string{entry.Stacktrace()}
 }
 
+// Checks if the extracted value equals the given one
 func Equals(value string, extractor func(entry *domain.Entry) []string) func(entry *domain.Entry) bool {
 	return func(entry *domain.Entry) bool {
 		for _, v := range extractor(entry) {
@@ -52,6 +64,7 @@ func Equals(value string, extractor func(entry *domain.Entry) []string) func(ent
 	}
 }
 
+// Checks if the extracted value contains the given one
 func Contains(value string, extractor func(entry *domain.Entry) []string) func(entry *domain.Entry) bool {
 	return func(entry *domain.Entry) bool {
 		for _, v := range extractor(entry) {
@@ -63,6 +76,7 @@ func Contains(value string, extractor func(entry *domain.Entry) []string) func(e
 	}
 }
 
+// Checks if the extracted value matches the given regular expression
 func Matches(expression string, extractor func(entry *domain.Entry) []string) func(entry *domain.Entry) bool {
 	exp := regexp.MustCompile(expression)
 	return func(entry *domain.Entry) bool {
@@ -75,36 +89,28 @@ func Matches(expression string, extractor func(entry *domain.Entry) []string) fu
 	}
 }
 
-func exception(expression string) func(entry *domain.Entry) bool {
-	exp := regexp.MustCompile(expression)
-	return func(entry *domain.Entry) bool {
-		for _, exception := range entry.Exceptions {
-			if exp.MatchString(exception) {
-				return true
-			}
-		}
-		return false
-	}
-}
-
+// Returns a new filter that uses the "&&" operation against the two given filters
 func And(filterA func(entry *domain.Entry) bool, filterB func(entry *domain.Entry) bool) func(entry *domain.Entry) bool {
 	return func(entry *domain.Entry) bool {
 		return filterA(entry) && filterB(entry)
 	}
 }
 
+// Returns a new filter that uses the "||" operation against the two given filters
 func Or(filterA func(entry *domain.Entry) bool, filterB func(entry *domain.Entry) bool) func(entry *domain.Entry) bool {
 	return func(entry *domain.Entry) bool {
 		return filterA(entry) || filterB(entry)
 	}
 }
 
+// Returns a new filter that returns the opposite of the given filter
 func Negate(filter func(entry *domain.Entry) bool) func(entry *domain.Entry) bool {
 	return func(entry *domain.Entry) bool {
 		return !filter(entry)
 	}
 }
 
+//
 func Filter(in <-chan *domain.Entry, out chan<- *domain.Entry, filter func(entry *domain.Entry) bool, max int64) {
 	var filtered int64
 	for e := range in {
@@ -120,67 +126,3 @@ func Filter(in <-chan *domain.Entry, out chan<- *domain.Entry, filter func(entry
 	}
 	close(out)
 }
-
-/*
-func Parse(expression string) func(entry *domain.Entry) bool {
-	if expression == "" {
-		return func(entry *domain.Entry) bool {
-			return true
-		}
-	}
-	var filter func(entry *domain.Entry) bool
-	var operator string
-	for _, term := range strings.Split(expression, " ") {
-		if strings.Contains(term, ":") {
-			split := strings.Split(term, ":")
-			attribute := split[0]
-			value := split[1]
-			if operator == "" {
-				filter = parse(attribute, value)
-			} else {
-				switch operator {
-				case "and":
-					filter = and(filter, parse(attribute, value))
-				case "or":
-					filter = or(filter, parse(attribute, value))
-				default:
-					panic(errors.New("no such operator: " + operator))
-				}
-				operator = ""
-			}
-		} else {
-			operator = term
-		}
-	}
-	return filter
-}
-
-func parse(attribute string, value string) func(entry *domain.Entry) bool {
-	var filter func(entry *domain.Entry) bool
-	negate := false
-	if string(value[0]) == "!" {
-		negate = true
-		value = value[1:]
-	}
-	switch attribute {
-	case "level":
-		filter = Level(value)
-	case "category":
-		filter = Category(value)
-	case "origin":
-		filter = Origin(value)
-	case "message":
-		filter = Message(value)
-	case "exception":
-		filter = Exception(value)
-	case "stacktrace":
-		filter = Stacktrace(value)
-	default:
-		panic(errors.New("no such attribute for filtering: " + attribute))
-	}
-	if negate {
-		filter = Negate(filter)
-	}
-	return filter
-}
-*/

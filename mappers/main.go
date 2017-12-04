@@ -6,7 +6,8 @@ import (
 	"github.com/devnull-tools/sherlog-holmes/domain"
 )
 
-var Components map[string]Mapper = make(map[string]Mapper)
+var RegisteredMappers map[string]Mapper = make(map[string]Mapper)
+var RegexpMappers map[string]RegexpMapper = make(map[string]RegexpMapper)
 
 var FindExceptionsOnStacktrace = false
 

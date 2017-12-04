@@ -1,0 +1,54 @@
+package mappers
+
+import (
+	"io/ioutil"
+
+	"errors"
+	"regexp"
+
+	"gopkg.in/yaml.v2"
+)
+
+type Config struct {
+	From       string
+	Entry      string
+	Exception  string
+	Stacktrace string
+}
+
+func ParseYaml(filePath string) {
+	data, err := ioutil.ReadFile(filePath)
+	if err != nil {
+		panic(err)
+	}
+	var config map[string]Config
+
+	if err := yaml.Unmarshal(data, &config); err != nil {
+		panic(err)
+	}
+
+	for id, conf := range config {
+		mapper := RegexpMapper{}
+		if conf.From != "" {
+			if base, ok := RegexpMappers[conf.From]; ok {
+				mapper.Entry = base.Entry
+				mapper.Exception = base.Exception
+				mapper.Stacktrace = base.Stacktrace
+			} else {
+				panic(errors.New("no configuration with id: " + conf.From))
+			}
+		}
+		if conf.Entry != "" {
+			mapper.Entry = regexp.MustCompile(conf.Entry)
+		}
+		if conf.Exception != "" {
+			mapper.Exception = regexp.MustCompile(conf.Exception)
+		}
+		if conf.Stacktrace != "" {
+			mapper.Stacktrace = regexp.MustCompile(conf.Stacktrace)
+		}
+		RegexpMappers[id] = mapper
+		RegisteredMappers[id] = mapper
+	}
+
+}
