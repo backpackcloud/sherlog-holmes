@@ -29,6 +29,9 @@ func (command PrintCommand) Execute() error {
 	if command.Layout == "" {
 		return errors.New("no layout defined")
 	}
+	if command.InputFileName == "" {
+		return errors.New("no file given")
+	}
 
 	reader := readers.FileReader{File: command.InputFileName}
 	mapper := mappers.RegisteredMappers[command.Layout]
