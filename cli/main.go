@@ -172,6 +172,9 @@ func Execute() {
 			},
 		},
 	}
-
-	app.Run(os.Args)
+	if err := app.Run(os.Args); err != nil {
+		os.Stderr.WriteString(err.Error())
+		os.Stderr.WriteString("\n")
+		os.Exit(1)
+	}
 }

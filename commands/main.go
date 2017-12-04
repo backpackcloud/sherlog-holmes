@@ -1,6 +1,8 @@
 package commands
 
 import (
+	"errors"
+
 	"github.com/devnull-tools/sherlog-holmes/domain"
 	"github.com/devnull-tools/sherlog-holmes/filters"
 	"github.com/devnull-tools/sherlog-holmes/mappers"
@@ -24,6 +26,10 @@ type PrintCommand struct {
 
 // Prints the filtered entries
 func (command PrintCommand) Execute() error {
+	if command.Layout == "" {
+		return errors.New("no layout defined")
+	}
+
 	reader := readers.FileReader{File: command.InputFileName}
 	mapper := mappers.RegisteredMappers[command.Layout]
 	processor := processors.Print(command.Format)
