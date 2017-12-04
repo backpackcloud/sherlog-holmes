@@ -1,8 +1,6 @@
 package commands
 
 import (
-	"errors"
-
 	"github.com/devnull-tools/sherlog-holmes/domain"
 	"github.com/devnull-tools/sherlog-holmes/filters"
 	"github.com/devnull-tools/sherlog-holmes/mappers"
@@ -13,31 +11,6 @@ import (
 // Interface that defines the commands available
 type Command interface {
 	Execute() error
-}
-
-// A structure that defines the print command
-type PrintCommand struct {
-	Layout        string
-	Format        string
-	InputFileName string
-	Filter        filters.EntryFilter
-	MaxEntries    int64
-}
-
-// Prints the filtered entries
-func (command PrintCommand) Execute() error {
-	if command.Layout == "" {
-		return errors.New("no layout defined")
-	}
-	if command.InputFileName == "" {
-		return errors.New("no file given")
-	}
-
-	reader := readers.FileReader{File: command.InputFileName}
-	mapper := mappers.RegisteredMappers[command.Layout]
-	processor := processors.Print(command.Format)
-
-	return Execute(command.MaxEntries, reader, mapper, command.Filter, processor)
 }
 
 // Executes the workflow using the given parameters:
