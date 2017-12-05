@@ -29,9 +29,7 @@ func (command CountCommand) Execute() error {
 
 	reader := readers.FileReader{File: command.InputFileName}
 	mapper := mappers.RegisteredMappers[command.Layout]
-	processor := processors.CountProcessor{
-		Groups: command.Groups,
-	}
+	processor := processors.NewCountProcessor(command.Groups)
 
 	return Execute(command.MaxEntries, reader, mapper, command.Filter, processor)
 }

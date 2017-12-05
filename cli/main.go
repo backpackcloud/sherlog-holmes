@@ -84,6 +84,12 @@ func Execute() {
 		Value:       processors.FORMAT_RAW,
 		Destination: &formatOutput,
 	}
+	var defaultGroups cli.StringSlice = []string{"level", "category", "origin", "exception"}
+	groupsFlag := cli.StringSliceFlag{
+		Name:  "groups, g",
+		Usage: "sets the groups to count",
+		Value: &defaultGroups,
+	}
 	maxFlag := cli.Int64Flag{
 		Name:        "max, m",
 		Usage:       "sets the maximum number of filtered entries",
@@ -194,6 +200,7 @@ func Execute() {
 				configFlag,
 				layoutFlag,
 				maxFlag,
+				groupsFlag,
 				stacktraceSearchFlag,
 				levelFilterFlag,
 				categoryFilterFlag,
@@ -222,6 +229,7 @@ func Execute() {
 					InputFileName: inputFileName,
 					Layout:        layout,
 					MaxEntries:    maxEntries,
+					Groups:        c.StringSlice("groups"),
 				}.Execute()
 			},
 		},
