@@ -16,6 +16,7 @@ type CountCommand struct {
 	Filter        filters.EntryFilter
 	MaxEntries    int64
 	Groups        []string
+	Printer       processors.Printer
 }
 
 // Prints the filtered entries
@@ -26,10 +27,13 @@ func (command CountCommand) Execute() error {
 	if command.InputFileName == "" {
 		return errors.New("no file given")
 	}
+	if len(command.Groups) == 0 {
+		command.Groups = []string{"level", "category", "exception"}
+	}
 
 	reader := readers.FileReader{File: command.InputFileName}
 	mapper := mappers.RegisteredMappers[command.Layout]
-	processor := processors.NewCountProcessor(command.Groups)
+	processor := processors.NewCountProcessor(command.Groups, command.Printer)
 
 	return Execute(command.MaxEntries, reader, mapper, command.Filter, processor)
 }
