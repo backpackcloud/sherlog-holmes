@@ -1,11 +1,8 @@
 package processors
 
 import (
-	"text/template"
-
 	"io"
-
-	"encoding/json"
+	"text/template"
 
 	"github.com/devnull-tools/sherlog-holmes/domain"
 	"github.com/devnull-tools/sherlog-holmes/filters"
@@ -30,32 +27,9 @@ func TemplatePrinter(templateString string) Printer {
 
 func init() {
 	CountPrinters = make(map[string]Printer)
-
-	CountPrinters["default"] = TemplatePrinter(`{{range $group, $counter := . }}== {{ $group }} ==
-{{ range $name, $count := $counter.Values }}{{ $name }}: {{ $count }}
-{{ end }}
-{{ end }}
-`)
-
-	CountPrinters["csv"] = TemplatePrinter(`{{range $group, $counter := . }}{{ $group }},count
-{{ range $name, $count := $counter.Values }}{{ $name }},{{ $count }}
-{{ end }}
-{{ end }}`)
-
-	CountPrinters["json"] = func(writer io.Writer, countMap map[string]EntryCount) {
-		values := make(map[string]map[string]int64)
-		for group, count := range countMap {
-			values[group] = make(map[string]int64)
-			for name, count := range count.Values {
-				values[group][name] = count
-			}
-		}
-		data, err := json.Marshal(values)
-		if err != nil {
-			panic(err)
-		}
-		writer.Write(data)
-	}
+	CountPrinters["default"] = Default
+	CountPrinters["csv"] = Csv
+	CountPrinters["json"] = Json
 }
 
 type countProcessor struct {
