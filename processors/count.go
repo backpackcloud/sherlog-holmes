@@ -35,7 +35,7 @@ func init() {
 {{ end }}
 `)
 
-	CountPrinters["csv"] = TemplatePrinter(`{{range $group, $counter := . }}{{ $group }},total
+	CountPrinters["csv"] = TemplatePrinter(`{{range $group, $counter := . }}{{ $group }},count
 {{ range $name, $count := $counter.Values }}{{ $name }},{{ $count }}
 {{ end }}
 {{ end }}`)
