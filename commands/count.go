@@ -3,6 +3,8 @@ package commands
 import (
 	"errors"
 
+	"io"
+
 	"github.com/devnull-tools/sherlog-holmes/filters"
 	"github.com/devnull-tools/sherlog-holmes/mappers"
 	"github.com/devnull-tools/sherlog-holmes/processors"
@@ -17,6 +19,7 @@ type CountCommand struct {
 	MaxEntries    int64
 	Groups        []string
 	Printer       processors.Printer
+	Writer        io.Writer
 }
 
 // Prints the filtered entries
@@ -33,7 +36,7 @@ func (command CountCommand) Execute() error {
 
 	reader := readers.FileReader{File: command.InputFileName}
 	mapper := mappers.RegisteredMappers[command.Layout]
-	processor := processors.NewCountProcessor(command.Groups, command.Printer)
+	processor := processors.NewCountProcessor(command.Groups, command.Printer, command.Writer)
 
 	return Execute(command.MaxEntries, reader, mapper, command.Filter, processor)
 }

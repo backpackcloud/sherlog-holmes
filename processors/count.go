@@ -1,7 +1,6 @@
 package processors
 
 import (
-	"os"
 	"text/template"
 
 	"io"
@@ -12,10 +11,10 @@ import (
 
 var CountPrinters map[string]Printer
 
-type Printer func(map[string]EntryCount)
+type Printer func(writer io.Writer, countMap map[string]EntryCount)
 
-func TemplatePrinter(writer io.Writer, templateString string) Printer {
-	return func(counts map[string]EntryCount) {
+func TemplatePrinter(templateString string) Printer {
+	return func(writer io.Writer, counts map[string]EntryCount) {
 		tmpl, err := template.New("Sherlog Holmes - Count").Parse(templateString)
 		if err != nil {
 			panic(err)
@@ -30,13 +29,13 @@ func TemplatePrinter(writer io.Writer, templateString string) Printer {
 func init() {
 	CountPrinters = make(map[string]Printer)
 
-	CountPrinters["default"] = TemplatePrinter(os.Stdout, `{{range $group, $counter := . }}== {{ $group }} ==
+	CountPrinters["default"] = TemplatePrinter(`{{range $group, $counter := . }}== {{ $group }} ==
 {{ range $name, $count := $counter.Values }}{{ $name }}: {{ $count }}
 {{ end }}
 {{ end }}
 `)
 
-	CountPrinters["csv"] = TemplatePrinter(os.Stdout, `{{range $group, $counter := . }}{{ $group }},total
+	CountPrinters["csv"] = TemplatePrinter(`{{range $group, $counter := . }}{{ $group }},total
 {{ range $name, $count := $counter.Values }}{{ $name }},{{ $count }}
 {{ end }}
 {{ end }}`)
@@ -45,6 +44,7 @@ func init() {
 type countProcessor struct {
 	Counters map[string]EntryCount
 	printer  Printer
+	writer   io.Writer
 }
 
 type EntryCount struct {
@@ -57,7 +57,7 @@ func (processor countProcessor) Before() {
 }
 
 func (processor countProcessor) After() {
-	processor.printer(processor.Counters)
+	processor.printer(processor.writer, processor.Counters)
 }
 
 func (processor countProcessor) Execute(entry *domain.Entry) {
@@ -68,7 +68,7 @@ func (processor countProcessor) Execute(entry *domain.Entry) {
 	}
 }
 
-func NewCountProcessor(groups []string, printer Printer) Processor {
+func NewCountProcessor(groups []string, printer Printer, writer io.Writer) Processor {
 	extractors := make(map[string]filters.Extractor)
 	extractors["level"] = filters.Level
 	extractors["category"] = filters.Category
@@ -83,5 +83,5 @@ func NewCountProcessor(groups []string, printer Printer) Processor {
 			Values:    make(map[string]int64),
 		}
 	}
-	return countProcessor{Counters: counters, printer: printer}
+	return countProcessor{Counters: counters, printer: printer, writer: writer}
 }

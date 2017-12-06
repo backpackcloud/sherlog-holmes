@@ -54,7 +54,7 @@ var countCommand = cli.Command{
 		templateFile := c.String("template")
 		if templateFile != "" {
 			if file, err := ioutil.ReadFile(templateFile); err == nil {
-				printer = processors.TemplatePrinter(os.Stdout, string(file))
+				printer = processors.TemplatePrinter(string(file))
 			} else {
 				return err
 			}
@@ -67,6 +67,7 @@ var countCommand = cli.Command{
 			MaxEntries:    c.Int64("max"),
 			Groups:        c.StringSlice("groups"),
 			Printer:       printer,
+			Writer:        os.Stdout,
 		}.Execute()
 	},
 }
