@@ -1,6 +1,8 @@
 package cli
 
 import (
+	"os"
+
 	"github.com/devnull-tools/sherlog-holmes/commands"
 	"github.com/devnull-tools/sherlog-holmes/filters"
 	"github.com/devnull-tools/sherlog-holmes/mappers"
@@ -44,6 +46,7 @@ var printCommand = cli.Command{
 			InputFileName: inputFileName,
 			Layout:        c.String("layout"),
 			MaxEntries:    c.Int64("max"),
+			Writer:        os.Stdout,
 		}.Execute()
 	},
 }

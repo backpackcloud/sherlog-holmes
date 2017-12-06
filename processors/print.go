@@ -2,8 +2,9 @@ package processors
 
 import (
 	"fmt"
-	"os"
 	"text/template"
+
+	"io"
 
 	"github.com/devnull-tools/sherlog-holmes/domain"
 )
@@ -12,7 +13,7 @@ type printProcessor struct {
 	processFunction func(entry *domain.Entry)
 }
 
-func NewPrintProcessor(format string) Processor {
+func NewPrintProcessor(writer io.Writer, format string) Processor {
 	if format == FORMAT_RAW || format == "" {
 		return printProcessor{
 			processFunction: func(entry *domain.Entry) {
@@ -26,7 +27,7 @@ func NewPrintProcessor(format string) Processor {
 	}
 	return printProcessor{
 		processFunction: func(entry *domain.Entry) {
-			err = tmpl.Execute(os.Stdout, entry)
+			err = tmpl.Execute(writer, entry)
 			if err != nil {
 				panic(err)
 			}

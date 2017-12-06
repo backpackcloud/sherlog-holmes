@@ -3,6 +3,8 @@ package commands
 import (
 	"errors"
 
+	"io"
+
 	"github.com/devnull-tools/sherlog-holmes/filters"
 	"github.com/devnull-tools/sherlog-holmes/mappers"
 	"github.com/devnull-tools/sherlog-holmes/processors"
@@ -16,6 +18,7 @@ type PrintCommand struct {
 	InputFileName string
 	Filter        filters.EntryFilter
 	MaxEntries    int64
+	Writer        io.Writer
 }
 
 // Prints the filtered entries
@@ -29,7 +32,7 @@ func (command PrintCommand) Execute() error {
 
 	reader := readers.FileReader{File: command.InputFileName}
 	mapper := mappers.RegisteredMappers[command.Layout]
-	processor := processors.NewPrintProcessor(command.Format)
+	processor := processors.NewPrintProcessor(command.Writer, command.Format)
 
 	return Execute(command.MaxEntries, reader, mapper, command.Filter, processor)
 }
