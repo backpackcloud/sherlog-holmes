@@ -5,6 +5,8 @@ import (
 
 	"io"
 
+	"encoding/json"
+
 	"github.com/devnull-tools/sherlog-holmes/domain"
 	"github.com/devnull-tools/sherlog-holmes/filters"
 )
@@ -39,6 +41,21 @@ func init() {
 {{ range $name, $count := $counter.Values }}{{ $name }},{{ $count }}
 {{ end }}
 {{ end }}`)
+
+	CountPrinters["json"] = func(writer io.Writer, countMap map[string]EntryCount) {
+		values := make(map[string]map[string]int64)
+		for group, count := range countMap {
+			values[group] = make(map[string]int64)
+			for name, count := range count.Values {
+				values[group][name] = count
+			}
+		}
+		data, err := json.Marshal(values)
+		if err != nil {
+			panic(err)
+		}
+		writer.Write(data)
+	}
 }
 
 type countProcessor struct {
