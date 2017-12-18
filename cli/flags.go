@@ -52,7 +52,7 @@ var negate = false
 var Filter func(entry *domain.Entry) bool
 
 var configFlag = cli.StringFlag{
-	Name:  "config-file, c",
+	Name:  "config, c",
 	Usage: "loads pattern configurations from `FILE`",
 }
 var layoutFlag = cli.StringFlag{
