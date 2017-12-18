@@ -110,16 +110,15 @@ func Negate(filter func(entry *domain.Entry) bool) func(entry *domain.Entry) boo
 	}
 }
 
-//
+// Runs the filter function using entries from the "in" channel and passes the filtered entries to the
+// "out" channel until the number of filtered entries reaches the given "max" number.
 func Filter(in <-chan *domain.Entry, out chan<- *domain.Entry, filter func(entry *domain.Entry) bool, max int64) {
 	var filtered int64
 	for e := range in {
 		if filter(e) {
 			out <- e
 			filtered++
-			if filtered != max {
-
-			} else {
+			if filtered == max {
 				break
 			}
 		}
