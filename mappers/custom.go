@@ -9,6 +9,7 @@ import (
 	"gopkg.in/yaml.v2"
 )
 
+// Struct that represents a configuration for mapping log entries
 type Config struct {
 	From       string
 	Entry      string
@@ -16,6 +17,7 @@ type Config struct {
 	Stacktrace string
 }
 
+// Parses the given yaml file and adds it to the RegexpMappers
 func ParseYaml(filePath string) {
 	data, err := ioutil.ReadFile(filePath)
 	if err != nil {
