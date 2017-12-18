@@ -18,7 +18,7 @@ type Config struct {
 }
 
 // Parses the given yaml file and adds it to the RegexpMappers
-func ParseYaml(filePath string) {
+func ParseYaml(filePath string) error {
 	data, err := ioutil.ReadFile(filePath)
 	if err != nil {
 		panic(err)
@@ -42,6 +42,8 @@ func ParseYaml(filePath string) {
 		}
 		if conf.Entry != "" {
 			mapper.Entry = regexp.MustCompile(conf.Entry)
+		} else {
+			return errors.New("No entry expression mapped for " + id)
 		}
 		if conf.Exception != "" {
 			mapper.Exception = regexp.MustCompile(conf.Exception)
@@ -49,8 +51,10 @@ func ParseYaml(filePath string) {
 		if conf.Stacktrace != "" {
 			mapper.Stacktrace = regexp.MustCompile(conf.Stacktrace)
 		}
+
 		RegexpMappers[id] = mapper
 		RegisteredMappers[id] = mapper
 	}
 
+	return nil
 }

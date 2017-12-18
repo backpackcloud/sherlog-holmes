@@ -33,7 +33,9 @@ var printCommand = cli.Command{
 		inputFileName := c.Args().First()
 		configFile := c.String("config")
 		if configFile != "" {
-			mappers.ParseYaml(configFile)
+			if err := mappers.ParseYaml(configFile); err != nil {
+				return err
+			}
 		}
 
 		if Filter == nil {
