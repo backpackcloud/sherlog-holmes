@@ -29,10 +29,11 @@ func TemplateFormatter(templateString string) Formatter {
 }
 
 func init() {
-	Formatters = make(map[string]Formatter)
-	Formatters["default"] = Default
-	Formatters["csv"] = Csv
-	Formatters["json"] = Json
+	Formatters = map[string]Formatter{
+		"default": Default,
+		"csv":     Csv,
+		"json":    Json,
+	}
 }
 
 // Structure that represents a counter
@@ -73,11 +74,12 @@ func (processor countProcessor) Execute(entry *domain.Entry) {
 // formatter: the component for printing the output in some format
 // writer: the writer that will receive the output for printing
 func NewCountProcessor(groups []string, formatter Formatter, writer io.Writer) Processor {
-	extractors := make(map[string]filters.Extractor)
-	extractors["level"] = filters.Level
-	extractors["category"] = filters.Category
-	extractors["origin"] = filters.Origin
-	extractors["exception"] = filters.Exception
+	extractors := map[string]filters.Extractor{
+		"level":     filters.Level,
+		"category":  filters.Category,
+		"origin":    filters.Origin,
+		"exception": filters.Exception,
+	}
 
 	counters := make(map[string]EntryCount)
 
