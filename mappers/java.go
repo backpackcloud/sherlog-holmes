@@ -2,6 +2,7 @@ package mappers
 
 import "regexp"
 
+// A Java mapper for use as a base
 var JavaMapper RegexpMapper
 
 func init() {

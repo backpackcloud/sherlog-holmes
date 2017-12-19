@@ -11,9 +11,13 @@ import (
 
 // Struct that represents a configuration for mapping log entries
 type Config struct {
-	From       string
-	Entry      string
-	Exception  string
+	// Sets the base of this configuration to inherit its properties
+	From string
+	// Holds the entry pattern
+	Entry string
+	// Holds the exception pattern
+	Exception string
+	// Holds the stacktrace pattern
 	Stacktrace string
 }
 

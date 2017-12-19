@@ -2,6 +2,7 @@ package mappers
 
 import "regexp"
 
+// A mapper for Wildfly logs
 var WildflyMapper RegexpMapper
 
 func init() {

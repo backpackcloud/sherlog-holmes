@@ -8,6 +8,7 @@ import (
 	"strings"
 )
 
+// The default formatter
 func Default(writer io.Writer, countMap map[string]EntryCount) {
 	for group, count := range countMap {
 		// determine the most lengthy value

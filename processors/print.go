@@ -9,10 +9,12 @@ import (
 	"github.com/devnull-tools/sherlog-holmes/domain"
 )
 
+// Struct that defines a processor that follows a template for printing the filtered entries
 type printProcessor struct {
 	processFunction func(entry *domain.Entry)
 }
 
+// Returns a new processor that will use the given template for formatting the output
 func NewPrintProcessor(writer io.Writer, format string) Processor {
 	if format == FORMAT_RAW || format == "" {
 		return printProcessor{

@@ -47,16 +47,16 @@ var countCommand = cli.Command{
 			Filter = filters.All
 		}
 
-		printer := processors.CountPrinters["default"]
+		formatter := processors.Formatters["default"]
 
 		output := c.String("format")
 		if output != "" {
-			printer = processors.CountPrinters[output]
+			formatter = processors.Formatters[output]
 		}
 		templateFile := c.String("template")
 		if templateFile != "" {
 			if file, err := ioutil.ReadFile(templateFile); err == nil {
-				printer = processors.TemplatePrinter(string(file))
+				formatter = processors.TemplateFormatter(string(file))
 			} else {
 				return err
 			}
@@ -68,7 +68,7 @@ var countCommand = cli.Command{
 			Layout:        c.String("layout"),
 			MaxEntries:    c.Int64("max"),
 			Groups:        c.StringSlice("groups"),
-			Printer:       printer,
+			Formatter:     formatter,
 			Writer:        os.Stdout,
 		}.Execute()
 	},

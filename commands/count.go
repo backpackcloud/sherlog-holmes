@@ -18,7 +18,7 @@ type CountCommand struct {
 	Filter        filters.EntryFilter
 	MaxEntries    int64
 	Groups        []string
-	Printer       processors.Printer
+	Formatter     processors.Formatter
 	Writer        io.Writer
 }
 
@@ -36,7 +36,7 @@ func (command CountCommand) Execute() error {
 
 	reader := readers.FileReader{File: command.InputFileName}
 	mapper := mappers.RegisteredMappers[command.Layout]
-	processor := processors.NewCountProcessor(command.Groups, command.Printer, command.Writer)
+	processor := processors.NewCountProcessor(command.Groups, command.Formatter, command.Writer)
 
 	return Execute(command.MaxEntries, reader, mapper, command.Filter, processor)
 }

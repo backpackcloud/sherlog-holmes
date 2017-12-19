@@ -6,6 +6,7 @@ import (
 	"strconv"
 )
 
+// A formatter for CSV output
 func Csv(writer io.Writer, countMap map[string]EntryCount) {
 	w := csv.NewWriter(writer)
 	for _, count := range countMap {
