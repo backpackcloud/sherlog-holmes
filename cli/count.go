@@ -67,7 +67,7 @@ var countCommand = cli.Command{
 			InputFileName: inputFileName,
 			Layout:        c.String("layout"),
 			MaxEntries:    c.Int64("max"),
-			Groups:        c.StringSlice("groups"),
+			Groups:        c.StringSlice("group"),
 			Formatter:     formatter,
 			Writer:        os.Stdout,
 		}.Execute()
