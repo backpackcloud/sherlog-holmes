@@ -7,9 +7,9 @@ import (
 )
 
 // Holds all the mappers registered in Sherlog
-var RegisteredMappers map[string]Mapper = make(map[string]Mapper)
+var RegisteredMappers = make(map[string]Mapper)
 // Holds all regexp based mappers registered in Sherlog (used for parsing user configuration)
-var RegexpMappers map[string]RegexpMapper = make(map[string]RegexpMapper)
+var RegexpMappers = make(map[string]RegexpMapper)
 // Tells if Sherlog should scan stacktrace for exceptions (may slow down performance)
 var FindExceptionsOnStacktrace = false
 
@@ -33,6 +33,7 @@ type RegexpMapper struct {
 	// The pattern for the stacktrace, while this pattern occurs in subsequent inputs from the channel, the input will
 	// be attached to the last entry as a stacktrace element
 	Stacktrace *regexp.Regexp
+
 }
 
 // Implements the mapper interface by using the defined regular expressions against the input strings
