@@ -38,7 +38,9 @@ func (entry *Entry) AddException(exception string) {
 
 // Adds the given line as a stacktrace to this entry
 func (entry *Entry) AddStacktrace(line string) {
-	entry.stacktrace.WriteString("\n")
+	if len(entry.Stacktrace()) > 0 {
+		entry.stacktrace.WriteString("\n")
+	}
 	entry.stacktrace.WriteString(line)
 	entry.Append(line)
 }
