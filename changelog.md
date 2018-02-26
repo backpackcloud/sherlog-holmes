@@ -1,5 +1,11 @@
 # Changelog
 
+## v0.7.0
+
+- Sherlog is now writen in Go \o/
+- Custom format outputs for count (json, csv, table)
+- Custom output format for logs
+
 ## v0.6.1
 
 - Merged jboss patterns file with java patterns file
