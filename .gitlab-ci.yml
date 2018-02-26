@@ -15,6 +15,7 @@ stages:
 format:
     stage: test
     script:
+      - go get ./...
       - go fmt $(go list ./... | grep -v /vendor/)
       - go vet $(go list ./... | grep -v /vendor/)
       - go test -race $(go list ./... | grep -v /vendor/)
@@ -22,6 +23,7 @@ format:
 compile:
     stage: build
     script:
+      - go get ./...
       - go build -race -ldflags "-extldflags '-static'" -o $CI_PROJECT_DIR/sherlog-holmes
     artifacts:
       paths:
