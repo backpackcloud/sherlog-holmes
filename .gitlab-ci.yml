@@ -9,22 +9,57 @@ before_script:
   - cd $GOPATH/src/$REPO_NAME
 
 stages:
-    - test
-    - build
+  - test
+  - build
+  - release
 
-format:
-    stage: test
-    script:
-      - go get ./...
-      - go fmt $(go list ./... | grep -v /vendor/)
-      - go vet $(go list ./... | grep -v /vendor/)
-      - go test -race $(go list ./... | grep -v /vendor/)
+go:test:
+  stage: test
+  script:
+    - go get ./...
+    - go vet ./...
+    - go test -race ./...
 
-compile:
-    stage: build
-    script:
-      - go get ./...
-      - go build -race -ldflags "-extldflags '-static'" -o $CI_PROJECT_DIR/sherlog-holmes
-    artifacts:
-      paths:
-        - sherlog-holmes
+go:build:macos:amd64:
+  stage: build
+  script:
+    - mkdir -p $CI_PROJECT_DIR/bin/macos/amd64
+    - go get ./...
+    - env GOOS=darwin GOARCH=amd64 go build -race -ldflags "-extldflags '-static'" -o $CI_PROJECT_DIR/macos/amd64/sherlog-holmes
+  artifacts:
+    expire_in: 2 days
+    paths:
+      - bin/macos/amd64
+
+go:build:linux:amd64:
+  stage: build
+  script:
+    - mkdir -p $CI_PROJECT_DIR/bin/linux/amd64
+    - go get ./...
+    - env GOOS=linux GOARCH=amd64 go build -race -ldflags "-extldflags '-static'" -o $CI_PROJECT_DIR/linux/amd64/sherlog-holmes
+  artifacts:
+    expire_in: 2 days
+    paths:
+      - bin/linux/amd64
+
+go:build:windows:amd64:
+  stage: build
+  script:
+    - mkdir -p $CI_PROJECT_DIR/bin/windows/amd64
+    - go get ./...
+    - env GOOS=windows GOARCH=amd64 go build -race -ldflags "-extldflags '-static'" -o $CI_PROJECT_DIR/windows/amd64/sherlog-holmes
+  artifacts:
+    expire_in: 2 days
+    paths:
+      - bin/windows/amd64
+`
+nexus:release:
+  stage: release
+  dependencies:
+    - go:build:macos:amd64
+    - go:build:linux:amd64
+    - go:build:windows:amd64
+  script:
+    - curl -v -u $NEXUS_AUTH --upload-file bin/windows/amd64/sherlog-holmes $NEXUS_URL/$NEXUS_REPO/$CI_COMMIT_REF_SLUG/windows/amd64/sherlog-holmes
+    - curl -v -u $NEXUS_AUTH --upload-file bin/linux/amd64/sherlog-holmes $NEXUS_URL/$NEXUS_REPO/$CI_COMMIT_REF_SLUG/linux/amd64/sherlog-holmes
+    - curl -v -u $NEXUS_AUTH --upload-file bin/macos/amd64/sherlog-holmes $NEXUS_URL/$NEXUS_REPO/$CI_COMMIT_REF_SLUG/macos/amd64/sherlog-holmes
