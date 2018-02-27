@@ -60,6 +60,6 @@ nexus:release:
     - go:build:linux:amd64
     - go:build:windows:amd64
   script:
-    - curl -v -u $NEXUS_AUTH --upload-file bin/windows/amd64/sherlog-holmes $NEXUS_URL/$NEXUS_REPO/$CI_COMMIT_REF_SLUG/windows/amd64/sherlog-holmes
-    - curl -v -u $NEXUS_AUTH --upload-file bin/linux/amd64/sherlog-holmes $NEXUS_URL/$NEXUS_REPO/$CI_COMMIT_REF_SLUG/linux/amd64/sherlog-holmes
-    - curl -v -u $NEXUS_AUTH --upload-file bin/macos/amd64/sherlog-holmes $NEXUS_URL/$NEXUS_REPO/$CI_COMMIT_REF_SLUG/macos/amd64/sherlog-holmes
+    - curl -v -u $NEXUS_AUTH --upload-file $CI_PROJECT_DIR/bin/windows/amd64/sherlog-holmes $NEXUS_URL/$NEXUS_REPO/$CI_COMMIT_REF_SLUG/windows/amd64/sherlog-holmes
+    - curl -v -u $NEXUS_AUTH --upload-file $CI_PROJECT_DIR/bin/linux/amd64/sherlog-holmes $NEXUS_URL/$NEXUS_REPO/$CI_COMMIT_REF_SLUG/linux/amd64/sherlog-holmes
+    - curl -v -u $NEXUS_AUTH --upload-file $CI_PROJECT_DIR/bin/macos/amd64/sherlog-holmes $NEXUS_URL/$NEXUS_REPO/$CI_COMMIT_REF_SLUG/macos/amd64/sherlog-holmes
