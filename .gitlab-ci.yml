@@ -7,6 +7,13 @@ before_script:
   - mkdir -p $GOPATH/src/$(dirname $REPO_NAME)
   - ln -svf $CI_PROJECT_DIR $GOPATH/src/$REPO_NAME
   - cd $GOPATH/src/$REPO_NAME
+  - mkdir $CI_PROJECT_DIR/bin
+  - curl http://racha-cuca.devnull.tools/bin/notify > $CI_PROJECT_DIR/bin/notify
+  - chmod +x $CI_PROJECT_DIR/bin/notify
+  - alias notify="$CI_PROJECT_DIR/bin/notify \"Sherlog-Holmes :: $CI_COMMIT_REF_NAME\""
+
+after_script:
+  - notify "$CI_JOB_STAGE :: $CI_JOB_NAME"
 
 stages:
   - test
