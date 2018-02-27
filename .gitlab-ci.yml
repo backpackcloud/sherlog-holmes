@@ -29,7 +29,7 @@ go:build:macos:amd64:
   artifacts:
     expire_in: 2 days
     paths:
-      - bin/macos/amd64
+      - bin/macos/amd64/sherlog-holmes
 
 go:build:linux:amd64:
   stage: build
@@ -40,7 +40,7 @@ go:build:linux:amd64:
   artifacts:
     expire_in: 2 days
     paths:
-      - bin/linux/amd64
+      - bin/linux/amd64/sherlog-holmes
 
 go:build:windows:amd64:
   stage: build
@@ -51,7 +51,7 @@ go:build:windows:amd64:
   artifacts:
     expire_in: 2 days
     paths:
-      - bin/windows/amd64
+      - bin/windows/amd64/sherlog-holmes
 
 nexus:release:
   stage: release
