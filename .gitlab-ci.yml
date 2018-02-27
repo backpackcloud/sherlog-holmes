@@ -25,7 +25,7 @@ go:build:macos:amd64:
   script:
     - mkdir -p $CI_PROJECT_DIR/bin/macos/amd64
     - go get ./...
-    - env GOOS=darwin GOARCH=amd64 go build -race -ldflags "-extldflags '-static'" -o $CI_PROJECT_DIR/macos/amd64/sherlog-holmes
+    - env CGO_ENABLED=1 GOOS=darwin GOARCH=amd64 go build -race -ldflags "-extldflags '-static'" -o $CI_PROJECT_DIR/macos/amd64/sherlog-holmes
   artifacts:
     expire_in: 2 days
     paths:
@@ -47,7 +47,7 @@ go:build:windows:amd64:
   script:
     - mkdir -p $CI_PROJECT_DIR/bin/windows/amd64
     - go get ./...
-    - env GOOS=windows GOARCH=amd64 go build -race -ldflags "-extldflags '-static'" -o $CI_PROJECT_DIR/windows/amd64/sherlog-holmes
+    - env CGO_ENABLED=1 GOOS=windows GOARCH=amd64 go build -race -ldflags "-extldflags '-static'" -o $CI_PROJECT_DIR/windows/amd64/sherlog-holmes
   artifacts:
     expire_in: 2 days
     paths:
