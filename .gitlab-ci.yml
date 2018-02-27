@@ -52,7 +52,7 @@ go:build:windows:amd64:
     expire_in: 2 days
     paths:
       - bin/windows/amd64
-`
+
 nexus:release:
   stage: release
   dependencies:
