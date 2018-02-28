@@ -9,7 +9,7 @@ import (
 	"github.com/devnull-tools/sherlog-holmes/test"
 )
 
-func TestSimpleMessage(t *testing.T) {
+func TestJavaMapperSimpleMessage(t *testing.T) {
 	mapperTest := test.MapperTest{Mapper: mappers.JavaMapper}
 
 	entries := mapperTest.Test("Bla bla bla\nMeh meh meh")
@@ -23,7 +23,7 @@ func TestSimpleMessage(t *testing.T) {
 	}
 }
 
-func TestMessageWithException(t *testing.T) {
+func TestJavaMapperMessageWithException(t *testing.T) {
 	mapperTest := test.MapperTest{Mapper: mappers.JavaMapper}
 
 	entries := mapperTest.Test("Bla bla bla: java.lang.RuntimeException")
@@ -40,7 +40,7 @@ func TestMessageWithException(t *testing.T) {
 	}
 }
 
-func TestMessageWithStackTrace(t *testing.T) {
+func TestJavaMapperMessageWithStackTrace(t *testing.T) {
 	mapperTest := test.MapperTest{Mapper: mappers.RegexpMapper{
 		Entry:      regexp.MustCompile(`ENTRY: (?P<message>.+)`),
 		Exception:  mappers.JavaMapper.Exception,
