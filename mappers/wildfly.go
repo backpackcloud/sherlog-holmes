@@ -17,6 +17,6 @@ func init() {
 	RegisteredMappers["wildfly"] = WildflyMapper
 	RegexpMappers["wildfly"] = WildflyMapper
 
-	RegisteredMappers["jboss"] = WildflyMapper
-	RegexpMappers["jboss"] = WildflyMapper
+	RegisteredMappers["jboss-eap"] = WildflyMapper
+	RegexpMappers["jboss-eap"] = WildflyMapper
 }
