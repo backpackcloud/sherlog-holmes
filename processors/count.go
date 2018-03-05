@@ -73,7 +73,7 @@ func (processor countProcessor) Execute(entry *domain.Entry) {
 // groups: an array of the groups to count (level, category, origin or exception)
 // formatter: the component for printing the output in some format
 // writer: the writer that will receive the output for printing
-func NewCountProcessor(groups []string, formatter Formatter, writer io.Writer) Processor {
+func NewCountProcessor(groups []string, formatter Formatter, writer io.Writer) countProcessor {
 	extractors := map[string]filters.Extractor{
 		"level":     filters.Level,
 		"category":  filters.Category,
