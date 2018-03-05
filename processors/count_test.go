@@ -10,73 +10,89 @@ import (
 )
 
 type CountTest struct {
-	Counter map[string]int64
-	T       *testing.T
+	T        *testing.T
+	Group    string
+	NewEntry func(attr string) *domain.Entry
+	values   map[string]int64
 }
 
-func (c *CountTest) expect(label string, count int64) {
-	if n := c.Counter[label]; n != count {
-		c.T.Errorf("Invalid count for %s. Expected: %d | Got: %d", label, count, n)
+func (test *CountTest) expect(label string, count int64) {
+	if n := test.values[label]; n != count {
+		test.T.Errorf("Invalid count for %s. Expected: %d | Got: %d", label, count, n)
 	}
+}
+
+func (test *CountTest) doTest() {
+	var buffer bytes.Buffer
+	processor := processors.NewCountProcessor([]string{test.Group}, processors.Default, &buffer)
+
+	processor.Before()
+	processor.Execute(test.NewEntry("lorem"))
+	processor.Execute(test.NewEntry("bacon"))
+	processor.Execute(test.NewEntry("bacon"))
+	processor.Execute(test.NewEntry("lorem"))
+	processor.Execute(test.NewEntry("meh"))
+	processor.Execute(test.NewEntry("bacon"))
+	processor.Execute(test.NewEntry("meh"))
+	processor.Execute(test.NewEntry("lorem"))
+	processor.Execute(test.NewEntry("bacon"))
+	processor.After()
+
+	test.values = processor.Counters[test.Group].Values
+
+	test.expect("lorem", 3)
+	test.expect("meh", 2)
+	test.expect("bacon", 4)
+	test.expect("foo", 0)
+	test.expect("bar", 0)
 }
 
 func TestCountProcessorForLevel(t *testing.T) {
 	entry := func(level string) *domain.Entry {
 		return &domain.Entry{Level: level}
 	}
-	var buffer bytes.Buffer
-	processor := processors.NewCountProcessor([]string{"level"}, processors.Default, &buffer)
-
-	processor.Before()
-	processor.Execute(entry("INFO"))
-	processor.Execute(entry("INFO"))
-	processor.Execute(entry("WARN"))
-	processor.Execute(entry("DEBUG"))
-	processor.Execute(entry("ERROR"))
-	processor.Execute(entry("INFO"))
-	processor.Execute(entry("ERROR"))
-	processor.Execute(entry("WARN"))
-	processor.Execute(entry("INFO"))
-	processor.After()
-
 	test := CountTest{
-		Counter: processor.Counters["level"].Values,
-		T:       t,
+		Group:    "level",
+		NewEntry: entry,
+		T:        t,
 	}
-
-	test.expect("INFO", 4)
-	test.expect("WARN", 2)
-	test.expect("DEBUG", 1)
-	test.expect("ERROR", 2)
-	test.expect("TRACE", 0)
+	test.doTest()
 }
 
 func TestCountProcessorForCategory(t *testing.T) {
 	entry := func(category string) *domain.Entry {
 		return &domain.Entry{Category: category}
 	}
-	var buffer bytes.Buffer
-	processor := processors.NewCountProcessor([]string{"category"}, processors.Default, &buffer)
-
-	processor.Before()
-	processor.Execute(entry("lorem"))
-	processor.Execute(entry("bacon"))
-	processor.Execute(entry("bacon"))
-	processor.Execute(entry("lorem"))
-	processor.Execute(entry("meh"))
-	processor.Execute(entry("bacon"))
-	processor.Execute(entry("meh"))
-	processor.Execute(entry("lorem"))
-	processor.Execute(entry("bacon"))
-	processor.After()
-
 	test := CountTest{
-		Counter: processor.Counters["category"].Values,
-		T:       t,
+		Group:    "category",
+		NewEntry: entry,
+		T:        t,
 	}
+	test.doTest()
+}
 
-	test.expect("lorem", 3)
-	test.expect("meh", 2)
-	test.expect("bacon", 4)
-	test.expect("foo", 0)
+func TestCountProcessorForOrigin(t *testing.T) {
+	entry := func(origin string) *domain.Entry {
+		return &domain.Entry{Origin: origin}
+	}
+	test := CountTest{
+		Group:    "origin",
+		NewEntry: entry,
+		T:        t,
+	}
+	test.doTest()
+}
+
+func TestCountProcessorForException(t *testing.T) {
+	entry := func(exception string) *domain.Entry {
+		e := domain.Entry{}
+		e.AddException(exception)
+		return &e
+	}
+	test := CountTest{
+		Group:    "exception",
+		NewEntry: entry,
+		T:        t,
+	}
+	test.doTest()
 }
