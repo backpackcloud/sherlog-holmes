@@ -24,7 +24,7 @@ The attributes are based on the named capture groups:
 - Message: `message`
 
 ```regexp
-(<?level>\w+)\s(<?category>\s+)\s(<?message>.+)
+(?P<level>\w+)\s(?P<category>\s+)\s(?P<message>.+)
 ```
 
 Patterns for exception and stacktrace should be defined separately. The exception pattern is used only in the message
@@ -32,8 +32,8 @@ field and stacktrace. Here is a complete example of a pattern configuration:
 
 ```yaml
 wildfly:
-  entry: (?<time>[0-9,.:]+)\s+(?<level>\w+)\s+\[(?<category>\S+)\]\s\((?<origin>[^)]+)\)?\s?(?<message>.+)
-  exception: (?<exception>\w+(\.\w+)+(Exception|Error))
+  entry: (?P<time>[0-9,.:]+)\s+(?P<level>\w+)\s+\[(?P<category>\S+)\]\s\((?P<origin>[^)]+)\)?\s?(?P<message>.+)
+  exception: (?P<exception>\w+(\.\w+)+(Exception|Error))
   stacktrace: ^(\s+at)|(Caused by\:)|(\s+\.{3}\s\d+\smore)
 ```
 
@@ -47,133 +47,70 @@ specify the parent configuration with the `from` key:
 
 ```yaml
 base.java:
-  exception: (?<exception>\w+(\.\w+)+(Exception|Error))
+  exception: (?P<exception>\w+(\.\w+)+(Exception|Error))
   stacktrace: ^(\s+at)|(Caused by\:)|(\s+\.{3}\s\d+\smore)
-jboss:
+wildfly:
   from: base.java
-  entry: (?<time>[0-9,.:]+)\s+(?<level>\w+)\s+\[(?<category>\S+)\]\s\((?<origin>[^)]+)\)?\s?(?<message>.+)
+  entry: (?P<time>[0-9,.:]+)\s+(?P<level>\w+)\s+\[(?P<category>\S+)\]\s\((?P<origin>[^)]+)\)?\s?(?P<message>.+)
 ```
 
 ## Usage
 
-Shelog Holmes provides the command line tool `sherlog-holmes`. You can use this to pass a log, the filters you need to
-apply and the process that needs to be executed (like showing the filtered entries or counting the exceptions):
+Shelog Holmes provides the command line tool `sherlog-holmes`. This tool expects a command and a set of arguments. Each
+command can receive a filter to reduce the log entries. The commands are:
 
-### Config Options
+- `print`: prints the entries that passes the filter (prints everything if no filter is given)
+- `count`: counts the occurrences of the attributes of the filtered entries in order to have a macro view of the log
 
-`-p, --patterns FILE`
+You can use `sherlog-holmes help <command>` to see the list of available options for each command. Bellow are some
+examples of use:
 
-Additionally to having definitions in your `$HOME/.sherlog` directory, you can pass a definition file from anywhere in your machine and Sherlog will scan and register the definitions.
+`sherlog-holmes print --layout wildfly --level ERROR server.log`
 
-`--encode ENCODE`
+This is a simple command that will print any `ERROR` message in the `server.log` file. In case you need more that one
+clause in the filter, just append another option:
 
-This sets the encode to use while reading the log file.
+`sherlog-holmes print --layout wildfly --level ERROR --exception java.lang.NullPointerException server.log`
 
-`-t, --type TYPE`
+This will print any entry that contains a `java.lang.NullPointerException` and is also an `ERROR` entry. If you want to
+use the `or` clause, just append a `--or` before the filter clause:
 
-This will manually set the patterns definitions. If you don't specify this option, Sherlog will try to guess the pattern by trying the mapped ones until it finds a match.
+`sherlog-holmes print --layout wildfly --level ERROR --or --exception java.lang.NullPointerException server.log`
 
-### Filter Options
+This will print any entry that contains a `java.lang.NullPointerException` or is an `ERROR` entry. You can also specify
+how the matching will be considered:
 
-`-c, --category EXPRESSION`
+`sherlog-holmes print --layout wildfly --contains --message "Hi there!" server.log`
 
-This will filter entries using the category field. You can use the wildcard `*` here.
+This will print any entry that contains `Hi there` in its message. To supply a regular expression, use the `--matches`
+instead:
 
-`-l, --level EXPRESSION`
+`sherlog-holmes print --layout wildfly --matches --message "\d{10}" server.log`
 
-This will filter entries using the level field. You can use the wildcard `*` here.
+If you need to change the output format, use the `--format` option:
 
-`-o, --origin EXPRESSION`
+`sherlog-holmes print --layout wildfly --format "{{.Line}}: {{.RawContent}}" server.log`
 
-This will filter entries using the origin field. You can use the wildcard `*` here.
+This will print all entries appending the line number before each one. The following attributes can be used:
 
-`-m, --message EXPRESSION`
+- `Line`: the line number
+- `Time`: the timestamp
+- `Level`: the log level
+- `Category`: the category
+- `Origin`: the origin
+- `Exceptions`: the array containing all exceptions found
+- `Stacktrace`: a string containing the stacktrace
+- `RawContent`: the raw entry
 
-This will filter entries using the message field. You can use the wildcard `*` here.
-
-`-e, --exception EXPRESSION`
-
-This will filter entries using the exception field. You can use the wildcard `*` here.
-
-*NOTICE: the expressions are case sensitive, wildcards can be used at start, end or both*
-
-`--any-exception`
-
-This will filter entries with exceptions, regardless the kind.
-
-`-f NAME, --field NAME`
-
-This will filter entries using custom attributes found in named capture groups. This parameter specifies the custom attribute name. Use it with `-v | --value` for defining the expression.
-
-`-v EXPRESSION, --value EXPRESSION`
-
-Specifies the expression to use with the last `-f | --field` parameter. The wildcard `*` is accepted here.
-
-### Logical Options
-
-`--and`
-
-This will use the **AND** operation to connect the next filter. This is the default operation.
-
-`--or`
-
-This will use the **OR** operation to connect the next filter.
-
-`--not`
-
-This will negate the next filter.
-
-```
-sherlog --level WARN --or --not --level INFO --and --any-exception
-```
-
-This is equivalent to:
-
-    (WARN || ! INFO) && EXCEPTION
-
-*NOTICE: try not to do fuzzy logics with those operators*
-
-### Operation Options
-
-`--print`
-
-This will instruct Sherlog to print every filtered entry. This is useful to reduce that crazy log file into a sane one.
-
-```
-$ sherlog --level ERROR --print crazy-log-file.log > sane-log-file.log
-```
-
-`--no-stacktrace`
-
-This will instruct Sherlog to not print stacktraces for entries. This only has effect if used with `--print`.
-
-`--max N`
-
-This will process only the first `N` filtered entries.
-
-`--count GROUPS...`
-
-Set this and Sherlog will count the number of entries per level, category, origin or exception. The possible parameters are (separated by a `,`):
-
-- `level`: counts the number of entries per level
-- `category`: counts the number of entries per category
-- `origin`: counts the number of entries per origin
-- `exception`: counts the number of entries per exception
-- `all`: counts all groups
-
-```
-$ sherlog --count level,category log-file.log
-```
-
-*Don't forget to set an operation or `sherlog` will not show anything in your console!*
+Remember that the format is a Go Template.
 
 ## Built-in Patterns
 
-Currently, Sherlog has the following patterns:
+Currently, Sherlog Holmes has the following built-in patterns:
 
 - `base.java`: base pattern for Java outputs (contains patterns for exceptions and stacktraces only)
-- `jboss`: matches Wildfly | EAP logs
-- `jboss.fuse`: matches JBoss Fuse logs
+- `wildfly`: matches Wildfly | EAP logs
+- `jboss-eap`: alias for `wildfly`
 
 ## License
 
