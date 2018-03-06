@@ -5,7 +5,7 @@ import (
 )
 
 const (
-	FORMAT_RAW = "{{.RawContent}}"
+	FormatRaw = "{{.RawContent}}"
 )
 
 // Interface that defines an entry processor

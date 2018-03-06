@@ -16,7 +16,7 @@ type printProcessor struct {
 
 // Returns a new processor that will use the given template for formatting the output
 func NewPrintProcessor(writer io.Writer, format string) Processor {
-	if format == FORMAT_RAW || format == "" {
+	if format == FormatRaw || format == "" {
 		return printProcessor{
 			processFunction: func(entry *domain.Entry) {
 				fmt.Println(entry.RawContent())
