@@ -16,8 +16,6 @@ var countCommand = cli.Command{
 	Name:  "count",
 	Usage: "counts filtered entries",
 	Flags: []cli.Flag{
-		configFlag,
-		layoutFlag,
 		formatFlag,
 		templateFlag,
 		maxFlag,
@@ -36,7 +34,7 @@ var countCommand = cli.Command{
 	},
 	Action: func(c *cli.Context) error {
 		inputFileName := c.Args().First()
-		configFile := c.String("config")
+		configFile := c.GlobalString("config")
 		if configFile != "" {
 			if err := mappers.ParseYaml(configFile); err != nil {
 				return err
@@ -65,7 +63,7 @@ var countCommand = cli.Command{
 		return commands.CountCommand{
 			Filter:        Filter,
 			InputFileName: inputFileName,
-			Layout:        c.String("layout"),
+			Layout:        c.GlobalString("layout"),
 			MaxEntries:    c.Int64("max"),
 			Groups:        c.StringSlice("group"),
 			Formatter:     formatter,

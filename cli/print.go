@@ -13,8 +13,6 @@ var printCommand = cli.Command{
 	Name:  "print",
 	Usage: "prints filtered entries",
 	Flags: []cli.Flag{
-		configFlag,
-		layoutFlag,
 		formatFlag,
 		maxFlag,
 		stacktraceSearchFlag,
@@ -31,7 +29,7 @@ var printCommand = cli.Command{
 	},
 	Action: func(c *cli.Context) error {
 		inputFileName := c.Args().First()
-		configFile := c.String("config")
+		configFile := c.GlobalString("config")
 		if configFile != "" {
 			if err := mappers.ParseYaml(configFile); err != nil {
 				return err
@@ -46,7 +44,7 @@ var printCommand = cli.Command{
 			Filter:        Filter,
 			Format:        c.String("format"),
 			InputFileName: inputFileName,
-			Layout:        c.String("layout"),
+			Layout:        c.GlobalString("layout"),
 			MaxEntries:    c.Int64("max"),
 			Writer:        os.Stdout,
 		}.Execute()

@@ -6,7 +6,7 @@ import (
 	"os"
 )
 
-var VERSION = "0.7.0.rc3"
+var VERSION = "0.7.0.rc4"
 
 func Execute() {
 	app := cli.NewApp()
@@ -15,6 +15,10 @@ func Execute() {
 
 	app.Version = VERSION
 
+	app.Flags = []cli.Flag{
+		configFlag,
+		layoutFlag,
+	}
 	app.Commands = []cli.Command{
 		printCommand,
 		countCommand,
