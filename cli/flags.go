@@ -52,8 +52,9 @@ var negate = false
 var Filter func(entry *domain.Entry) bool
 
 var configFlag = cli.StringFlag{
-	Name:  "config, c",
-	Usage: "loads pattern configurations from `FILE`",
+	Name:   "config, c",
+	Usage:  "loads pattern configurations from `FILE`",
+	EnvVar: "SHERLOG_CONFIG_FILE",
 }
 var layoutFlag = cli.StringFlag{
 	Name:  "layout, l",
