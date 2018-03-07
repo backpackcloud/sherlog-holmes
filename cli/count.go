@@ -60,12 +60,21 @@ var countCommand = cli.Command{
 			}
 		}
 
+		groups := c.StringSlice("group")
+
+		// if user defines groups, the default one won't be erased
+		// this will clean the default groups to avoid the odd behaviour
+		var defaultGroupsSize = len(groupFlag.Value.Value())
+		if len(groups) > defaultGroupsSize {
+			groups = groups[defaultGroupsSize:]
+		}
+
 		return commands.CountCommand{
 			Filter:        Filter,
 			InputFileName: inputFileName,
 			Layout:        c.GlobalString("layout"),
 			MaxEntries:    c.Int64("max"),
-			Groups:        c.StringSlice("group"),
+			Groups:        groups,
 			Formatter:     formatter,
 			Writer:        os.Stdout,
 		}.Execute()
