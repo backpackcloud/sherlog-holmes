@@ -9,6 +9,11 @@ Holmes a try.
 
 If you are a log detective, then Sherlog Holmes is your best companion!
 
+## Installation
+
+Just grab the binary for your system in the downloads page. You can also install it by using the classical `go install`
+if you want to build it from source.
+
 ## How it works
 
 Sherlog works by grabbing every line of an input and applying a Regular Expression to create an `entry`. This `entry`
@@ -38,7 +43,9 @@ wildfly:
 ```
 
 The configuration should contain a unique id and at least a pattern for the log **entry**. Place you configuration file
-in a `*.yml` file inside your `$HOME/.sherlog-holmes/patterns` directory and you're ready to go!
+in a `*.yml` file, assign this file to the `$SHERLOG_CONFIG_FILE` and you're good to go!
+
+You might also pass the config file by using the global flag `--config`.
 
 ### Configuration Inheritance
 
