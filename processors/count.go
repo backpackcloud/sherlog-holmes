@@ -45,23 +45,23 @@ type EntryCount struct {
 }
 
 // Defines a processor for counting entries
-type countProcessor struct {
+type CountProcessor struct {
 	Counters  map[string]EntryCount
 	formatter Formatter
 	writer    io.Writer
 }
 
-func (processor countProcessor) Before() {
+func (processor CountProcessor) Before() {
 
 }
 
 // Prints the totals after the process
-func (processor countProcessor) After() {
+func (processor CountProcessor) After() {
 	processor.formatter(processor.writer, processor.Counters)
 }
 
 // Counts the entries as they arrive on the pipeline
-func (processor countProcessor) Execute(entry *domain.Entry) {
+func (processor CountProcessor) Execute(entry *domain.Entry) {
 	for _, counter := range processor.Counters {
 		for _, value := range counter.extractor(entry) {
 			counter.Values[value]++
@@ -73,7 +73,7 @@ func (processor countProcessor) Execute(entry *domain.Entry) {
 // groups: an array of the groups to count (level, category, origin or exception)
 // formatter: the component for printing the output in some format
 // writer: the writer that will receive the output for printing
-func NewCountProcessor(groups []string, formatter Formatter, writer io.Writer) countProcessor {
+func NewCountProcessor(groups []string, formatter Formatter, writer io.Writer) CountProcessor {
 	extractors := map[string]filters.Extractor{
 		"level":     filters.Level,
 		"category":  filters.Category,
@@ -89,5 +89,5 @@ func NewCountProcessor(groups []string, formatter Formatter, writer io.Writer) c
 			Values:    make(map[string]int64),
 		}
 	}
-	return countProcessor{Counters: counters, formatter: formatter, writer: writer}
+	return CountProcessor{Counters: counters, formatter: formatter, writer: writer}
 }
