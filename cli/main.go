@@ -6,7 +6,7 @@ import (
 	"os"
 )
 
-var VERSION = "0.7.0.rc4"
+var VERSION = "0.7.0"
 
 func Execute() {
 	app := cli.NewApp()
