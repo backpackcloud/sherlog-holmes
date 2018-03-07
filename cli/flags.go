@@ -70,6 +70,7 @@ var templateFlag = cli.StringFlag{
 var groupFlag = cli.StringSliceFlag{
 	Name:  "group, g",
 	Usage: "add the given group to the count",
+	Value: &cli.StringSlice{"level", "category", "exception"},
 }
 var maxFlag = cli.Int64Flag{
 	Name:  "max, m",

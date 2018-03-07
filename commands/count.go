@@ -30,9 +30,6 @@ func (command CountCommand) Execute() error {
 	if command.InputFileName == "" {
 		return errors.New("no file given")
 	}
-	if len(command.Groups) == 0 {
-		command.Groups = []string{"level", "category", "exception"}
-	}
 
 	reader := readers.FileReader{File: command.InputFileName}
 	mapper := mappers.RegisteredMappers[command.Layout]
