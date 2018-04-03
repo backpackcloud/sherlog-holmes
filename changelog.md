@@ -1,5 +1,9 @@
 # Changelog
 
+## v0.7.1
+
+- Bugfix: Segmentation Fault for custom regex without optional attributes
+
 ## v0.7.0
 
 - Sherlog is now writen in Go \o/
