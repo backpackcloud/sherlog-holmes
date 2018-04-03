@@ -11,17 +11,13 @@ import (
 
 func TestCustomMapperWithoutOptionals(t *testing.T) {
 	mapperTest := test.MapperTest{Mapper: mappers.RegexpMapper{
-		Entry:regexp.MustCompile(".+"),
+		Entry:regexp.MustCompile("Entry: (?P<message>.+)"),
 		Stacktrace:nil,
 		Exception:nil,
 	}}
-	entries := mapperTest.Test("Bla bla bla\nMeh meh meh")
+	entries := mapperTest.Test("Entry: Bla bla bla\nMeh meh meh")
 
 	if entry := <-entries; entry.Message() != "Bla bla bla" {
-		t.Error("Unexpected entry message")
-	}
-
-	if entry := <-entries; entry.Message() != "Meh meh meh" {
 		t.Error("Unexpected entry message")
 	}
 }
