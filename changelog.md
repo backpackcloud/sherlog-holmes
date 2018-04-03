@@ -20,7 +20,7 @@
 
 ## v0.5.2
 
-- Changed jboss pattern to jboss.wildfly (#1)
+- Changed jboss pattern to jboss.wildfly
 
 ## v0.5.1
 
