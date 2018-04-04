@@ -16,6 +16,7 @@ var printCommand = cli.Command{
 		formatFlag,
 		maxFlag,
 		stacktraceSearchFlag,
+		timeFilterFlag,
 		levelFilterFlag,
 		categoryFilterFlag,
 		originFilterFlag,
