@@ -1,5 +1,9 @@
 # Changelog
 
+## ?
+
+- Added support for time filtering
+
 ## v0.7.1
 
 - Bugfix: Segmentation Fault for custom regex without optional attributes
