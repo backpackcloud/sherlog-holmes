@@ -69,7 +69,7 @@ func (mapper RegexpMapper) Map(in <-chan string, out chan<- *domain.Entry) {
 			}
 			if message, ok := result["message"]; ok {
 				entry.SetMessage(message)
-				if mapper.Exception.MatchString(message) {
+				if mapper.Exception != nil && mapper.Exception.MatchString(message) {
 					match = mapper.Exception.FindStringSubmatch(message)
 					result = make(map[string]string)
 					if len(match) > 0 {
@@ -86,12 +86,12 @@ func (mapper RegexpMapper) Map(in <-chan string, out chan<- *domain.Entry) {
 			}
 		} else {
 			if entry != nil {
-				if mapper.Stacktrace.MatchString(line) {
+				if mapper.Stacktrace != nil && mapper.Stacktrace.MatchString(line) {
 					entry.AddStacktrace(line)
 				} else {
 					entry.Append(line)
 				}
-				if FindExceptionsOnStacktrace {
+				if FindExceptionsOnStacktrace && mapper.Exception != nil {
 					match := mapper.Exception.FindStringSubmatch(line)
 					result := make(map[string]string)
 					if len(match) > 0 {
