@@ -21,6 +21,7 @@ var countCommand = cli.Command{
 		maxFlag,
 		groupFlag,
 		stacktraceSearchFlag,
+		timeFilterFlag,
 		levelFilterFlag,
 		categoryFilterFlag,
 		originFilterFlag,

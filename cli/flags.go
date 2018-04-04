@@ -84,6 +84,11 @@ var stacktraceSearchFlag = cli.BoolFlag{
 	EnvVar:      "SHERLOG_SEARCH_STACKTRACE",
 	Destination: &mappers.FindExceptionsOnStacktrace,
 }
+var timeFilterFlag = cli.GenericFlag{
+	Name:  "time",
+	Usage: "sets a time filter",
+	Value: &FilterFlag{Attribute: filters.Time, Operation: filters.Equals},
+}
 var levelFilterFlag = cli.GenericFlag{
 	Name:  "level",
 	Usage: "sets a level filter",
