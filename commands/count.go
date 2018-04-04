@@ -13,13 +13,13 @@ import (
 
 // A structure that defines the print command
 type CountCommand struct {
-	Layout        string
-	InputFileName string
-	Filter        filters.EntryFilter
-	MaxEntries    int64
-	Groups        []string
-	Formatter     processors.Formatter
-	Writer        io.Writer
+	Layout     string
+	InputFiles []string
+	Filter     filters.EntryFilter
+	MaxEntries int64
+	Groups     []string
+	Formatter  processors.Formatter
+	Writer     io.Writer
 }
 
 // Prints the filtered entries
@@ -27,11 +27,11 @@ func (command CountCommand) Execute() error {
 	if command.Layout == "" {
 		return errors.New("no layout defined")
 	}
-	if command.InputFileName == "" {
+	if len(command.InputFiles) == 0 {
 		return errors.New("no file given")
 	}
 
-	reader := readers.FileReader{File: command.InputFileName}
+	reader := readers.FileReader{Files: command.InputFiles}
 	mapper := mappers.RegisteredMappers[command.Layout]
 	processor := processors.NewCountProcessor(command.Groups, command.Formatter, command.Writer)
 

@@ -13,12 +13,12 @@ import (
 
 // A structure that defines the print command
 type PrintCommand struct {
-	Layout        string
-	Format        string
-	InputFileName string
-	Filter        filters.EntryFilter
-	MaxEntries    int64
-	Writer        io.Writer
+	Layout     string
+	Format     string
+	InputFiles []string
+	Filter     filters.EntryFilter
+	MaxEntries int64
+	Writer     io.Writer
 }
 
 // Prints the filtered entries
@@ -26,11 +26,11 @@ func (command PrintCommand) Execute() error {
 	if command.Layout == "" {
 		return errors.New("no layout defined")
 	}
-	if command.InputFileName == "" {
+	if len(command.InputFiles) == 0 {
 		return errors.New("no file given")
 	}
 
-	reader := readers.FileReader{File: command.InputFileName}
+	reader := readers.FileReader{Files: command.InputFiles}
 	mapper := mappers.RegisteredMappers[command.Layout]
 	processor := processors.NewPrintProcessor(command.Writer, command.Format)
 
