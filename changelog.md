@@ -3,6 +3,7 @@
 ## ?
 
 - Added support for time filtering
+- Added support for multiple files
 
 ## v0.7.1
 

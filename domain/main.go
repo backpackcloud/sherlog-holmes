@@ -5,6 +5,7 @@ import "bytes"
 // Represents a log entry. Log entries can have a lot of different fields, this struct tries to balance the most used
 // fields for formatting and filtering
 type Entry struct {
+	Filename   string
 	Line       int64
 	Time       string
 	Level      string
@@ -14,6 +15,13 @@ type Entry struct {
 	stacktrace bytes.Buffer
 	message    bytes.Buffer
 	raw        bytes.Buffer
+}
+
+// Represents a read line
+type Line struct {
+	Content  string
+	Filename string
+	Index    int64
 }
 
 // Returns the raw content of this entry

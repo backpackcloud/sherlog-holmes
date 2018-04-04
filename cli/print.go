@@ -29,7 +29,6 @@ var printCommand = cli.Command{
 		logicNotFlag,
 	},
 	Action: func(c *cli.Context) error {
-		inputFileName := c.Args().First()
 		configFile := c.GlobalString("config")
 		if configFile != "" {
 			if err := mappers.ParseYaml(configFile); err != nil {
@@ -42,12 +41,12 @@ var printCommand = cli.Command{
 		}
 
 		return commands.PrintCommand{
-			Filter:        Filter,
-			Format:        c.String("format"),
-			InputFileName: inputFileName,
-			Layout:        c.GlobalString("layout"),
-			MaxEntries:    c.Int64("max"),
-			Writer:        os.Stdout,
+			Filter:     Filter,
+			Format:     c.String("format"),
+			InputFiles: c.Args(),
+			Layout:     c.GlobalString("layout"),
+			MaxEntries: c.Int64("max"),
+			Writer:     os.Stdout,
 		}.Execute()
 	},
 }
