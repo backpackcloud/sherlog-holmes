@@ -1,6 +1,6 @@
 # Changelog
 
-## ?
+## v0.8.0
 
 - Added support for time filtering
 - Added support for multiple files
