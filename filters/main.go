@@ -22,6 +22,11 @@ func All(entry *domain.Entry) bool {
 	return true
 }
 
+// Extracts the time of a log entry
+func Time(entry *domain.Entry) []string {
+	return []string{entry.Time}
+}
+
 // Extracts the level of a log entry
 func Level(entry *domain.Entry) []string {
 	return []string{entry.Level}

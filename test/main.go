@@ -17,7 +17,7 @@ type MapperTest struct {
 }
 
 func (mapperTest *MapperTest) Test(lines string) chan *domain.Entry {
-	lineChan := make(chan string)
+	lineChan := make(chan *domain.Line)
 	entryChan := make(chan *domain.Entry)
 
 	go mapperTest.Mapper.Map(lineChan, entryChan)
@@ -25,7 +25,7 @@ func (mapperTest *MapperTest) Test(lines string) chan *domain.Entry {
 	go func() {
 		scanner := bufio.NewScanner(strings.NewReader(lines))
 		for scanner.Scan() {
-			lineChan <- scanner.Text()
+			lineChan <- &domain.Line{Content: scanner.Text()}
 		}
 		close(lineChan)
 	}()

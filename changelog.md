@@ -1,5 +1,10 @@
 # Changelog
 
+## v0.8.0
+
+- Added support for time filtering
+- Added support for multiple files
+
 ## v0.7.1
 
 - Bugfix: Segmentation Fault for custom regex without optional attributes

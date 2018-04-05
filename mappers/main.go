@@ -19,7 +19,7 @@ var FindExceptionsOnStacktrace = false
 type Mapper interface {
 
 	// Maps all string from the input channel to an Entry structure and sends them to the pipeline channel
-	Map(in <-chan string, pipeline chan<- *domain.Entry)
+	Map(in <-chan *domain.Line, pipeline chan<- *domain.Entry)
 
 }
 
@@ -37,13 +37,11 @@ type RegexpMapper struct {
 }
 
 // Implements the mapper interface by using the defined regular expressions against the input strings
-func (mapper RegexpMapper) Map(in <-chan string, out chan<- *domain.Entry) {
+func (mapper RegexpMapper) Map(in <-chan *domain.Line, out chan<- *domain.Entry) {
 	var entry *domain.Entry
-	var i int64
 	for line := range in {
-		i++
-		if mapper.Entry.MatchString(line) {
-			match := mapper.Entry.FindStringSubmatch(line)
+		if mapper.Entry.MatchString(line.Content) {
+			match := mapper.Entry.FindStringSubmatch(line.Content)
 			result := make(map[string]string)
 			for i, name := range mapper.Entry.SubexpNames() {
 				if i != 0 {
@@ -53,8 +51,8 @@ func (mapper RegexpMapper) Map(in <-chan string, out chan<- *domain.Entry) {
 			if entry != nil {
 				out <- entry
 			}
-			entry = &domain.Entry{Line: i}
-			entry.SetContent(line)
+			entry = &domain.Entry{Line: line.Index, Filename:line.Filename}
+			entry.SetContent(line.Content)
 			if level, ok := result["level"]; ok {
 				entry.Level = level
 			}
@@ -86,13 +84,13 @@ func (mapper RegexpMapper) Map(in <-chan string, out chan<- *domain.Entry) {
 			}
 		} else {
 			if entry != nil {
-				if mapper.Stacktrace != nil && mapper.Stacktrace.MatchString(line) {
-					entry.AddStacktrace(line)
+				if mapper.Stacktrace != nil && mapper.Stacktrace.MatchString(line.Content) {
+					entry.AddStacktrace(line.Content)
 				} else {
-					entry.Append(line)
+					entry.Append(line.Content)
 				}
 				if FindExceptionsOnStacktrace && mapper.Exception != nil {
-					match := mapper.Exception.FindStringSubmatch(line)
+					match := mapper.Exception.FindStringSubmatch(line.Content)
 					result := make(map[string]string)
 					if len(match) > 0 {
 						for i, name := range mapper.Exception.SubexpNames() {

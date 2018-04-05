@@ -25,7 +25,7 @@ func Execute(maxEntries int64,
 	filter filters.EntryFilter,
 	processor processors.Processor) error {
 
-	lineChan := make(chan string)
+	lineChan := make(chan *domain.Line)
 	entryChan := make(chan *domain.Entry)
 	processChan := make(chan *domain.Entry)
 	done := make(chan bool)

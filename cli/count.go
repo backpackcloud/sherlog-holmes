@@ -21,6 +21,7 @@ var countCommand = cli.Command{
 		maxFlag,
 		groupFlag,
 		stacktraceSearchFlag,
+		timeFilterFlag,
 		levelFilterFlag,
 		categoryFilterFlag,
 		originFilterFlag,
@@ -33,7 +34,6 @@ var countCommand = cli.Command{
 		logicNotFlag,
 	},
 	Action: func(c *cli.Context) error {
-		inputFileName := c.Args().First()
 		configFile := c.GlobalString("config")
 		if configFile != "" {
 			if err := mappers.ParseYaml(configFile); err != nil {
@@ -70,13 +70,13 @@ var countCommand = cli.Command{
 		}
 
 		return commands.CountCommand{
-			Filter:        Filter,
-			InputFileName: inputFileName,
-			Layout:        c.GlobalString("layout"),
-			MaxEntries:    c.Int64("max"),
-			Groups:        groups,
-			Formatter:     formatter,
-			Writer:        os.Stdout,
+			Filter:     Filter,
+			InputFiles: c.Args(),
+			Layout:     c.GlobalString("layout"),
+			MaxEntries: c.Int64("max"),
+			Groups:     groups,
+			Formatter:  formatter,
+			Writer:     os.Stdout,
 		}.Execute()
 	},
 }

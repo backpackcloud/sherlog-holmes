@@ -100,6 +100,7 @@ If you need to change the output format, use the `--format` option:
 
 This will print all entries appending the line number before each one. The following attributes can be used:
 
+- `Filename`: the file being readed (useful if you're passing more than one file)
 - `Line`: the line number
 - `Time`: the timestamp
 - `Level`: the log level
