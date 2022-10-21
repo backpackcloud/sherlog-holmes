@@ -1,0 +1,4 @@
+data:   nf-fa-database
+filter: nf-mdi-filter
+stack:  nf-mdi-filter_variant
+tag:    nf-fa-tag

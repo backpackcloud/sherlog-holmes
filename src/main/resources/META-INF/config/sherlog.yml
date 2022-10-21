@@ -1,0 +1,85 @@
+models:
+  java:
+    format: '{#timestamp} {#level|-5} {#category} {#thread} {@exception}{#message}'
+    attributes:
+      timestamp:
+        type:      datetime
+        indexable: false
+        format:    yyyy-MM-dd HH:mm:ss,SSS
+
+      level:
+        type:      enum
+        indexable: true
+        values:
+          - TRACE
+          - DEBUG
+          - INFO
+          - WARN
+          - ERROR
+          - FATAL
+
+      category:
+        type:      text
+        indexable: true
+
+      thread:
+        type:      text
+        indexable: true
+
+      exception:
+        type:        text
+        indexable:   true
+        multivalued: true
+
+      message:
+        type:      text
+        identity:  true
+        indexable: false
+
+readers:
+  log:
+    type:               line
+    charset:            UTF-8
+    new-entry:          '{{timestamp}}.+'
+    remove-ansi-colors: true
+
+parsers:
+  java:
+    type:    regex
+    model:   java
+    pattern: '{{timestamp}} {{level}} {{category}} {{thread}} {{message}}'
+
+patterns:
+  timestamp: '(?<timestamp>\d{2,4}-\d{2}-\d{2,4} \d{2}:\d{2}:\d{2},\d{3})'
+  level:     '(?<level>\w+)'
+  category:  '\[(?<category>[^]]+)]'
+  thread:    '\((?<thread>[^)]+)\)'
+  message:   '(?<message>.+)'
+
+pipeline:
+  - map:
+      from:  message
+      regex: '(?<exception>\w+(\.\w+)+(Exception|Error))'
+
+icons:
+  attribute-timestamp: nf-fa-calendar
+  attribute-level:     nf-fa-signal
+  attribute-category:  nf-fa-folder_open
+  attribute-thread:    nf-fa-code_fork
+  attribute-message:   nf-mdi-message
+  attribute-exception: nf-fa-bug
+
+styles:
+  attribute-timestamp:   grey//i
+
+  attribute-level-TRACE: cyan
+  attribute-level-DEBUG: cyan
+  attribute-level-INFO:  orange
+  attribute-level-WARN:  yellow
+  attribute-level-ERROR: red//b
+  attribute-level-FATAL: red//b
+
+  attribute-category:    blue
+  attribute-thread:      grey
+  attribute-message:     white
+  attribute-exception:   red

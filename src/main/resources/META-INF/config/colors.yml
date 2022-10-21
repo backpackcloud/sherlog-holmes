@@ -1,0 +1,26 @@
+segment_data_count_fg: segment_fg
+segment_data_count_bg: segment_bg
+
+segment_data_range_fg: segment_fg
+segment_data_range_bg: segment_bg
+
+segment_filter_size_fg: segment_fg
+segment_filter_size_bg: segment_bg
+
+filter_grouping: white
+filter_operation: purple
+
+filter: white
+
+name: white
+count: blue
+percentage: orange
+separator: white
+total: white
+
+timeline: white
+timeline-empty: grey
+timeline-highlight: blue
+timeline-x-axis: orange
+timeline-y-axis: yellow
+timeline-scale: purple
