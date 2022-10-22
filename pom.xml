@@ -50,7 +50,7 @@
     <jakarta.version>4.0.1</jakarta.version>
     <jakarta.inject-api.version>2.0.1</jakarta.inject-api.version>
 
-    <zipper.version>1.0.0</zipper.version>
+    <zipper.version>1.0.0-SNAPSHOT</zipper.version>
     <opencsv.version>5.7.0</opencsv.version>
   </properties>
 
