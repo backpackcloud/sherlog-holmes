@@ -33,15 +33,15 @@ import io.quarkus.runtime.annotations.RegisterForReflection;
 @RegisterForReflection
 public class CsvDataReaderConfig implements DataReaderConfig {
 
-  private final boolean skipFirstLine;
+  private final int linesToSkip;
 
-  public CsvDataReaderConfig(@JsonProperty("skip-first-line") Boolean skipFirstLine) {
-    this.skipFirstLine = skipFirstLine != null ? skipFirstLine : false;
+  public CsvDataReaderConfig(@JsonProperty("skip-lines") Integer skip) {
+    this.linesToSkip = skip != null ? skip : 0;
   }
 
   @Override
   public DataReader<String[]> get(Config config) {
-    return new CsvDataReader(skipFirstLine);
+    return new CsvDataReader(linesToSkip);
   }
 
 }

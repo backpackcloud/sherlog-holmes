@@ -35,10 +35,10 @@ import java.util.function.Consumer;
 
 public class CsvDataReader implements DataReader<String[]> {
 
-  private final boolean skipFirstLine;
+  private final int linesToSkip;
 
-  public CsvDataReader(boolean skipFirstLine) {
-    this.skipFirstLine = skipFirstLine;
+  public CsvDataReader(int linesToSkip) {
+    this.linesToSkip = linesToSkip;
   }
 
   @Override
@@ -47,13 +47,12 @@ public class CsvDataReader implements DataReader<String[]> {
       FileReader fileReader = new FileReader(location);
       CSVReader csvReader = new CSVReader(fileReader);
 
-      int count = skipFirstLine ? 0 : 1;
+      int count = 0;
 
       String[] nextRecord;
 
       while ((nextRecord = csvReader.readNext()) != null) {
-        // assume first line is the header
-        if (count++ > 0) {
+        if (++count > linesToSkip) {
           parser.parse(nextRecord).ifPresent(consumer);
         }
       }
