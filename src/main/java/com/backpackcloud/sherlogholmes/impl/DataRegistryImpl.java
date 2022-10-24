@@ -206,7 +206,7 @@ public class DataRegistryImpl implements DataRegistry {
 
     @Override
     public DataRegistry addIndex(String attributeName) {
-      this.index.put(attributeName, new HashMap<>());
+      this.index.putIfAbsent(attributeName, new HashMap<>());
       return this;
     }
 
