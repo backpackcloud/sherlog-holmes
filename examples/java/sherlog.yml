@@ -40,7 +40,7 @@ readers:
   log:
     type:               line
     charset:            UTF-8
-    new-entry:          '{{timestamp}}.+'
+    new-entry:          '{{timestamp}}'
     remove-ansi-colors: true
 
 parsers:
