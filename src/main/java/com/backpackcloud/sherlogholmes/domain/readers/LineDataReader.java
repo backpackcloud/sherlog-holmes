@@ -56,7 +56,7 @@ public class LineDataReader implements DataReader<String> {
         String content = removeAnsiColors ?
           line.replaceAll("\\x1B(?:[@-Z\\\\-_]|\\[[0-?]*[ -/]*[@-~])", "") :
           line;
-        if (newEntry.matcher(content).matches() && !dataContent.isEmpty()) {
+        if (newEntry.matcher(content).find() && !dataContent.isEmpty()) {
           parser.parse(dataContent.toString()).ifPresent(consumer);
           dataContent.delete(0, dataContent.length());
         } else if (!dataContent.isEmpty()) {
