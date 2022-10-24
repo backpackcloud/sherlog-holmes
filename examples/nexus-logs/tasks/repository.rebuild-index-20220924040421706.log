@@ -1,0 +1,18 @@
+2022-09-24 04:04:21,715+0100 INFO  [quartz-9-thread-1]  *SYSTEM org.sonatype.nexus.repository.search.index.RebuildIndexTask - Task information:
+2022-09-24 04:04:21,732+0100 INFO  [quartz-9-thread-1]  *SYSTEM org.sonatype.nexus.repository.search.index.RebuildIndexTask -  ID: d59842fa-e7e3-4a80-bcd0-bcf93eaa68b7
+2022-09-24 04:04:21,733+0100 INFO  [quartz-9-thread-1]  *SYSTEM org.sonatype.nexus.repository.search.index.RebuildIndexTask -  Type: repository.rebuild-index
+2022-09-24 04:04:21,735+0100 INFO  [quartz-9-thread-1]  *SYSTEM org.sonatype.nexus.repository.search.index.RebuildIndexTask -  Name: Repair - Rebuild repository search
+2022-09-24 04:04:21,736+0100 INFO  [quartz-9-thread-1]  *SYSTEM org.sonatype.nexus.repository.search.index.RebuildIndexTask -  Description: Rebuilding search index of *
+2022-09-24 04:04:21,793+0100 INFO  [quartz-9-thread-1]  *SYSTEM org.sonatype.nexus.repository.search.ElasticSearchFacetImpl - Rebuilding index of repository maven-snapshots
+2022-09-24 04:04:23,660+0100 INFO  [quartz-9-thread-1]  *SYSTEM org.sonatype.nexus.repository.search.ElasticSearchFacetImpl - Indexed 23 / 23 maven-snapshots components in 1239 ms
+2022-09-24 04:04:23,669+0100 INFO  [quartz-9-thread-1]  *SYSTEM org.sonatype.nexus.repository.search.ElasticSearchFacetImpl - Rebuilding index of repository maven-central
+2022-09-24 04:04:46,330+0100 INFO  [quartz-9-thread-1]  *SYSTEM org.sonatype.nexus.repository.search.ElasticSearchFacetImpl - Indexed 2701 / 2701 maven-central components in 22147 ms
+2022-09-24 04:04:46,333+0100 INFO  [quartz-9-thread-1]  *SYSTEM org.sonatype.nexus.repository.search.ElasticSearchFacetImpl - Rebuilding index of repository nuget.org-proxy
+2022-09-24 04:04:46,738+0100 INFO  [quartz-9-thread-1]  *SYSTEM org.sonatype.nexus.repository.search.ElasticSearchFacetImpl - Rebuilding index of repository maven-releases
+2022-09-24 04:04:47,233+0100 INFO  [quartz-9-thread-1]  *SYSTEM org.sonatype.nexus.repository.search.ElasticSearchFacetImpl - Indexed 2 / 2 maven-releases components in 115 ms
+2022-09-24 04:04:47,239+0100 INFO  [quartz-9-thread-1]  *SYSTEM org.sonatype.nexus.repository.search.ElasticSearchFacetImpl - Rebuilding index of repository nuget-hosted
+2022-09-24 04:04:47,663+0100 INFO  [quartz-9-thread-1]  *SYSTEM org.sonatype.nexus.repository.search.ElasticSearchFacetImpl - Rebuilding index of repository files
+2022-09-24 04:04:48,229+0100 INFO  [quartz-9-thread-1]  *SYSTEM org.sonatype.nexus.repository.search.ElasticSearchFacetImpl - Indexed 7 / 7 files components in 132 ms
+2022-09-24 04:04:48,235+0100 INFO  [quartz-9-thread-1]  *SYSTEM org.sonatype.nexus.repository.search.ElasticSearchFacetImpl - Rebuilding index of repository redhat
+2022-09-24 04:04:48,835+0100 INFO  [quartz-9-thread-1]  *SYSTEM org.sonatype.nexus.repository.search.ElasticSearchFacetImpl - Indexed 27 / 27 redhat components in 265 ms
+2022-09-24 04:04:48,842+0100 INFO  [quartz-9-thread-1]  *SYSTEM org.sonatype.nexus.repository.search.index.RebuildIndexTask - Task complete

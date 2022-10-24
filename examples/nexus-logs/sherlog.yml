@@ -1,0 +1,92 @@
+models:
+  nexus:
+    format: '{@exception}{#timestamp} {#level|-5} {#category} {#initiator} {#class} {#message}'
+    attributes:
+      timestamp:
+        type:      zoned-datetime
+        indexable: false
+        format:    yyyy-MM-dd HH:mm:ss,SSSZ
+
+      level:
+        type:      enum
+        indexable: true
+        values:
+          - TRACE
+          - DEBUG
+          - INFO
+          - WARN
+          - ERROR
+          - FATAL
+
+      category:
+        type:      text
+        indexable: true
+
+      initiator:
+        type:      text
+        indexable: true
+
+      class:
+        type:      text
+        indexable: true
+
+      exception:
+        type:        text
+        indexable:   true
+        multivalued: true
+
+      message:
+        type:      text
+        identity:  true
+        indexable: false
+
+readers:
+  plain-log:
+    type:               line
+    charset:            UTF-8
+    new-entry:          '{{timestamp}}'
+    remove-ansi-colors: true
+
+parsers:
+  nexus-log:
+    type:    regex
+    model:   nexus
+    pattern: '{{timestamp}} {{level}}\s+{{category}}  {{initiator}} {{class}} - {{message}}'
+
+patterns:
+  timestamp: '(?<timestamp>\d{2,4}-\d{2}-\d{2,4} \d{2}:\d{2}:\d{2},\d{3}[+-]\d{4})'
+  level:     '(?<level>\w+)'
+  category:  '\[(?<category>[^]]+)]'
+  initiator: '\*(?<initiator>\S+)'
+  class:     '(?<class>\S+)'
+  message:   '(?<message>.+)'
+
+pipeline:
+  - map:
+      from:  message
+      regex: '(?<exception>\w+(\.\w+)+(Exception|Error))'
+
+icons:
+  attribute-timestamp: nf-fa-calendar
+  attribute-level:     nf-fa-signal
+  attribute-category:  nf-fa-folder_open
+  attribute-initiator: nf-fa-code_fork
+  attribute-class:     nf-dev-java
+  attribute-message:   nf-mdi-message
+  attribute-exception: nf-fa-bug
+
+styles:
+  attribute-timestamp:   grey//i
+
+  attribute-level-TRACE: cyan
+  attribute-level-DEBUG: cyan
+  attribute-level-INFO:  orange
+  attribute-level-WARN:  yellow
+  attribute-level-ERROR: red//b
+  attribute-level-FATAL: red//b
+
+  attribute-category:    blue
+  attribute-initiator:   grey
+  attribute-message:     white
+  attribute-exception:   red
+  attribute-class:       yellow
