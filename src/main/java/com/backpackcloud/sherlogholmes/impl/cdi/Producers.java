@@ -40,7 +40,7 @@ import java.io.File;
 @ApplicationScoped
 public class Producers {
 
-  @ConfigProperty(name = "sherlog.config.file", defaultValue = "__default__")
+  @ConfigProperty(name = "sherlog.config.file")
   String configFile;
 
   @Singleton
@@ -55,13 +55,6 @@ public class Producers {
     serializer.addDependency(Theme.class, theme);
     serializer.addDependency(DataRegistry.class, registry);
     serializer.addDependency(FilterFactory.class, filterFactory);
-
-    if ("__default__".equals(configFile)) {
-      return serializer.deserialize(
-        Producers.class.getResourceAsStream("/META-INF/config/sherlog.yml"),
-        Config.class
-      );
-    }
 
     return serializer.deserialize(new File(configFile), Config.class);
   }

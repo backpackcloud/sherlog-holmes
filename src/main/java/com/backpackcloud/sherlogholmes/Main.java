@@ -29,6 +29,8 @@ import io.quarkus.runtime.Quarkus;
 import io.quarkus.runtime.annotations.QuarkusMain;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 @QuarkusMain
 public class Main {
@@ -37,9 +39,22 @@ public class Main {
     UserConfigurationLoader loader = new UserConfigurationLoader("sherlog");
     loader.resolveLocation().map(file -> System.setProperty("sherlog.config.file", file));
 
+    List<String> cliArgs = new ArrayList<>();
+    boolean setCliArgs = false;
+
+    for (String arg : args) {
+      if ("--".equals(arg)) {
+        setCliArgs = true;
+      } else if (setCliArgs) {
+        cliArgs.add(arg);
+      } else {
+        System.setProperty("sherlog.config.file", arg);
+      }
+    }
+
     System.out.println(new String(Main.class.getResourceAsStream("/META-INF/banner.txt").readAllBytes()));
 
-    Quarkus.run(Application.class, args);
+    Quarkus.run(Application.class, cliArgs.toArray(new String[0]));
     Quarkus.waitForExit();
   }
 
