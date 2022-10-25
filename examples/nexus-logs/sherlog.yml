@@ -1,5 +1,5 @@
 models:
-  nexus:
+  nexus-log:
     format: '{@exception}{#timestamp} {#level|-5} {#thread} {#initiator} [{#domain},{#type},{#context}] {#class} {#message}'
     attributes:
       timestamp:
@@ -22,6 +22,36 @@ models:
         type:      text
         indexable: true
 
+      initiator:
+        type:      text
+        indexable: true
+
+      class:
+        type:      text
+        indexable: true
+
+      exception:
+        type:        text
+        indexable:   true
+        multivalued: true
+
+      message:
+        type:      text
+        identity:  true
+        indexable: false
+
+  nexus-audit:
+    format: '{#timestamp} {#thread} {#initiator} [{#domain},{#type},{#context}] {#message}'
+    attributes:
+      timestamp:
+        type:      zoned-datetime
+        indexable: false
+        format:    yyyy-MM-dd HH:mm:ss,SSSZ
+
+      thread:
+        type:      text
+        indexable: true
+
       domain:
         type:      text
         indexable: true
@@ -37,15 +67,6 @@ models:
       initiator:
         type:      text
         indexable: true
-
-      class:
-        type:      text
-        indexable: true
-
-      exception:
-        type:        text
-        indexable:   true
-        multivalued: true
 
       message:
         type:      text
@@ -65,16 +86,17 @@ readers:
 parsers:
   nexus-log:
     type:    regex
-    model:   nexus
+    model:   nexus-log
     pattern: '{{timestamp}} {{level}}\s+{{thread}}  {{initiator}} {{class}} - {{message}}'
+
   nexus-audit:
     type:  map
-    model: nexus
+    model: nexus-audit
     attributes:
       timestamp: /timestamp
       initiator: /initiator
       domain:    /domain
-      type:      /type
+      type:      /attributes/.typeId
       context:   /context
       thread:    /thread
       message:   /attributes/.message
