@@ -22,6 +22,18 @@ models:
         type:      text
         indexable: true
 
+      domain:
+        type:      text
+        indexable: true
+
+      type:
+        type:      text
+        indexable: true
+
+      context:
+        type:      text
+        indexable: true
+
       initiator:
         type:      text
         indexable: true
