@@ -41,7 +41,11 @@ models:
         indexable: false
 
   nexus-audit:
-    format: '{#timestamp} {#thread} {#initiator} [{#domain},{#type},{#context}] {#message}'
+    format: |
+      {#timestamp} {#initiator} {#thread} {#message}
+      domain: {domain}
+      type: {type}
+      context: {context}
     attributes:
       timestamp:
         type:      zoned-datetime
