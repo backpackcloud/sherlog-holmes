@@ -22,21 +22,36 @@
  * SOFTWARE.
  */
 
-package com.backpackcloud.sherlogholmes.config.reader;
+package com.backpackcloud.sherlogholmes.domain.parsers;
 
-import com.backpackcloud.sherlogholmes.config.ConfigObject;
-import com.backpackcloud.sherlogholmes.domain.DataReader;
-import com.fasterxml.jackson.annotation.JsonSubTypes;
-import com.fasterxml.jackson.annotation.JsonTypeInfo;
-import io.quarkus.runtime.annotations.RegisterForReflection;
+import com.backpackcloud.sherlogholmes.domain.DataEntry;
+import com.backpackcloud.sherlogholmes.domain.DataParser;
 
-@JsonTypeInfo(use = JsonTypeInfo.Id.NAME, property = "type")
-@JsonSubTypes({
-  @JsonSubTypes.Type(name = "line", value = LineDataReaderConfig.class),
-  @JsonSubTypes.Type(name = "csv", value = CsvDataReaderConfig.class),
-  @JsonSubTypes.Type(name = "json", value = JsonDataReaderConfig.class),
-})
-@RegisterForReflection
-public interface DataReaderConfig extends ConfigObject<DataReader> {
+import java.util.Map;
+import java.util.Optional;
+import java.util.function.Function;
+import java.util.function.Supplier;
+
+public class FunctionDataParser implements DataParser<Function<String, String>> {
+
+  private final Supplier<DataEntry> dataSupplier;
+
+  private final Map<String, String> attributeMapping;
+
+  public FunctionDataParser(Supplier<DataEntry> dataSupplier, Map<String, String> attributeMapping) {
+    this.dataSupplier = dataSupplier;
+    this.attributeMapping = attributeMapping;
+  }
+
+  @Override
+  public Optional<DataEntry> parse(Function<String, String> function) {
+    DataEntry entry = dataSupplier.get();
+
+    attributeMapping.forEach((attributeName, functionParameter) ->
+      entry.attribute(attributeName).ifPresent(attribute ->
+        attribute.assignFromInput(function.apply(functionParameter))));
+
+    return Optional.of(entry);
+  }
 
 }

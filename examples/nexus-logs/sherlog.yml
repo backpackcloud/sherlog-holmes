@@ -1,6 +1,6 @@
 models:
   nexus:
-    format: '{@exception}{#timestamp} {#level|-5} {#category} {#initiator} {#class} {#message}'
+    format: '{@exception}{#timestamp} {#level|-5} {#thread} {#initiator} {#class} {#message}'
     attributes:
       timestamp:
         type:      zoned-datetime
@@ -18,7 +18,7 @@ models:
           - ERROR
           - FATAL
 
-      category:
+      thread:
         type:      text
         indexable: true
 
@@ -46,18 +46,32 @@ readers:
     charset:            UTF-8
     new-entry:          '{{timestamp}}'
     remove-ansi-colors: true
+  json-log:
+    type:    json
+    charset: UTF-8
 
 parsers:
   nexus-log:
     type:    regex
     model:   nexus
-    pattern: '{{timestamp}} {{level}}\s+{{category}}  {{initiator}} {{class}} - {{message}}'
+    pattern: '{{timestamp}} {{level}}\s+{{thread}}  {{initiator}} {{class}} - {{message}}'
+  nexus-audit:
+    type:  map
+    model: nexus
+    attributes:
+      timestamp: /timestamp
+      initiator: /initiator
+      domain:    /domain
+      type:      /type
+      context:   /context
+      thread:    /thread
+      message:   /attributes/.message
 
 patterns:
   timestamp: '(?<timestamp>\d{2,4}-\d{2}-\d{2,4} \d{2}:\d{2}:\d{2},\d{3}[+-]\d{4})'
   level:     '(?<level>\w+)'
-  category:  '\[(?<category>[^]]+)]'
-  initiator: '\*(?<initiator>\S+)'
+  thread:    '\[(?<thread>[^]]+)]'
+  initiator: '(?<initiator>\*\S+)'
   class:     '(?<class>\S+)'
   message:   '(?<message>.+)'
 
@@ -69,8 +83,8 @@ pipeline:
 icons:
   attribute-timestamp: nf-fa-calendar
   attribute-level:     nf-fa-signal
-  attribute-category:  nf-fa-folder_open
-  attribute-initiator: nf-fa-code_fork
+  attribute-thread:    nf-fa-code_fork
+  attribute-initiator: nf-fa-folder_open
   attribute-class:     nf-dev-java
   attribute-message:   nf-mdi-message
   attribute-exception: nf-fa-bug
@@ -85,7 +99,7 @@ styles:
   attribute-level-ERROR: red//b
   attribute-level-FATAL: red//b
 
-  attribute-category:    blue
+  attribute-thread:      blue
   attribute-initiator:   grey
   attribute-message:     white
   attribute-exception:   red

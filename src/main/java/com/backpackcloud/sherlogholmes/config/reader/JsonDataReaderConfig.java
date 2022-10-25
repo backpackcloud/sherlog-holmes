@@ -24,19 +24,30 @@
 
 package com.backpackcloud.sherlogholmes.config.reader;
 
-import com.backpackcloud.sherlogholmes.config.ConfigObject;
+import com.backpackcloud.configuration.Configuration;
+import com.backpackcloud.serializer.Serializer;
+import com.backpackcloud.sherlogholmes.config.Config;
 import com.backpackcloud.sherlogholmes.domain.DataReader;
-import com.fasterxml.jackson.annotation.JsonSubTypes;
-import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import com.backpackcloud.sherlogholmes.domain.readers.JsonDataReader;
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import io.quarkus.runtime.annotations.RegisterForReflection;
 
-@JsonTypeInfo(use = JsonTypeInfo.Id.NAME, property = "type")
-@JsonSubTypes({
-  @JsonSubTypes.Type(name = "line", value = LineDataReaderConfig.class),
-  @JsonSubTypes.Type(name = "csv", value = CsvDataReaderConfig.class),
-  @JsonSubTypes.Type(name = "json", value = JsonDataReaderConfig.class),
-})
+import java.nio.charset.Charset;
+
 @RegisterForReflection
-public interface DataReaderConfig extends ConfigObject<DataReader> {
+public class JsonDataReaderConfig implements DataReaderConfig {
+
+  private final Configuration charsetName;
+
+  @JsonCreator
+  public JsonDataReaderConfig(@JsonProperty("charset") Configuration charsetName) {
+    this.charsetName = charsetName;
+  }
+
+  @Override
+  public DataReader get(Config config) {
+    return new JsonDataReader(Charset.forName(charsetName.get()), Serializer.json());
+  }
 
 }
