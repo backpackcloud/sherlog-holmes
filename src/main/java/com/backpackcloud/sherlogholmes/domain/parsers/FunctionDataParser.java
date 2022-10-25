@@ -34,17 +34,14 @@ import java.util.function.Supplier;
 
 public class FunctionDataParser implements DataParser<Function<String, String>> {
 
-  private final Supplier<DataEntry> dataSupplier;
-
   private final Map<String, String> attributeMapping;
 
-  public FunctionDataParser(Supplier<DataEntry> dataSupplier, Map<String, String> attributeMapping) {
-    this.dataSupplier = dataSupplier;
+  public FunctionDataParser(Map<String, String> attributeMapping) {
     this.attributeMapping = attributeMapping;
   }
 
   @Override
-  public Optional<DataEntry> parse(Function<String, String> function) {
+  public Optional<DataEntry> parse(Supplier<DataEntry> dataSupplier, Function<String, String> function) {
     DataEntry entry = dataSupplier.get();
 
     attributeMapping.forEach((attributeName, functionParameter) ->

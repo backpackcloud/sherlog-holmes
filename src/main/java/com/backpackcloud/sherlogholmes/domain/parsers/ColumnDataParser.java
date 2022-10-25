@@ -32,16 +32,14 @@ import java.util.function.Supplier;
 
 public class ColumnDataParser implements DataParser<String[]> {
 
-  private final Supplier<DataEntry> dataSupplier;
   private final String[] attributeOrder;
 
-  public ColumnDataParser(Supplier<DataEntry> dataSupplier, String[] attributeOrder) {
-    this.dataSupplier = dataSupplier;
+  public ColumnDataParser(String[] attributeOrder) {
     this.attributeOrder = attributeOrder;
   }
 
   @Override
-  public Optional<DataEntry> parse(String[] data) {
+  public Optional<DataEntry> parse(Supplier<DataEntry> dataSupplier, String[] data) {
     if (data.length == attributeOrder.length) {
       DataEntry dataEntry = dataSupplier.get();
       for (int i = 0; i < attributeOrder.length; i++) {

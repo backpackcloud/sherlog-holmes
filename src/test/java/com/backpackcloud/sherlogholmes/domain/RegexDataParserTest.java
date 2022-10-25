@@ -46,12 +46,12 @@ public class RegexDataParserTest {
     .add("origin", AttributeType.text())
     .add("message", AttributeType.text());
 
-  private final RegexDataParser parser = new RegexDataParser(model.dataSupplier(), Pattern.compile(pattern, Pattern.DOTALL));
+  private final RegexDataParser parser = new RegexDataParser(Pattern.compile(pattern, Pattern.DOTALL));
 
   @Test
   public void testSingleLineParsing() {
     String line = "2022-09-26T20:59:24 DEBUG [chat] (room-1702) chat bot is glorious, replying to Baylor Harris with an ASCII image of a horse";
-    DataEntry data = parser.parse(line).orElseThrow(UnbelievableException::new);
+    DataEntry data = parser.parse(model.dataSupplier(), line).orElseThrow(UnbelievableException::new);
     Backstage.describe(DataEntry.class)
       .given(data)
 
@@ -65,7 +65,7 @@ public class RegexDataParserTest {
   @Test
   public void testMultilineParsing() {
     String lines = "2022-09-26T20:59:24 DEBUG [chat] (room-1702) chat bot is glorious,\nreplying to Baylor Harris with\nan ASCII image of a horse";
-    DataEntry data = parser.parse(lines).orElseThrow(UnbelievableException::new);
+    DataEntry data = parser.parse(model.dataSupplier(), lines).orElseThrow(UnbelievableException::new);
     Backstage.describe(DataEntry.class)
       .given(data)
 

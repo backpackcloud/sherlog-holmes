@@ -34,6 +34,7 @@ import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.function.Consumer;
+import java.util.function.Supplier;
 import java.util.regex.Pattern;
 
 public class LineDataReader implements DataReader<String> {
@@ -49,7 +50,7 @@ public class LineDataReader implements DataReader<String> {
   }
 
   @Override
-  public void read(String location, DataParser<String> parser, Consumer<DataEntry> consumer) {
+  public void read(String location, Supplier<DataEntry> dataSupplier, DataParser<String> parser, Consumer<DataEntry> consumer) {
     StringBuilder dataContent = new StringBuilder();
     try {
       Files.lines(Path.of(location), inputCharset).forEach(line -> {
@@ -57,7 +58,7 @@ public class LineDataReader implements DataReader<String> {
           line.replaceAll("\\x1B(?:[@-Z\\\\-_]|\\[[0-?]*[ -/]*[@-~])", "") :
           line;
         if (newEntry.matcher(content).find() && !dataContent.isEmpty()) {
-          parser.parse(dataContent.toString()).ifPresent(consumer);
+          parser.parse(dataSupplier, dataContent.toString()).ifPresent(consumer);
           dataContent.delete(0, dataContent.length());
         } else if (!dataContent.isEmpty()) {
           dataContent.append("\n");
@@ -65,7 +66,7 @@ public class LineDataReader implements DataReader<String> {
         dataContent.append(content);
       });
       if (!dataContent.isEmpty()) {
-        parser.parse(dataContent.toString()).ifPresent(consumer::accept);
+        parser.parse(dataSupplier, dataContent.toString()).ifPresent(consumer::accept);
       }
     } catch (IOException e) {
       throw new UnbelievableException(e);

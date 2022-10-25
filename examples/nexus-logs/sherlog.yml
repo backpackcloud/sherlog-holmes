@@ -86,12 +86,10 @@ readers:
 parsers:
   nexus-log:
     type:    regex
-    model:   nexus-log
     pattern: '{{timestamp}} {{level}}\s+{{thread}}  {{initiator}} {{class}} - {{message}}'
 
   nexus-audit:
     type:  map
-    model: nexus-audit
     attributes:
       timestamp: /timestamp
       initiator: /initiator

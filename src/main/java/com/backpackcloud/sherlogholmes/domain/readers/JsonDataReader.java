@@ -37,6 +37,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.function.Consumer;
 import java.util.function.Function;
+import java.util.function.Supplier;
 
 public class JsonDataReader implements DataReader<Function<String, String>> {
 
@@ -49,11 +50,11 @@ public class JsonDataReader implements DataReader<Function<String, String>> {
   }
 
   @Override
-  public void read(String location, DataParser<Function<String, String>> parser, Consumer<DataEntry> consumer) {
+  public void read(String location, Supplier<DataEntry> dataSupplier, DataParser<Function<String, String>> parser, Consumer<DataEntry> consumer) {
     try {
       Files.lines(Path.of(location), inputCharset).forEach(line -> {
         JsonNode jsonNode = serializer.deserialize(line.trim(), JsonNode.class);
-        parser.parse(pointer -> jsonNode.at(pointer).asText()).ifPresent(consumer);
+        parser.parse(dataSupplier, pointer -> jsonNode.at(pointer).asText()).ifPresent(consumer);
       });
     } catch (IOException e) {
       throw new UnbelievableException(e);

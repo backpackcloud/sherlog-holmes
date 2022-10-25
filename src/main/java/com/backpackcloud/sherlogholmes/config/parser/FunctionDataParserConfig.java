@@ -24,9 +24,7 @@
 
 package com.backpackcloud.sherlogholmes.config.parser;
 
-import com.backpackcloud.configuration.Configuration;
 import com.backpackcloud.sherlogholmes.config.Config;
-import com.backpackcloud.sherlogholmes.domain.DataModel;
 import com.backpackcloud.sherlogholmes.domain.DataParser;
 import com.backpackcloud.sherlogholmes.domain.parsers.FunctionDataParser;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -38,20 +36,16 @@ import java.util.function.Function;
 @RegisterForReflection
 public class FunctionDataParserConfig implements DataParserConfig {
 
-  private final String modelId;
   private final Map<String, String> attributes;
 
-  public FunctionDataParserConfig(@JsonProperty("model") Configuration modelId,
-                                  @JsonProperty("attributes") Map<String, String> attributes) {
-    this.modelId = modelId.get();
+  public FunctionDataParserConfig(@JsonProperty("attributes") Map<String, String> attributes) {
     this.attributes = attributes;
   }
 
 
   @Override
   public DataParser<Function<String, String>> get(Config config) {
-    DataModel dataModel = config.dataModel(modelId).orElseThrow();
-    return new FunctionDataParser(dataModel.dataSupplier(), attributes);
+    return new FunctionDataParser(attributes);
   }
 
 }

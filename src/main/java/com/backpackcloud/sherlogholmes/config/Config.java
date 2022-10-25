@@ -131,8 +131,8 @@ public class Config {
     if (readers.containsKey(id)) {
       DataReader<?> reader = readers.get(id).get(this);
 
-      return Optional.of((location, parser, consumer) ->
-        reader.read(location, parser, dataEntry -> {
+      return Optional.of((location, dataSupplier, parser, consumer) ->
+        reader.read(location, dataSupplier, parser, dataEntry -> {
           pipeline.forEach(step -> step.analyze(dataEntry));
           consumer.accept(dataEntry);
         }));

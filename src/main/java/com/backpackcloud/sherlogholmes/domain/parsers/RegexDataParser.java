@@ -38,17 +38,16 @@ import java.util.regex.Pattern;
 @RegisterForReflection
 public class RegexDataParser implements DataParser<String> {
 
-  private final Supplier<DataEntry> dataSupplier;
   private final Pattern pattern;
   private final Set<String> namedGroups;
 
-  public RegexDataParser(Supplier<DataEntry> dataSupplier, Pattern pattern) {
-    this.dataSupplier = dataSupplier;
+  public RegexDataParser(Pattern pattern) {
     this.pattern = pattern;
     this.namedGroups = new RegexAnalyzer(this.pattern).namedGroups();
   }
 
-  public Optional<DataEntry> parse(String content) {
+  @Override
+  public Optional<DataEntry> parse(Supplier<DataEntry> dataSupplier, String content) {
     Matcher matcher = pattern.matcher(content);
     if (matcher.find()) {
       DataEntry entry = dataSupplier.get();

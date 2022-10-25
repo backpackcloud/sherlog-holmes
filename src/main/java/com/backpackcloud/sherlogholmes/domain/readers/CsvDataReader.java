@@ -32,6 +32,7 @@ import com.opencsv.CSVReader;
 
 import java.io.FileReader;
 import java.util.function.Consumer;
+import java.util.function.Supplier;
 
 public class CsvDataReader implements DataReader<String[]> {
 
@@ -42,7 +43,7 @@ public class CsvDataReader implements DataReader<String[]> {
   }
 
   @Override
-  public void read(String location, DataParser<String[]> parser, Consumer<DataEntry> consumer) {
+  public void read(String location, Supplier<DataEntry> dataSupplier, DataParser<String[]> parser, Consumer<DataEntry> consumer) {
     try {
       FileReader fileReader = new FileReader(location);
       CSVReader csvReader = new CSVReader(fileReader);
@@ -53,7 +54,7 @@ public class CsvDataReader implements DataReader<String[]> {
 
       while ((nextRecord = csvReader.readNext()) != null) {
         if (++count > linesToSkip) {
-          parser.parse(nextRecord).ifPresent(consumer);
+          parser.parse(dataSupplier, nextRecord).ifPresent(consumer);
         }
       }
     } catch (Exception e) {

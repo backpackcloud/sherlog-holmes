@@ -24,9 +24,7 @@
 
 package com.backpackcloud.sherlogholmes.config.parser;
 
-import com.backpackcloud.configuration.Configuration;
 import com.backpackcloud.sherlogholmes.config.Config;
-import com.backpackcloud.sherlogholmes.domain.DataModel;
 import com.backpackcloud.sherlogholmes.domain.DataParser;
 import com.backpackcloud.sherlogholmes.domain.parsers.ColumnDataParser;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -35,20 +33,16 @@ import io.quarkus.runtime.annotations.RegisterForReflection;
 @RegisterForReflection
 public class ColumnDataParserConfig implements DataParserConfig {
 
-  private final String modelId;
   private final String[] attributes;
 
-  public ColumnDataParserConfig(@JsonProperty("model") Configuration modelId,
-                                @JsonProperty("attributes") String attributes) {
-    this.modelId = modelId.get();
+  public ColumnDataParserConfig(@JsonProperty("attributes") String attributes) {
     this.attributes = attributes.split("\\s*,\\s*");
   }
 
 
   @Override
   public DataParser<String[]> get(Config config) {
-    DataModel dataModel = config.dataModel(modelId).orElseThrow();
-    return new ColumnDataParser(dataModel.dataSupplier(), attributes);
+    return new ColumnDataParser(attributes);
   }
 
 }

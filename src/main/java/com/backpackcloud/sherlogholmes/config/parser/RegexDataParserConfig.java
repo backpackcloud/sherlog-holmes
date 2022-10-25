@@ -26,7 +26,6 @@ package com.backpackcloud.sherlogholmes.config.parser;
 
 import com.backpackcloud.configuration.Configuration;
 import com.backpackcloud.sherlogholmes.config.Config;
-import com.backpackcloud.sherlogholmes.domain.DataModel;
 import com.backpackcloud.sherlogholmes.domain.DataParser;
 import com.backpackcloud.sherlogholmes.domain.parsers.RegexDataParser;
 import com.backpackcloud.text.Interpolator;
@@ -41,19 +40,15 @@ import java.util.regex.Pattern;
 public class RegexDataParserConfig implements DataParserConfig {
 
   private final Configuration patternString;
-  private final Configuration modelId;
 
   @JsonCreator
-  public RegexDataParserConfig(@JsonProperty("pattern") Configuration patternString,
-                               @JsonProperty("model") Configuration modelId) {
+  public RegexDataParserConfig(@JsonProperty("pattern") Configuration patternString) {
     this.patternString = patternString;
-    this.modelId = modelId;
   }
 
 
   @Override
   public DataParser<String> get(Config config) {
-    DataModel dataModel = config.dataModel(modelId.get()).orElseThrow();
     Map<String, String> patterns = config.patterns();
 
     String result = new Interpolator(
@@ -63,7 +58,7 @@ public class RegexDataParserConfig implements DataParserConfig {
 
     Pattern pattern = Pattern.compile(result, Pattern.DOTALL);
 
-    return new RegexDataParser(dataModel.dataSupplier(), pattern);
+    return new RegexDataParser(pattern);
   }
 
 }

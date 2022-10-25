@@ -32,6 +32,7 @@ import com.backpackcloud.cli.ui.Suggestion;
 import com.backpackcloud.cli.ui.impl.FileSuggester;
 import com.backpackcloud.cli.ui.impl.PromptSuggestion;
 import com.backpackcloud.sherlogholmes.config.Config;
+import com.backpackcloud.sherlogholmes.domain.DataModel;
 import com.backpackcloud.sherlogholmes.domain.DataParser;
 import com.backpackcloud.sherlogholmes.domain.DataReader;
 import com.backpackcloud.sherlogholmes.domain.DataRegistry;
@@ -65,9 +66,10 @@ public class InspectCommand implements AnnotatedCommand {
   }
 
   @Action
-  public void execute(String readerId, String parserId, String location) {
+  public void execute(String readerId, String parserId, String modelId, String location) {
     DataReader<?> dataReader = config.dataReader(readerId).orElseThrow();
     DataParser dataParser = config.dataParser(parserId).orElseThrow();
+    DataModel dataModel = config.dataModel(modelId).orElseThrow();
 
     PathMatcher matcher = FileSystems.getDefault().getPathMatcher("glob:" + location);
     File directory = new File(location).getParentFile();
@@ -76,24 +78,29 @@ public class InspectCommand implements AnnotatedCommand {
       for (File file : directory.listFiles()) {
         String path = file.getPath();
         if (matcher.matches(Path.of(path))) {
-          dataReader.read(path, dataParser, registry::add);
+          dataReader.read(path, dataModel.dataSupplier(), dataParser, registry::add);
         }
       }
     } else {
-      dataReader.read(location, dataParser, registry::add);
+      dataReader.read(location, dataModel.dataSupplier(), dataParser, registry::add);
     }
 
   }
 
   @Suggestions
-  public List<Suggestion> suggest(String readerId, String parserId, String location) {
+  public List<Suggestion> suggest(String readerId, String parserId, String modelId, String location) {
     if (parserId == null) {
       return config.readers().keySet()
         .stream().map(PromptSuggestion::suggest)
         .collect(Collectors.toList());
     }
-    if (location == null) {
+    if (modelId == null) {
       return config.parsers().keySet()
+        .stream().map(PromptSuggestion::suggest)
+        .collect(Collectors.toList());
+    }
+    if (location == null) {
+      return config.models().keySet()
         .stream().map(PromptSuggestion::suggest)
         .collect(Collectors.toList());
     }
