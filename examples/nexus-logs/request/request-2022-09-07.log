@@ -1,3 +1,0 @@
-192.168.1.127 - - [07/Sep/2022:19:00:18 +0100] "GET /repository/maven-public/com/backpackcloud/zipper/1.0.0-SNAPSHOT/maven-metadata.xml.sha1 HTTP/1.1" 200 - 40 65 "Apache-Maven/3.8.1 (Java 17.0.3; Mac OS X 12.5.1)" [qtp16175117-107]
-192.168.1.127 - - [07/Sep/2022:19:00:18 +0100] "GET /repository/maven-public/com/backpackcloud/zipper/1.0.0-SNAPSHOT/maven-metadata.xml HTTP/1.1" 200 - 1206 1396 "Apache-Maven/3.8.1 (Java 17.0.3; Mac OS X 12.5.1)" [qtp16175117-113]
-192.168.1.127 - - [07/Sep/2022:19:00:20 +0100] "GET /repository/maven-public/com/backpackcloud/sherlog-holmes/1.0.0-SNAPSHOT/maven-metadata.xml HTTP/1.1" 404 - 1854 203 "Apache-Maven/3.8.1 (Java 17.0.3; Mac OS X 12.5.1)" [qtp16175117-109]

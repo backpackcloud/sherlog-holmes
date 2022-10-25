@@ -1,3 +1,0 @@
-192.168.1.152 - - [28/Sep/2022:11:37:02 +0100] "GET /repository/maven-public/com/backpackcloud/zipper/1.0.0-SNAPSHOT/maven-metadata.xml HTTP/1.1" 200 - 1206 492 "Apache-Maven/3.6.3 (Java 17; Linux 5.10.102.1-microsoft-standard-WSL2)" [qtp22753518-106]
-192.168.1.152 - - [28/Sep/2022:11:37:03 +0100] "GET /repository/maven-public/com/backpackcloud/zipper/1.0.0-SNAPSHOT/maven-metadata.xml.sha1 HTTP/1.1" 200 - 40 102 "Apache-Maven/3.6.3 (Java 17; Linux 5.10.102.1-microsoft-standard-WSL2)" [qtp22753518-100]
-192.168.1.152 - - [28/Sep/2022:11:37:15 +0100] "GET /repository/maven-public/com/backpackcloud/sherlog-holmes/1.0.0-SNAPSHOT/maven-metadata.xml HTTP/1.1" 404 - 1854 191 "Apache-Maven/3.6.3 (Java 17; Linux 5.10.102.1-microsoft-standard-WSL2)" [qtp22753518-99]
