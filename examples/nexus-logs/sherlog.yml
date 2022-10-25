@@ -1,6 +1,6 @@
 models:
   nexus:
-    format: '{@exception}{#timestamp} {#level|-5} {#thread} {#initiator} {#class} {#message}'
+    format: '{@exception}{#timestamp} {#level|-5} {#thread} {#initiator} [{#domain},{#type},{#context}] {#class} {#message}'
     attributes:
       timestamp:
         type:      zoned-datetime
