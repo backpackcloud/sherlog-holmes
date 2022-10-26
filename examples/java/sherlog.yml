@@ -40,14 +40,19 @@ readers:
   log:
     type:               line
     charset:            UTF-8
-    new-entry:          '{{timestamp}}'
+    pattern:            '{{timestamp}} {{level}} {{category}} {{thread}} {{message}}'
+    non-match-mode:     append
     remove-ansi-colors: true
 
 parsers:
-  java:
-    type:    regex
-    model:   java
-    pattern: '{{timestamp}} {{level}} {{category}} {{thread}} {{message}}'
+  java-regex:
+    type: function
+    copy:
+      - timestamp
+      - level
+      - category
+      - thread
+      - message
 
 patterns:
   timestamp: '(?<timestamp>\d{2,4}-\d{2}-\d{2,4} \d{2}:\d{2}:\d{2},\d{3})'
