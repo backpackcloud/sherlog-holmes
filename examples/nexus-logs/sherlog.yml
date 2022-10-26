@@ -10,13 +10,7 @@ models:
       level:
         type:      enum
         indexable: true
-        values:
-          - TRACE
-          - DEBUG
-          - INFO
-          - WARN
-          - ERROR
-          - FATAL
+        values:    TRACE,DEBUG,INFO,WARN,ERROR,FATAL
 
       thread:
         type:      text
@@ -91,14 +85,7 @@ readers:
 parsers:
   nexus-log:
     type: function
-    copy:
-      - timestamp
-      - level
-      - thread
-      - initiator
-      - class
-      - message
-
+    copy: timestamp,level,thread,initiator,class,message
 
   nexus-audit:
     type: function

@@ -42,10 +42,12 @@ public class FunctionDataParserConfig implements DataParserConfig {
   private final List<String> attributeCopies;
 
   public FunctionDataParserConfig(@JsonProperty("map") Map<String, String> attributeMappings,
-                                  @JsonProperty("copy") List<String> attributeCopies) {
+                                  @JsonProperty("copy") String attributeCopies) {
 
     this.attributeMappings = attributeMappings;
-    this.attributeCopies = attributeCopies;
+    this.attributeCopies = attributeCopies != null ?
+      List.of(attributeCopies.split("\\s*,\\s*")) :
+      null;
   }
 
 

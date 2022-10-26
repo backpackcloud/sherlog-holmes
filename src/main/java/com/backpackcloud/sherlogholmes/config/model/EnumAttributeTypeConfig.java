@@ -43,9 +43,9 @@ public class EnumAttributeTypeConfig implements DataAttributeConfig {
   @JsonCreator
   public EnumAttributeTypeConfig(@JsonProperty("indexable") Configuration indexable,
                                  @JsonProperty("multivalued") Boolean multivalued,
-                                 @JsonProperty("values") List<String> values) {
+                                 @JsonProperty("values") String values) {
     this.indexable = indexable;
-    this.values = values;
+    this.values = List.of(values.split("\\s*,\\s*"));
     this.multivalued = multivalued != null ? multivalued : false;
   }
 
