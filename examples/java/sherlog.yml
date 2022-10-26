@@ -27,7 +27,6 @@ models:
 
       message:
         type:      text
-        identity:  true
         indexable: false
 
 readers:
