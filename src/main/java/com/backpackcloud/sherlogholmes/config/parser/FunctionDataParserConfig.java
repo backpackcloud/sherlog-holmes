@@ -30,22 +30,35 @@ import com.backpackcloud.sherlogholmes.domain.parsers.FunctionDataParser;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.quarkus.runtime.annotations.RegisterForReflection;
 
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
 
 @RegisterForReflection
 public class FunctionDataParserConfig implements DataParserConfig {
 
-  private final Map<String, String> attributes;
+  private final Map<String, String> attributeMappings;
+  private final List<String> attributeCopies;
 
-  public FunctionDataParserConfig(@JsonProperty("attributes") Map<String, String> attributes) {
-    this.attributes = attributes;
+  public FunctionDataParserConfig(@JsonProperty("map") Map<String, String> attributeMappings,
+                                  @JsonProperty("copy") List<String> attributeCopies) {
+
+    this.attributeMappings = attributeMappings;
+    this.attributeCopies = attributeCopies;
   }
 
 
   @Override
   public DataParser<Function<String, String>> get(Config config) {
-    return new FunctionDataParser(attributes);
+    Map<String, String> attributesMap = new HashMap<>();
+    if (attributeMappings != null) {
+      attributesMap.putAll(attributesMap);
+    }
+    if (attributeCopies != null) {
+      attributeCopies.forEach(attr -> attributesMap.put(attr, attr));
+    }
+    return new FunctionDataParser(attributesMap);
   }
 
 }

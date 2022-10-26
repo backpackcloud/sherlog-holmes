@@ -22,33 +22,43 @@
  * SOFTWARE.
  */
 
-package com.backpackcloud.sherlogholmes.config.parser;
+package com.backpackcloud.sherlogholmes.config.reader;
 
 import com.backpackcloud.configuration.Configuration;
 import com.backpackcloud.sherlogholmes.config.Config;
-import com.backpackcloud.sherlogholmes.domain.DataParser;
-import com.backpackcloud.sherlogholmes.domain.parsers.RegexDataParser;
+import com.backpackcloud.sherlogholmes.domain.DataReader;
+import com.backpackcloud.sherlogholmes.domain.readers.RegexDataReader;
 import com.backpackcloud.text.Interpolator;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.quarkus.runtime.annotations.RegisterForReflection;
 
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.Map;
 import java.util.regex.Pattern;
 
 @RegisterForReflection
-public class RegexDataParserConfig implements DataParserConfig {
+public class RegexDataReaderConfig implements DataReaderConfig {
 
   private final Configuration patternString;
+  private final Configuration removeAnsiColors;
+  private final Configuration nonMatchMode;
+  private final Configuration charsetName;
 
   @JsonCreator
-  public RegexDataParserConfig(@JsonProperty("pattern") Configuration patternString) {
+  public RegexDataReaderConfig(@JsonProperty("pattern") Configuration patternString,
+                               @JsonProperty("remove-ansi-colors") Configuration removeAnsiColors,
+                               @JsonProperty("non-match-mode") Configuration nonMatchMode,
+                               @JsonProperty("charset") Configuration charsetName) {
     this.patternString = patternString;
+    this.removeAnsiColors = removeAnsiColors;
+    this.nonMatchMode = nonMatchMode;
+    this.charsetName = charsetName;
   }
 
-
   @Override
-  public DataParser<String> get(Config config) {
+  public DataReader get(Config config) {
     Map<String, String> patterns = config.patterns();
 
     String result = new Interpolator(
@@ -56,9 +66,13 @@ public class RegexDataParserConfig implements DataParserConfig {
       patterns::get
     ).eval(patternString.get()).orElseThrow();
 
-    Pattern pattern = Pattern.compile(result, Pattern.DOTALL);
-
-    return new RegexDataParser(pattern);
+    Pattern pattern = Pattern.compile(result);
+    return new RegexDataReader(
+      charsetName.map(Charset::forName).orElse(StandardCharsets.UTF_8),
+      pattern,
+      nonMatchMode.orElse(RegexDataReader.NonMatchMode.IGNORE),
+      removeAnsiColors.asBoolean()
+    );
   }
 
 }

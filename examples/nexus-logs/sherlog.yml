@@ -42,10 +42,10 @@ models:
 
   nexus-audit:
     format: |
-      {#timestamp} {#initiator} {#thread} {#message}
-      domain: {domain}
-      type: {type}
-      context: {context}
+            {#timestamp} {#initiator} {#thread} {#message}
+            domain: {domain}
+            type: {type}
+            context: {context}
     attributes:
       timestamp:
         type:      zoned-datetime
@@ -79,22 +79,30 @@ models:
 
 readers:
   plain-log:
-    type:               line
+    type:               regex
     charset:            UTF-8
-    new-entry:          '{{timestamp}}'
+    pattern:            '{{timestamp}} {{level}}\s+{{thread}}  {{initiator}} {{class}} - {{message}}'
     remove-ansi-colors: true
+    non-match-mode:     append
   json-log:
     type:    json
     charset: UTF-8
 
 parsers:
   nexus-log:
-    type:    regex
-    pattern: '{{timestamp}} {{level}}\s+{{thread}}  {{initiator}} {{class}} - {{message}}'
+    type: function
+    copy:
+      - timestamp
+      - level
+      - thread
+      - initiator
+      - class
+      - message
+
 
   nexus-audit:
-    type:  map
-    attributes:
+    type: function
+    map:
       timestamp: /timestamp
       initiator: /initiator
       domain:    /domain

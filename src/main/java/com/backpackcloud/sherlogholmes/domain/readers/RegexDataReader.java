@@ -34,43 +34,73 @@ import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.function.Consumer;
+import java.util.function.Function;
 import java.util.function.Supplier;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class LineDataReader implements DataReader<String> {
+public class RegexDataReader implements DataReader<Function<String, String>> {
 
   private final Charset inputCharset;
-  private final Pattern newEntry;
+  private final Pattern pattern;
+  private final NonMatchMode nonMatchMode;
   private final boolean removeAnsiColors;
 
-  public LineDataReader(Charset inputCharset, Pattern newEntry, boolean removeAnsiColors) {
+  public RegexDataReader(Charset inputCharset, Pattern pattern, NonMatchMode nonMatchMode, boolean removeAnsiColors) {
     this.inputCharset = inputCharset;
-    this.newEntry = newEntry;
+    this.pattern = pattern;
+    this.nonMatchMode = nonMatchMode;
     this.removeAnsiColors = removeAnsiColors;
   }
 
   @Override
-  public void read(String location, Supplier<DataEntry> dataSupplier, DataParser<String> parser, Consumer<DataEntry> consumer) {
+  public void read(String location, Supplier<DataEntry> dataSupplier, DataParser<Function<String, String>> parser, Consumer<DataEntry> consumer) {
     StringBuilder dataContent = new StringBuilder();
     try {
       Files.lines(Path.of(location), inputCharset).forEach(line -> {
         String content = removeAnsiColors ?
           line.replaceAll("\\x1B(?:[@-Z\\\\-_]|\\[[0-?]*[ -/]*[@-~])", "") :
           line;
-        if (newEntry.matcher(content).find() && !dataContent.isEmpty()) {
-          parser.parse(dataSupplier, dataContent.toString()).ifPresent(consumer);
-          dataContent.delete(0, dataContent.length());
-        } else if (!dataContent.isEmpty()) {
-          dataContent.append("\n");
+        Matcher matcher = pattern.matcher(content);
+        if (matcher.find()) {
+          switch (nonMatchMode) {
+            case IGNORE -> parser.parse(dataSupplier, matcher::group).ifPresent(consumer);
+            case APPEND -> {
+              // flushes previous content, as a new match means a new data entry
+              if (!dataContent.isEmpty()) {
+                Matcher dataContentMatcher = pattern.matcher(dataContent.toString());
+                if (dataContentMatcher.find()) {
+                  parser.parse(dataSupplier, dataContentMatcher::group).ifPresent(consumer::accept);
+                }
+                dataContent.delete(0, dataContent.length());
+              }
+              dataContent.append(content);
+            }
+          }
+        } else {
+          if (nonMatchMode == NonMatchMode.APPEND) {
+            if (!dataContent.isEmpty()) {
+              dataContent.append("\n");
+            }
+            dataContent.append(content);
+          }
         }
-        dataContent.append(content);
       });
-      if (!dataContent.isEmpty()) {
-        parser.parse(dataSupplier, dataContent.toString()).ifPresent(consumer::accept);
+      if (nonMatchMode == NonMatchMode.APPEND && !dataContent.isEmpty()) {
+        Matcher matcher = pattern.matcher(dataContent.toString());
+        if (matcher.find()) {
+          parser.parse(dataSupplier, matcher::group).ifPresent(consumer::accept);
+        }
       }
     } catch (IOException e) {
       throw new UnbelievableException(e);
     }
+  }
+
+  public enum NonMatchMode {
+
+    APPEND, IGNORE
+
   }
 
 }

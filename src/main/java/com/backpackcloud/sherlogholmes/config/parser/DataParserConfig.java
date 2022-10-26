@@ -31,9 +31,8 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
 
 @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, property = "type")
 @JsonSubTypes({
-  @JsonSubTypes.Type(name = "regex", value = RegexDataParserConfig.class),
   @JsonSubTypes.Type(name = "column", value = ColumnDataParserConfig.class),
-  @JsonSubTypes.Type(name = "map", value = FunctionDataParserConfig.class),
+  @JsonSubTypes.Type(name = "function", value = FunctionDataParserConfig.class),
 })
 public interface DataParserConfig extends ConfigObject<DataParser> {
 
