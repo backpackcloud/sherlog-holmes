@@ -27,6 +27,7 @@ package com.backpackcloud.sherlogholmes.config.mapper;
 import com.backpackcloud.sherlogholmes.config.Config;
 import com.backpackcloud.sherlogholmes.domain.DataMapper;
 import com.backpackcloud.sherlogholmes.domain.mappers.FunctionDataMapper;
+import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.quarkus.runtime.annotations.RegisterForReflection;
 
@@ -41,6 +42,7 @@ public class FunctionDataMapperConfig implements DataMapperConfig {
   private final Map<String, String> attributeMappings;
   private final List<String> attributeCopies;
 
+  @JsonCreator
   public FunctionDataMapperConfig(@JsonProperty("map") Map<String, String> attributeMappings,
                                   @JsonProperty("copy") String attributeCopies) {
 
@@ -55,7 +57,7 @@ public class FunctionDataMapperConfig implements DataMapperConfig {
   public DataMapper<Function<String, String>> get(Config config) {
     Map<String, String> attributesMap = new HashMap<>();
     if (attributeMappings != null) {
-      attributesMap.putAll(attributesMap);
+      attributesMap.putAll(attributeMappings);
     }
     if (attributeCopies != null) {
       attributeCopies.forEach(attr -> attributesMap.put(attr, attr));
