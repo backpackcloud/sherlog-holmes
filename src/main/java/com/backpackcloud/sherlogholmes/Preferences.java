@@ -34,12 +34,6 @@ public enum Preferences implements PreferenceSpec {
     "timestamp"
   ),
 
-  INPUT_CHARSET(
-    "the charset to use for reading",
-    Type.CHARSET,
-    "UTF-8"
-  ),
-
   CSV_HEADER(
     "sets whether to show csv headers or not",
     Type.FLAG,
