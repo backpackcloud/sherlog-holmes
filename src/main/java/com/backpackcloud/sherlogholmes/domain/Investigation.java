@@ -101,9 +101,8 @@ public class Investigation {
       this.content.append("\n").append(content);
     }
 
-
     public void push(String content, Object structure) {
-      if (this.structure == null) {
+      if (this.structure == null && this.content != null) {
         dataParser.parse(this.content.toString())
           .ifPresent(struct -> this.structure = struct);
       }
@@ -111,6 +110,7 @@ public class Investigation {
       this.content = new StringBuilder(content);
       this.structure = structure;
     }
+
   }
 
 }
