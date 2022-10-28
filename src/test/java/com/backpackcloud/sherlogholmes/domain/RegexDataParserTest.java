@@ -44,7 +44,6 @@ public class RegexDataParserTest {
     .add("timestamp", AttributeType.datetime())
     .add("level", AttributeType.enumOf("TRACE", "DEBUG", "INFO", "WARN", "ERROR", "FATAL"))
     .add("category", AttributeType.text())
-    .add("thread", AttributeType.text())
     .add("origin", AttributeType.text())
     .add("message", AttributeType.text());
 
