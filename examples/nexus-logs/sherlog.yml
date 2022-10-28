@@ -3,7 +3,7 @@ preferences:
 
 models:
   log:
-    format: '{@exception}{#timestamp} {#level|-5} {#thread} {#initiator} [{#domain},{#type},{#context}] {#class} {#message}'
+    format: '{@exception}{#timestamp} {#level|-5} {#thread} {#initiator} {#class} {#message}'
     attributes:
       timestamp:
         type:      zoned-datetime
