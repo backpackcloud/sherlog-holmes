@@ -55,7 +55,7 @@ public class RegexDataParserConfig implements DataParserConfig {
       patterns::get
     ).eval(patternString.get()).orElseThrow();
 
-    return new RegexDataParser(Pattern.compile(result));
+    return new RegexDataParser(Pattern.compile(result, Pattern.DOTALL));
   }
 
 }
