@@ -24,37 +24,26 @@
 
 package com.backpackcloud.sherlogholmes.domain.parsers;
 
-import com.backpackcloud.sherlogholmes.domain.DataEntry;
 import com.backpackcloud.sherlogholmes.domain.DataParser;
-import com.backpackcloud.text.RegexAnalyzer;
-import io.quarkus.runtime.annotations.RegisterForReflection;
 
 import java.util.Optional;
-import java.util.Set;
-import java.util.function.Supplier;
+import java.util.function.Function;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-@RegisterForReflection
-public class RegexDataParser implements DataParser<String> {
+public class RegexDataParser implements DataParser<Function<String, String>> {
 
   private final Pattern pattern;
-  private final Set<String> namedGroups;
 
   public RegexDataParser(Pattern pattern) {
     this.pattern = pattern;
-    this.namedGroups = new RegexAnalyzer(this.pattern).namedGroups();
   }
 
   @Override
-  public Optional<DataEntry> parse(Supplier<DataEntry> dataSupplier, String content) {
+  public Optional<Function<String, String>> parse(String content) {
     Matcher matcher = pattern.matcher(content);
     if (matcher.find()) {
-      DataEntry entry = dataSupplier.get();
-      namedGroups.forEach(name ->
-        entry.attribute(name).ifPresent(attr ->
-          attr.assignFromInput(matcher.group(name))));
-      return Optional.of(entry);
+      return Optional.of(matcher::group);
     }
     return Optional.empty();
   }

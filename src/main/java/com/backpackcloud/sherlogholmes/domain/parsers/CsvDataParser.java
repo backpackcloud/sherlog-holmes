@@ -22,21 +22,29 @@
  * SOFTWARE.
  */
 
-package com.backpackcloud.sherlogholmes.config.parser;
+package com.backpackcloud.sherlogholmes.domain.parsers;
 
-import com.backpackcloud.sherlogholmes.config.ConfigObject;
+import com.backpackcloud.UnbelievableException;
 import com.backpackcloud.sherlogholmes.domain.DataParser;
-import com.fasterxml.jackson.annotation.JsonSubTypes;
-import com.fasterxml.jackson.annotation.JsonTypeInfo;
-import io.quarkus.runtime.annotations.RegisterForReflection;
+import com.opencsv.CSVReader;
+import com.opencsv.exceptions.CsvValidationException;
 
-@JsonTypeInfo(use = JsonTypeInfo.Id.NAME, property = "type")
-@JsonSubTypes({
-  @JsonSubTypes.Type(name = "regex", value = RegexDataParserConfig.class),
-  @JsonSubTypes.Type(name = "csv", value = CsvDataParserConfig.class),
-  @JsonSubTypes.Type(name = "json", value = JsonDataParserConfig.class),
-})
-@RegisterForReflection
-public interface DataParserConfig extends ConfigObject<DataParser> {
+import java.io.IOException;
+import java.io.StringReader;
+import java.util.Optional;
+
+public class CsvDataParser implements DataParser<String[]> {
+
+  @Override
+  public Optional<String[]> parse(String content) {
+    CSVReader csvReader = new CSVReader(new StringReader(content));
+
+    try {
+      return Optional.ofNullable(csvReader.readNext());
+    } catch (IOException | CsvValidationException e) {
+      throw new UnbelievableException(e);
+    }
+
+  }
 
 }

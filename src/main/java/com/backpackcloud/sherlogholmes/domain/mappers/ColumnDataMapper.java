@@ -22,21 +22,35 @@
  * SOFTWARE.
  */
 
-package com.backpackcloud.sherlogholmes.config.parser;
+package com.backpackcloud.sherlogholmes.domain.mappers;
 
-import com.backpackcloud.sherlogholmes.config.ConfigObject;
-import com.backpackcloud.sherlogholmes.domain.DataParser;
-import com.fasterxml.jackson.annotation.JsonSubTypes;
-import com.fasterxml.jackson.annotation.JsonTypeInfo;
-import io.quarkus.runtime.annotations.RegisterForReflection;
+import com.backpackcloud.sherlogholmes.domain.DataEntry;
+import com.backpackcloud.sherlogholmes.domain.DataMapper;
 
-@JsonTypeInfo(use = JsonTypeInfo.Id.NAME, property = "type")
-@JsonSubTypes({
-  @JsonSubTypes.Type(name = "regex", value = RegexDataParserConfig.class),
-  @JsonSubTypes.Type(name = "csv", value = CsvDataParserConfig.class),
-  @JsonSubTypes.Type(name = "json", value = JsonDataParserConfig.class),
-})
-@RegisterForReflection
-public interface DataParserConfig extends ConfigObject<DataParser> {
+import java.util.Optional;
+import java.util.function.Supplier;
+
+public class ColumnDataMapper implements DataMapper<String[]> {
+
+  private final String[] attributeOrder;
+
+  public ColumnDataMapper(String[] attributeOrder) {
+    this.attributeOrder = attributeOrder;
+  }
+
+  @Override
+  public Optional<DataEntry> map(Supplier<DataEntry> dataSupplier, String[] data) {
+    if (data.length == attributeOrder.length) {
+      DataEntry dataEntry = dataSupplier.get();
+      for (int i = 0; i < attributeOrder.length; i++) {
+        String attrName = attributeOrder[i];
+        String value = data[i];
+        dataEntry.attribute(attrName)
+          .ifPresent(attr -> attr.assignFromInput(value.strip()));
+      }
+      return Optional.of(dataEntry);
+    }
+    return Optional.empty();
+  }
 
 }

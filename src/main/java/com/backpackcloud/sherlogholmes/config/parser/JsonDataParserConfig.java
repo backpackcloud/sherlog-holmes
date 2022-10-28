@@ -22,26 +22,20 @@
  * SOFTWARE.
  */
 
-package com.backpackcloud.sherlogholmes.config.reader;
+package com.backpackcloud.sherlogholmes.config.parser;
 
+import com.backpackcloud.serializer.Serializer;
 import com.backpackcloud.sherlogholmes.config.Config;
-import com.backpackcloud.sherlogholmes.domain.DataReader;
-import com.backpackcloud.sherlogholmes.domain.readers.CsvDataReader;
-import com.fasterxml.jackson.annotation.JsonProperty;
+import com.backpackcloud.sherlogholmes.domain.DataParser;
+import com.backpackcloud.sherlogholmes.domain.parsers.JsonDataParser;
 import io.quarkus.runtime.annotations.RegisterForReflection;
 
 @RegisterForReflection
-public class CsvDataReaderConfig implements DataReaderConfig {
-
-  private final int linesToSkip;
-
-  public CsvDataReaderConfig(@JsonProperty("skip-lines") Integer skip) {
-    this.linesToSkip = skip != null ? skip : 0;
-  }
+public class JsonDataParserConfig implements DataParserConfig {
 
   @Override
-  public DataReader<String[]> get(Config config) {
-    return new CsvDataReader(linesToSkip);
+  public DataParser get(Config config) {
+    return new JsonDataParser(Serializer.json());
   }
 
 }

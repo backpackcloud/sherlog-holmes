@@ -25,10 +25,9 @@
 package com.backpackcloud.sherlogholmes.domain;
 
 import java.util.Optional;
-import java.util.function.Supplier;
 
 public interface DataParser<T> {
 
-  Optional<DataEntry> parse(Supplier<DataEntry> dataSupplier, T data);
+  Optional<T> parse(String content);
 
 }

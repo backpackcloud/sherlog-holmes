@@ -25,10 +25,9 @@
 package com.backpackcloud.sherlogholmes.domain;
 
 import java.util.function.Consumer;
-import java.util.function.Supplier;
 
-public interface DataReader<T> {
+public interface DataReader {
 
-  void read(String location, Supplier<DataEntry> dataSupplier, DataParser<T> parser, Consumer<DataEntry> consumer);
+  void read(String location, Consumer<String> consumer);
 
 }

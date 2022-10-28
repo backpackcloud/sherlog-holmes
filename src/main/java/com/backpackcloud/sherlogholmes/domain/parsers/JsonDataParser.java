@@ -22,45 +22,27 @@
  * SOFTWARE.
  */
 
-package com.backpackcloud.sherlogholmes.config.parser;
+package com.backpackcloud.sherlogholmes.domain.parsers;
 
-import com.backpackcloud.sherlogholmes.config.Config;
+import com.backpackcloud.serializer.Serializer;
 import com.backpackcloud.sherlogholmes.domain.DataParser;
-import com.backpackcloud.sherlogholmes.domain.parsers.FunctionDataParser;
-import com.fasterxml.jackson.annotation.JsonProperty;
-import io.quarkus.runtime.annotations.RegisterForReflection;
+import com.fasterxml.jackson.databind.JsonNode;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.Optional;
 import java.util.function.Function;
 
-@RegisterForReflection
-public class FunctionDataParserConfig implements DataParserConfig {
+public class JsonDataParser implements DataParser<Function<String, String>> {
 
-  private final Map<String, String> attributeMappings;
-  private final List<String> attributeCopies;
+  private final Serializer serializer;
 
-  public FunctionDataParserConfig(@JsonProperty("map") Map<String, String> attributeMappings,
-                                  @JsonProperty("copy") String attributeCopies) {
-
-    this.attributeMappings = attributeMappings;
-    this.attributeCopies = attributeCopies != null ?
-      List.of(attributeCopies.split("\\s*,\\s*")) :
-      null;
+  public JsonDataParser(Serializer serializer) {
+    this.serializer = serializer;
   }
 
-
   @Override
-  public DataParser<Function<String, String>> get(Config config) {
-    Map<String, String> attributesMap = new HashMap<>();
-    if (attributeMappings != null) {
-      attributesMap.putAll(attributesMap);
-    }
-    if (attributeCopies != null) {
-      attributeCopies.forEach(attr -> attributesMap.put(attr, attr));
-    }
-    return new FunctionDataParser(attributesMap);
+  public Optional<Function<String, String>> parse(String content) {
+    JsonNode jsonNode = serializer.deserialize(content.trim(), JsonNode.class);
+    return Optional.of(pointer -> jsonNode.at(pointer).asText());
   }
 
 }

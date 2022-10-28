@@ -25,6 +25,7 @@
 package com.backpackcloud.sherlogholmes.domain;
 
 import com.backpackcloud.UnbelievableException;
+import com.backpackcloud.sherlogholmes.domain.mappers.FunctionDataMapper;
 import com.backpackcloud.sherlogholmes.domain.parsers.RegexDataParser;
 import com.backpackcloud.sherlogholmes.impl.DataModelImpl;
 import com.backpackcloud.spectaculous.Backstage;
@@ -32,6 +33,7 @@ import com.backpackcloud.spectaculous.Operation;
 import org.junit.jupiter.api.Test;
 
 import java.time.LocalDateTime;
+import java.util.function.Function;
 import java.util.regex.Pattern;
 
 public class RegexDataParserTest {
@@ -48,10 +50,17 @@ public class RegexDataParserTest {
 
   private final RegexDataParser parser = new RegexDataParser(Pattern.compile(pattern, Pattern.DOTALL));
 
+  private final DataMapper<Function<String, String>> mapper = FunctionDataMapper.attributesFrom(model);
+
+  private DataEntry entryFrom(String content) {
+    Function<String, String> function = parser.parse(content).orElseThrow();
+    return mapper.map(model.dataSupplier(), function).orElseThrow();
+  }
+
   @Test
   public void testSingleLineParsing() {
     String line = "2022-09-26T20:59:24 DEBUG [chat] (room-1702) chat bot is glorious, replying to Baylor Harris with an ASCII image of a horse";
-    DataEntry data = parser.parse(model.dataSupplier(), line).orElseThrow(UnbelievableException::new);
+    DataEntry data = entryFrom(line);
     Backstage.describe(DataEntry.class)
       .given(data)
 
@@ -65,7 +74,7 @@ public class RegexDataParserTest {
   @Test
   public void testMultilineParsing() {
     String lines = "2022-09-26T20:59:24 DEBUG [chat] (room-1702) chat bot is glorious,\nreplying to Baylor Harris with\nan ASCII image of a horse";
-    DataEntry data = parser.parse(model.dataSupplier(), lines).orElseThrow(UnbelievableException::new);
+    DataEntry data = entryFrom(lines);
     Backstage.describe(DataEntry.class)
       .given(data)
 

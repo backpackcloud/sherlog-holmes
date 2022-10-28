@@ -24,19 +24,23 @@
 
 package com.backpackcloud.sherlogholmes.config;
 
-import com.backpackcloud.configuration.Configuration;
+import com.backpackcloud.UnbelievableException;
 import com.backpackcloud.cli.preferences.UserPreferences;
 import com.backpackcloud.cli.ui.ColorMap;
 import com.backpackcloud.cli.ui.IconMap;
 import com.backpackcloud.cli.ui.StyleMap;
 import com.backpackcloud.cli.ui.Theme;
+import com.backpackcloud.configuration.Configuration;
 import com.backpackcloud.sherlogholmes.Preferences;
+import com.backpackcloud.sherlogholmes.config.mapper.DataMapperConfig;
 import com.backpackcloud.sherlogholmes.config.model.DataModelConfig;
 import com.backpackcloud.sherlogholmes.config.parser.DataParserConfig;
 import com.backpackcloud.sherlogholmes.config.reader.DataReaderConfig;
+import com.backpackcloud.sherlogholmes.domain.DataMapper;
 import com.backpackcloud.sherlogholmes.domain.DataModel;
 import com.backpackcloud.sherlogholmes.domain.DataParser;
 import com.backpackcloud.sherlogholmes.domain.DataReader;
+import com.backpackcloud.sherlogholmes.domain.Investigation;
 import com.backpackcloud.sherlogholmes.domain.PipelineStep;
 import com.fasterxml.jackson.annotation.JacksonInject;
 import com.fasterxml.jackson.annotation.JsonCreator;
@@ -46,7 +50,6 @@ import io.quarkus.runtime.annotations.RegisterForReflection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 
 @RegisterForReflection
 public class Config {
@@ -54,10 +57,12 @@ public class Config {
   private final UserPreferences preferences;
   private final List<String> commands;
   private final Map<String, List<String>> macros;
+  private final Map<String, DataModelConfig> models;
   private final Map<String, DataReaderConfig> readers;
   private final Map<String, DataParserConfig> parsers;
-  private final Map<String, DataModelConfig> models;
-  private final List<PipelineStep> pipeline;
+  private final Map<String, DataMapperConfig> mappers;
+  private final Map<String, List<PipelineStep>> steps;
+  private final Map<String, InvestigationConfig> investigations;
 
   @JsonCreator
   public Config(@JacksonInject UserPreferences userPreferences,
@@ -69,17 +74,22 @@ public class Config {
                 @JsonProperty("styles") Map<String, String> styles,
                 @JsonProperty("commands") List<String> commands,
                 @JsonProperty("macros") Map<String, List<String>> macros,
+                @JsonProperty("models") Map<String, DataModelConfig> models,
                 @JsonProperty("readers") Map<String, DataReaderConfig> readers,
                 @JsonProperty("parsers") Map<String, DataParserConfig> parsers,
-                @JsonProperty("models") Map<String, DataModelConfig> models,
-                @JsonProperty("pipeline") List<PipelineStep> pipeline) {
+                @JsonProperty("mappers") Map<String, DataMapperConfig> mappers,
+                @JsonProperty("steps") Map<String, List<PipelineStep>> steps,
+                @JsonProperty("paths") Map<String, InvestigationConfig> investigations) {
     this.preferences = userPreferences;
     this.commands = commands != null ? commands : Collections.emptyList();
     this.macros = macros != null ? macros : Collections.emptyMap();
+    this.models = models;
     this.readers = readers;
     this.parsers = parsers;
-    this.models = models;
-    this.pipeline = pipeline != null ? pipeline : Collections.emptyList();
+    this.mappers = mappers;
+    this.steps = steps != null ? steps : Collections.emptyMap();
+    this.investigations = investigations != null ? investigations : Collections.emptyMap();
+
     this.preferences.register(Preferences.values());
     this.patterns = patterns != null ? patterns : Collections.emptyMap();
 
@@ -101,6 +111,12 @@ public class Config {
       StyleMap styleMap = theme.styleMap();
       styles.forEach(styleMap::put);
     }
+
+    readers.forEach((id, map) -> {
+      if (this.parsers.containsKey(id) && this.mappers.containsKey(id)) {
+        this.investigations.put(id, new InvestigationConfig(id, id, id, id, id, null));
+      }
+    });
   }
 
   public List<String> commands() {
@@ -115,43 +131,43 @@ public class Config {
     return macros;
   }
 
-  public Map<String, DataReaderConfig> readers() {
-    return readers;
-  }
-
-  public Map<String, DataParserConfig> parsers() {
-    return parsers;
-  }
-
-  public Map<String, DataModelConfig> models() {
-    return models;
-  }
-
-  public Optional<DataReader> dataReader(String id) {
-    if (readers.containsKey(id)) {
-      DataReader<?> reader = readers.get(id).get(this);
-
-      return Optional.of((location, dataSupplier, parser, consumer) ->
-        reader.read(location, dataSupplier, parser, dataEntry -> {
-          pipeline.forEach(step -> step.analyze(dataEntry));
-          consumer.accept(dataEntry);
-        }));
+  private <E, T extends ConfigObject<E>> E getObject(Map<String, T> map, String key) {
+    if (map.containsKey(key)) {
+      return map.get(key).get(this);
     }
-    return Optional.empty();
+    throw new UnbelievableException("No " + key + " present");
   }
 
-  public Optional<DataParser> dataParser(String id) {
-    if (parsers.containsKey(id)) {
-      return Optional.of(parsers.get(id).get(this));
-    }
-    return Optional.empty();
+  public DataModel dataModelFor(String id) {
+    return getObject(models, id);
   }
 
-  public Optional<DataModel> dataModel(String id) {
-    if (models.containsKey(id)) {
-      return Optional.of(models.get(id).get(this));
-    }
-    return Optional.empty();
+  public DataReader dataReaderFor(String id) {
+    return getObject(readers, id);
+  }
+
+  public DataParser dataParserFor(String id) {
+    return getObject(parsers, id);
+  }
+
+  public DataMapper dataMapperFor(String id) {
+    return getObject(mappers, id);
+  }
+
+  public List<PipelineStep> stepsFor(String id) {
+    return steps.getOrDefault(id, Collections.emptyList());
+  }
+
+  public Investigation investigationFor(String id) {
+    return getObject(investigations, id);
+  }
+
+  public Map<String, InvestigationConfig> investigations() {
+    return investigations;
+  }
+
+  public UserPreferences preferences() {
+    return preferences;
   }
 
 }

@@ -32,9 +32,7 @@ import io.quarkus.runtime.annotations.RegisterForReflection;
 
 @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, property = "type")
 @JsonSubTypes({
-  @JsonSubTypes.Type(name = "regex", value = RegexDataReaderConfig.class),
-  @JsonSubTypes.Type(name = "csv", value = CsvDataReaderConfig.class),
-  @JsonSubTypes.Type(name = "json", value = JsonDataReaderConfig.class),
+  @JsonSubTypes.Type(name = "file", value = FileDataReaderConfig.class)
 })
 @RegisterForReflection
 public interface DataReaderConfig extends ConfigObject<DataReader> {

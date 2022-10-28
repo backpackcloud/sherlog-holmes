@@ -25,37 +25,39 @@
 package com.backpackcloud.sherlogholmes.domain.readers;
 
 import com.backpackcloud.UnbelievableException;
-import com.backpackcloud.serializer.Serializer;
-import com.backpackcloud.sherlogholmes.domain.DataEntry;
-import com.backpackcloud.sherlogholmes.domain.DataParser;
 import com.backpackcloud.sherlogholmes.domain.DataReader;
-import com.fasterxml.jackson.databind.JsonNode;
 
 import java.io.IOException;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Consumer;
-import java.util.function.Function;
-import java.util.function.Supplier;
+import java.util.function.Predicate;
 
-public class JsonDataReader implements DataReader<Function<String, String>> {
+public class FileLineReader implements DataReader {
 
-  private final Charset inputCharset;
-  private final Serializer serializer;
+  private final Charset charset;
+  private final int linesToSkip;
+  private final boolean removeAnsiColors;
 
-  public JsonDataReader(Charset inputCharset, Serializer serializer) {
-    this.inputCharset = inputCharset;
-    this.serializer = serializer;
+  public FileLineReader(Charset charset, int linesToSkip, boolean removeAnsiColors) {
+    this.charset = charset;
+    this.linesToSkip = linesToSkip;
+    this.removeAnsiColors = removeAnsiColors;
   }
 
   @Override
-  public void read(String location, Supplier<DataEntry> dataSupplier, DataParser<Function<String, String>> parser, Consumer<DataEntry> consumer) {
+  public void read(String location, Consumer<String> consumer) {
+    AtomicInteger count = new AtomicInteger(0);
+    Predicate<String> ignoredLines = s -> count.incrementAndGet() > linesToSkip;
     try {
-      Files.lines(Path.of(location), inputCharset).forEach(line -> {
-        JsonNode jsonNode = serializer.deserialize(line.trim(), JsonNode.class);
-        parser.parse(dataSupplier, pointer -> jsonNode.at(pointer).asText()).ifPresent(consumer);
-      });
+      Files.lines(Path.of(location), charset)
+        .filter(ignoredLines)
+        .forEach(line -> consumer.accept(removeAnsiColors ?
+          line.replaceAll("\\x1B(?:[@-Z\\\\-_]|\\[[0-?]*[ -/]*[@-~])", "") :
+          line
+        ));
     } catch (IOException e) {
       throw new UnbelievableException(e);
     }

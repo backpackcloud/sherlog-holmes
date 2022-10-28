@@ -74,6 +74,15 @@ public class DataRegistryImpl implements DataRegistry {
   }
 
   @Override
+  public void add(Collection<DataEntry> entries) {
+    entries.forEach(entry -> {
+      total.add(entry);
+      filtered().ifPresent(registry -> registry.add(entry));
+    });
+    notifyDataChange();
+  }
+
+  @Override
   public void apply(DataFilter filter) {
     filtered = new _DataRegistry();
     total.indexedAttributes().forEach(filtered::addIndex);
@@ -192,6 +201,11 @@ public class DataRegistryImpl implements DataRegistry {
             }
             valuesMap.get(value).add(entry);
           })));
+    }
+
+    @Override
+    public void add(Collection<DataEntry> entries) {
+      entries.forEach(this::add);
     }
 
     @Override

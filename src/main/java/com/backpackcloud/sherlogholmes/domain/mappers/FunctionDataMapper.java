@@ -22,26 +22,28 @@
  * SOFTWARE.
  */
 
-package com.backpackcloud.sherlogholmes.domain.parsers;
+package com.backpackcloud.sherlogholmes.domain.mappers;
 
 import com.backpackcloud.sherlogholmes.domain.DataEntry;
-import com.backpackcloud.sherlogholmes.domain.DataParser;
+import com.backpackcloud.sherlogholmes.domain.DataMapper;
+import com.backpackcloud.sherlogholmes.domain.DataModel;
 
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
-public class FunctionDataParser implements DataParser<Function<String, String>> {
+public class FunctionDataMapper implements DataMapper<Function<String, String>> {
 
   private final Map<String, String> attributeMapping;
 
-  public FunctionDataParser(Map<String, String> attributeMapping) {
+  public FunctionDataMapper(Map<String, String> attributeMapping) {
     this.attributeMapping = attributeMapping;
   }
 
   @Override
-  public Optional<DataEntry> parse(Supplier<DataEntry> dataSupplier, Function<String, String> function) {
+  public Optional<DataEntry> map(Supplier<DataEntry> dataSupplier, Function<String, String> function) {
     DataEntry entry = dataSupplier.get();
 
     attributeMapping.forEach((attributeName, functionParameter) ->
@@ -49,6 +51,12 @@ public class FunctionDataParser implements DataParser<Function<String, String>> 
         attribute.assignFromInput(function.apply(functionParameter))));
 
     return Optional.of(entry);
+  }
+
+  public static FunctionDataMapper attributesFrom(DataModel dataModel) {
+    Map<String, String> map = new HashMap<>();
+    dataModel.attributeNames().forEach(attr -> map.put(attr, attr));
+    return new FunctionDataMapper(map);
   }
 
 }

@@ -25,29 +25,33 @@
 package com.backpackcloud.sherlogholmes.config.reader;
 
 import com.backpackcloud.configuration.Configuration;
-import com.backpackcloud.serializer.Serializer;
 import com.backpackcloud.sherlogholmes.config.Config;
 import com.backpackcloud.sherlogholmes.domain.DataReader;
-import com.backpackcloud.sherlogholmes.domain.readers.JsonDataReader;
-import com.fasterxml.jackson.annotation.JsonCreator;
+import com.backpackcloud.sherlogholmes.domain.readers.FileLineReader;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.quarkus.runtime.annotations.RegisterForReflection;
 
 import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 
 @RegisterForReflection
-public class JsonDataReaderConfig implements DataReaderConfig {
+public class FileDataReaderConfig implements DataReaderConfig {
 
-  private final Configuration charsetName;
+  private final Charset charset;
+  private final int linesToSkip;
+  private final boolean removeAnsiColors;
 
-  @JsonCreator
-  public JsonDataReaderConfig(@JsonProperty("charset") Configuration charsetName) {
-    this.charsetName = charsetName;
+  public FileDataReaderConfig(@JsonProperty("charset") Configuration charset,
+                              @JsonProperty("linesToSkip") Configuration linesToSkip,
+                              @JsonProperty("removeAnsiColors") Configuration removeAnsiColors) {
+    this.charset = charset.map(Charset::forName).orElse(StandardCharsets.UTF_8);
+    this.linesToSkip = linesToSkip.orElse(0);
+    this.removeAnsiColors = removeAnsiColors.orElse(false);
   }
 
   @Override
   public DataReader get(Config config) {
-    return new JsonDataReader(Charset.forName(charsetName.get()), Serializer.json());
+    return new FileLineReader(charset, linesToSkip, removeAnsiColors);
   }
 
 }

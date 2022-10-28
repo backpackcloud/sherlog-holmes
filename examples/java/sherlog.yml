@@ -1,3 +1,6 @@
+preferences:
+  default-fallback-mode: append
+
 models:
   java:
     format: '{#timestamp} {#level|-5} {#category} {#thread} {@exception}{#message}'
@@ -30,15 +33,18 @@ models:
         indexable: false
 
 readers:
-  log:
-    type:               line
-    charset:            UTF-8
-    pattern:            '{{timestamp}} {{level}} {{category}} {{thread}} {{message}}'
-    non-match-mode:     append
-    remove-ansi-colors: true
+  java:
+    type:    file
+    charset: UTF-8
 
 parsers:
-  java-regex:
+  java:
+    type:               regex
+    pattern:            '{{timestamp}} {{level}} {{category}} {{thread}} {{message}}'
+    remove-ansi-colors: true
+
+mappers:
+  java:
     type: function
     copy: timestamp,level,category,thread,message
 
@@ -49,10 +55,11 @@ patterns:
   thread:    '\((?<thread>[^)]+)\)'
   message:   '(?<message>.+)'
 
-pipeline:
-  - map:
-      from:  message
-      regex: '(?<exception>\w+(\.\w+)+(Exception|Error))'
+steps:
+  java:
+    - map:
+        from:  message
+        regex: '(?<exception>\w+(\.\w+)+(Exception|Error))'
 
 icons:
   attribute-timestamp: nf-fa-calendar

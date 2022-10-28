@@ -22,27 +22,45 @@
  * SOFTWARE.
  */
 
-package com.backpackcloud.sherlogholmes.config.parser;
+package com.backpackcloud.sherlogholmes.config.mapper;
 
 import com.backpackcloud.sherlogholmes.config.Config;
-import com.backpackcloud.sherlogholmes.domain.DataParser;
-import com.backpackcloud.sherlogholmes.domain.parsers.ColumnDataParser;
+import com.backpackcloud.sherlogholmes.domain.DataMapper;
+import com.backpackcloud.sherlogholmes.domain.mappers.FunctionDataMapper;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.quarkus.runtime.annotations.RegisterForReflection;
 
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.function.Function;
+
 @RegisterForReflection
-public class ColumnDataParserConfig implements DataParserConfig {
+public class FunctionDataMapperConfig implements DataMapperConfig {
 
-  private final String[] attributes;
+  private final Map<String, String> attributeMappings;
+  private final List<String> attributeCopies;
 
-  public ColumnDataParserConfig(@JsonProperty("attributes") String attributes) {
-    this.attributes = attributes.split("\\s*,\\s*");
+  public FunctionDataMapperConfig(@JsonProperty("map") Map<String, String> attributeMappings,
+                                  @JsonProperty("copy") String attributeCopies) {
+
+    this.attributeMappings = attributeMappings;
+    this.attributeCopies = attributeCopies != null ?
+      List.of(attributeCopies.split("\\s*,\\s*")) :
+      null;
   }
 
 
   @Override
-  public DataParser<String[]> get(Config config) {
-    return new ColumnDataParser(attributes);
+  public DataMapper<Function<String, String>> get(Config config) {
+    Map<String, String> attributesMap = new HashMap<>();
+    if (attributeMappings != null) {
+      attributesMap.putAll(attributesMap);
+    }
+    if (attributeCopies != null) {
+      attributeCopies.forEach(attr -> attributesMap.put(attr, attr));
+    }
+    return new FunctionDataMapper(attributesMap);
   }
 
 }

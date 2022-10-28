@@ -22,21 +22,18 @@
  * SOFTWARE.
  */
 
-package com.backpackcloud.sherlogholmes.config.parser;
+package com.backpackcloud.sherlogholmes.config.mapper;
 
 import com.backpackcloud.sherlogholmes.config.ConfigObject;
-import com.backpackcloud.sherlogholmes.domain.DataParser;
+import com.backpackcloud.sherlogholmes.domain.DataMapper;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
-import io.quarkus.runtime.annotations.RegisterForReflection;
 
 @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, property = "type")
 @JsonSubTypes({
-  @JsonSubTypes.Type(name = "regex", value = RegexDataParserConfig.class),
-  @JsonSubTypes.Type(name = "csv", value = CsvDataParserConfig.class),
-  @JsonSubTypes.Type(name = "json", value = JsonDataParserConfig.class),
+  @JsonSubTypes.Type(name = "column", value = ColumnDataMapperConfig.class),
+  @JsonSubTypes.Type(name = "function", value = FunctionDataMapperConfig.class),
 })
-@RegisterForReflection
-public interface DataParserConfig extends ConfigObject<DataParser> {
+public interface DataMapperConfig extends ConfigObject<DataMapper> {
 
 }

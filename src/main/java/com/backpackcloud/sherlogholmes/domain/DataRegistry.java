@@ -27,6 +27,7 @@ package com.backpackcloud.sherlogholmes.domain;
 import com.backpackcloud.cli.Registry;
 
 import java.time.Duration;
+import java.util.Collection;
 import java.util.Map;
 import java.util.NavigableSet;
 import java.util.Optional;
@@ -43,6 +44,8 @@ public interface DataRegistry extends Registry {
   void onDataChange(Runnable action);
 
   void add(DataEntry entry);
+
+  void add(Collection<DataEntry> entries);
 
   void apply(DataFilter filter);
 

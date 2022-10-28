@@ -22,44 +22,40 @@
  * SOFTWARE.
  */
 
-package com.backpackcloud.sherlogholmes.domain.readers;
+package com.backpackcloud.sherlogholmes.config.parser;
 
-import com.backpackcloud.UnbelievableException;
-import com.backpackcloud.sherlogholmes.domain.DataEntry;
+import com.backpackcloud.configuration.Configuration;
+import com.backpackcloud.sherlogholmes.config.Config;
 import com.backpackcloud.sherlogholmes.domain.DataParser;
-import com.backpackcloud.sherlogholmes.domain.DataReader;
-import com.opencsv.CSVReader;
+import com.backpackcloud.sherlogholmes.domain.parsers.RegexDataParser;
+import com.backpackcloud.text.Interpolator;
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import io.quarkus.runtime.annotations.RegisterForReflection;
 
-import java.io.FileReader;
-import java.util.function.Consumer;
-import java.util.function.Supplier;
+import java.util.Map;
+import java.util.regex.Pattern;
 
-public class CsvDataReader implements DataReader<String[]> {
+@RegisterForReflection
+public class RegexDataParserConfig implements DataParserConfig {
 
-  private final int linesToSkip;
+  private final Configuration patternString;
 
-  public CsvDataReader(int linesToSkip) {
-    this.linesToSkip = linesToSkip;
+  @JsonCreator
+  public RegexDataParserConfig(@JsonProperty("pattern") Configuration patternString) {
+    this.patternString = patternString;
   }
 
   @Override
-  public void read(String location, Supplier<DataEntry> dataSupplier, DataParser<String[]> parser, Consumer<DataEntry> consumer) {
-    try {
-      FileReader fileReader = new FileReader(location);
-      CSVReader csvReader = new CSVReader(fileReader);
+  public DataParser get(Config config) {
+    Map<String, String> patterns = config.patterns();
 
-      int count = 0;
+    String result = new Interpolator(
+      Interpolator.DOUBLE_BRACKET_INTERPOLATION_PATTERN,
+      patterns::get
+    ).eval(patternString.get()).orElseThrow();
 
-      String[] nextRecord;
-
-      while ((nextRecord = csvReader.readNext()) != null) {
-        if (++count > linesToSkip) {
-          parser.parse(dataSupplier, nextRecord).ifPresent(consumer);
-        }
-      }
-    } catch (Exception e) {
-      throw new UnbelievableException(e);
-    }
+    return new RegexDataParser(Pattern.compile(result));
   }
 
 }

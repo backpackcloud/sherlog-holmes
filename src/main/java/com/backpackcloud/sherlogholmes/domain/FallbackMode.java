@@ -22,35 +22,10 @@
  * SOFTWARE.
  */
 
-package com.backpackcloud.sherlogholmes.domain.parsers;
+package com.backpackcloud.sherlogholmes.domain;
 
-import com.backpackcloud.sherlogholmes.domain.DataEntry;
-import com.backpackcloud.sherlogholmes.domain.DataParser;
+public enum FallbackMode {
 
-import java.util.Optional;
-import java.util.function.Supplier;
-
-public class ColumnDataParser implements DataParser<String[]> {
-
-  private final String[] attributeOrder;
-
-  public ColumnDataParser(String[] attributeOrder) {
-    this.attributeOrder = attributeOrder;
-  }
-
-  @Override
-  public Optional<DataEntry> parse(Supplier<DataEntry> dataSupplier, String[] data) {
-    if (data.length == attributeOrder.length) {
-      DataEntry dataEntry = dataSupplier.get();
-      for (int i = 0; i < attributeOrder.length; i++) {
-        String attrName = attributeOrder[i];
-        String value = data[i];
-        dataEntry.attribute(attrName)
-          .ifPresent(attr -> attr.assignFromInput(value.strip()));
-      }
-      return Optional.of(dataEntry);
-    }
-    return Optional.empty();
-  }
+  IGNORE, APPEND
 
 }

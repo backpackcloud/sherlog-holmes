@@ -46,7 +46,11 @@ public enum Preferences implements PreferenceSpec {
     "5"
   ),
 
-  ;
+  DEFAULT_FALLBACK_MODE(
+    "sets the default fallback behavior to ",
+    Type.TEXT,
+    "ignore"
+  );
 
   private final String id;
   private final String description;

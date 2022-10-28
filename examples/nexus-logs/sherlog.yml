@@ -1,5 +1,8 @@
+preferences:
+  default-fallback-mode: append
+
 models:
-  nexus-log:
+  log:
     format: '{@exception}{#timestamp} {#level|-5} {#thread} {#initiator} [{#domain},{#type},{#context}] {#class} {#message}'
     attributes:
       timestamp:
@@ -34,7 +37,7 @@ models:
         identity:  true
         indexable: false
 
-  nexus-audit:
+  audit:
     format: |
             {#timestamp} {#initiator} {#thread} {#message}
             domain: {domain}
@@ -71,22 +74,29 @@ models:
         indexable: false
 
 readers:
-  plain-log:
-    type:               regex
+  log:
+    type:               file
     charset:            UTF-8
-    pattern:            '{{timestamp}} {{level}}\s+{{thread}}  {{initiator}} {{class}} - {{message}}'
     remove-ansi-colors: true
-    non-match-mode:     append
-  json-log:
-    type:    json
+
+  audit:
+    type:    file
     charset: UTF-8
 
 parsers:
-  nexus-log:
+  log:
+    type:    regex
+    pattern: '{{timestamp}} {{level}}\s+{{thread}}  {{initiator}} {{class}} - {{message}}'
+
+  audit:
+    type: json
+
+mappers:
+  log:
     type: function
     copy: timestamp,level,thread,initiator,class,message
 
-  nexus-audit:
+  audit:
     type: function
     map:
       timestamp: /timestamp
@@ -105,10 +115,11 @@ patterns:
   class:     '(?<class>\S+)'
   message:   '(?<message>.+)'
 
-pipeline:
-  - map:
-      from:  message
-      regex: '(?<exception>\w+(\.\w+)+(Exception|Error))'
+steps:
+  log:
+    - map:
+        from:  message
+        regex: '(?<exception>\w+(\.\w+)+(Exception|Error))'
 
 icons:
   attribute-timestamp: nf-fa-calendar
