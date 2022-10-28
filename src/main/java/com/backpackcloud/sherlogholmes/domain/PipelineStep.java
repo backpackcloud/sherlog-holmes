@@ -25,6 +25,7 @@
 package com.backpackcloud.sherlogholmes.domain;
 
 import com.backpackcloud.sherlogholmes.domain.steps.AttributeExtractStep;
+import com.backpackcloud.sherlogholmes.domain.steps.AttributeReplaceStep;
 import com.backpackcloud.sherlogholmes.domain.steps.AttributeSetStep;
 import com.backpackcloud.sherlogholmes.domain.steps.BasicPipelineStep;
 import com.backpackcloud.sherlogholmes.domain.steps.RegexMapperStep;
@@ -59,7 +60,8 @@ public interface PipelineStep {
                              @JsonProperty("when") String filter,
                              @JsonProperty("assign") AttributeSetStep attributeSetStep,
                              @JsonProperty("extract") AttributeExtractStep attributeExtractStep,
-                             @JsonProperty("map") RegexMapperStep regexMapperStep) {
+                             @JsonProperty("map") RegexMapperStep regexMapperStep,
+                             @JsonProperty("replace") AttributeReplaceStep attributeReplaceStep) {
     List<Predicate<DataEntry>> predicates = new ArrayList<>();
 
     if (filter != null) {
@@ -70,7 +72,11 @@ public interface PipelineStep {
 
     Predicate<DataEntry> predicate = predicates.stream().reduce(o -> true, Predicate::and);
 
-    PipelineStep steps = Stream.of(attributeSetStep, attributeExtractStep, regexMapperStep)
+    PipelineStep steps = Stream.of(
+        attributeSetStep,
+        attributeExtractStep,
+        regexMapperStep,
+        attributeReplaceStep)
       .filter(Objects::nonNull)
       .reduce(NOTHING, PipelineStep::andThen);
 
