@@ -24,18 +24,40 @@
 
 package com.backpackcloud.sherlogholmes.config.reader;
 
-import com.backpackcloud.sherlogholmes.config.ConfigObject;
+import com.backpackcloud.configuration.Configuration;
+import com.backpackcloud.sherlogholmes.config.Config;
 import com.backpackcloud.sherlogholmes.domain.DataReader;
-import com.fasterxml.jackson.annotation.JsonSubTypes;
-import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import com.backpackcloud.sherlogholmes.domain.readers.HttpReader;
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import io.quarkus.runtime.annotations.RegisterForReflection;
 
-@JsonTypeInfo(use = JsonTypeInfo.Id.NAME, property = "type")
-@JsonSubTypes({
-  @JsonSubTypes.Type(name = "file", value = FileDataReaderConfig.class),
-  @JsonSubTypes.Type(name = "http", value = HttpDataReaderConfig.class)
-})
+import java.net.http.HttpClient;
+import java.time.Duration;
+
 @RegisterForReflection
-public interface DataReaderConfig extends ConfigObject<DataReader> {
+public class HttpDataReaderConfig implements DataReaderConfig {
+
+  private final String timeout;
+
+  public HttpDataReaderConfig(String timeout) {
+    this.timeout = timeout;
+  }
+
+  @Override
+  public DataReader get(Config config) {
+    HttpClient client = HttpClient.newBuilder()
+      .version(HttpClient.Version.HTTP_2)
+      .connectTimeout(Duration.parse("PT" + timeout))
+      .followRedirects(HttpClient.Redirect.ALWAYS)
+      .build();
+
+    return new HttpReader(client);
+  }
+
+  @JsonCreator
+  public static HttpDataReaderConfig create(@JsonProperty("timeout") Configuration timeout) {
+    return new HttpDataReaderConfig(timeout.orElse("15s"));
+  }
 
 }

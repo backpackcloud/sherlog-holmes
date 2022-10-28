@@ -22,20 +22,42 @@
  * SOFTWARE.
  */
 
-package com.backpackcloud.sherlogholmes.config.reader;
+package com.backpackcloud.sherlogholmes.domain.readers;
 
-import com.backpackcloud.sherlogholmes.config.ConfigObject;
+import com.backpackcloud.UnbelievableException;
 import com.backpackcloud.sherlogholmes.domain.DataReader;
-import com.fasterxml.jackson.annotation.JsonSubTypes;
-import com.fasterxml.jackson.annotation.JsonTypeInfo;
-import io.quarkus.runtime.annotations.RegisterForReflection;
 
-@JsonTypeInfo(use = JsonTypeInfo.Id.NAME, property = "type")
-@JsonSubTypes({
-  @JsonSubTypes.Type(name = "file", value = FileDataReaderConfig.class),
-  @JsonSubTypes.Type(name = "http", value = HttpDataReaderConfig.class)
-})
-@RegisterForReflection
-public interface DataReaderConfig extends ConfigObject<DataReader> {
+import java.io.IOException;
+import java.net.URI;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
+import java.util.function.Consumer;
+
+public class HttpReader implements DataReader {
+
+  private final HttpClient client;
+
+  public HttpReader(HttpClient client) {
+    this.client = client;
+  }
+
+  @Override
+  public void read(String location, Consumer<String> consumer) {
+    HttpRequest request = HttpRequest.newBuilder()
+      .GET()
+      .uri(URI.create(location))
+      .build();
+
+    try {
+      String result = client.send(request, HttpResponse.BodyHandlers.ofString())
+        .body()
+        .strip();
+
+      consumer.accept(result);
+    } catch (IOException | InterruptedException e) {
+      throw new UnbelievableException(e);
+    }
+  }
 
 }
