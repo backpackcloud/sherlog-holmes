@@ -48,6 +48,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import io.quarkus.runtime.annotations.RegisterForReflection;
 
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -88,7 +89,7 @@ public class Config {
     this.parsers = parsers;
     this.mappers = mappers;
     this.steps = steps != null ? steps : Collections.emptyMap();
-    this.investigations = investigations != null ? investigations : Collections.emptyMap();
+    this.investigations = investigations != null ? investigations : new HashMap<>();
 
     this.preferences.register(Preferences.values());
     this.patterns = patterns != null ? patterns : Collections.emptyMap();
