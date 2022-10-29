@@ -47,7 +47,7 @@ public enum Preferences implements PreferenceSpec {
   ),
 
   DEFAULT_FALLBACK_MODE(
-    "sets the default fallback behavior to ",
+    "sets the default fallback behavior to use when parsing content fails",
     Type.TEXT,
     "ignore"
   );
