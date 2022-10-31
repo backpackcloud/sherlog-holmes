@@ -95,7 +95,11 @@ public class Investigation {
 
     public void push(String content) {
       this.structure = null;
-      this.content.append("\n").append(content);
+      if (this.content == null) {
+        this.content = new StringBuilder(content);
+      } else {
+        this.content.append("\n").append(content);
+      }
     }
 
     public void push(String content, Object structure) {
