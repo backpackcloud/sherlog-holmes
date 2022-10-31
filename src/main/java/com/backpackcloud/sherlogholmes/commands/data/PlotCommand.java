@@ -34,7 +34,6 @@ import com.backpackcloud.cli.ui.Suggestion;
 import com.backpackcloud.serializer.Serializer;
 import com.backpackcloud.sherlogholmes.Preferences;
 import com.backpackcloud.sherlogholmes.domain.DataRegistry;
-import com.backpackcloud.sherlogholmes.domain.DataRegistryListener;
 import com.backpackcloud.sherlogholmes.domain.TimeUnit;
 import com.backpackcloud.sherlogholmes.domain.chart.ChartDataProducer;
 import com.backpackcloud.sherlogholmes.impl.WebChart;
@@ -75,14 +74,13 @@ public class PlotCommand implements AnnotatedCommand {
 
   public PlotCommand(ChartDataProducer chartDataProducer,
                      DataRegistry registry,
-                     UserPreferences preferences,
-                     DataRegistryListener dataListener) {
+                     UserPreferences preferences) {
     this.chartDataProducer = chartDataProducer;
     this.attributeSuggester = new AttributeSuggester(registry);
     this.preferences = preferences;
     this.serializer = Serializer.json();
     this.preferences.get(Preferences.MAX_SERIES_COUNT).listen(o -> redrawChart());
-    dataListener.onDataChange(this::redrawChart);
+    registry.onDataChanged(this::redrawChart);
   }
 
   @OnOpen

@@ -24,35 +24,39 @@
 
 package com.backpackcloud.sherlogholmes.impl;
 
-import com.backpackcloud.cli.CommandListener;
+import com.backpackcloud.cli.Writer;
+import com.backpackcloud.cli.preferences.UserPreferences;
+import com.backpackcloud.sherlogholmes.Preferences;
+import com.backpackcloud.sherlogholmes.domain.DataEntry;
 import com.backpackcloud.sherlogholmes.domain.DataRegistry;
-import com.backpackcloud.sherlogholmes.domain.DataRegistryListener;
+import io.quarkus.runtime.Startup;
 
+import javax.annotation.PostConstruct;
 import javax.enterprise.context.ApplicationScoped;
-import java.util.ArrayList;
-import java.util.List;
 
+@Startup
 @ApplicationScoped
-public class DataRegistryListenerImpl implements DataRegistryListener {
+public class DataInspector {
 
-  private final List<Runnable> listeners;
-  private boolean dataChanged;
+  private final UserPreferences preferences;
+  private final Writer writer;
+  private final DataRegistry registry;
 
-  public DataRegistryListenerImpl(DataRegistry registry, CommandListener commandListener) {
-    this.listeners = new ArrayList<>();
-    registry.onDataChange(() -> dataChanged = true);
-    commandListener.beforeInput(() -> dataChanged = false);
-    commandListener.afterCommand(() -> {
-      if (dataChanged) {
-        listeners.forEach(Runnable::run);
-        dataChanged = false;
-      }
-    });
+  public DataInspector(UserPreferences preferences, Writer writer, DataRegistry registry) {
+    this.preferences = preferences;
+    this.writer = writer;
+    this.registry = registry;
   }
 
-  @Override
-  public void onDataChange(Runnable action) {
-    this.listeners.add(action);
+  @PostConstruct
+  void initialize() {
+    registry.onDataAdded(this::printData);
+  }
+
+  public void printData(DataEntry entry) {
+    if (preferences.isEnabled(Preferences.SHOW_ADDED_ENTRIES)) {
+      writer.writeln(entry);
+    }
   }
 
 }

@@ -35,12 +35,14 @@ import javax.enterprise.context.ApplicationScoped;
 import java.time.Duration;
 import java.time.temporal.Temporal;
 import java.util.*;
+import java.util.function.Consumer;
 import java.util.stream.Stream;
 
 @ApplicationScoped
 public class DataRegistryImpl implements DataRegistry {
 
-  private final List<Runnable> dataChangeListeners = new ArrayList<>();
+  private final List<Runnable> dataChangedListeners = new ArrayList<>();
+  private final List<Consumer<DataEntry>> dataAddedListeners = new ArrayList<>();
   private final DataRegistry total = new _DataRegistry();
   private DataRegistry filtered;
 
@@ -58,19 +60,29 @@ public class DataRegistryImpl implements DataRegistry {
   }
 
   @Override
-  public void onDataChange(Runnable action) {
-    this.dataChangeListeners.add(action);
+  public void onDataChanged(Runnable action) {
+    this.dataChangedListeners.add(action);
   }
 
-  private void notifyDataChange() {
-    dataChangeListeners.forEach(Runnable::run);
+  @Override
+  public void onDataAdded(Consumer<DataEntry> consumer) {
+    this.dataAddedListeners.add(consumer);
+  }
+
+  private void notifyDataChanged() {
+    dataChangedListeners.forEach(Runnable::run);
+  }
+
+  private void notifyDataAdded(DataEntry entry) {
+    dataAddedListeners.forEach(consumer -> consumer.accept(entry));
   }
 
   @Override
   public void add(DataEntry entry) {
     total.add(entry);
     filtered().ifPresent(registry -> registry.add(entry));
-    notifyDataChange();
+    notifyDataAdded(entry);
+    notifyDataChanged();
   }
 
   @Override
@@ -78,8 +90,9 @@ public class DataRegistryImpl implements DataRegistry {
     entries.forEach(entry -> {
       total.add(entry);
       filtered().ifPresent(registry -> registry.add(entry));
+      notifyDataAdded(entry);
     });
-    notifyDataChange();
+    notifyDataChanged();
   }
 
   @Override
@@ -89,13 +102,13 @@ public class DataRegistryImpl implements DataRegistry {
     total.stream()
       .filter(filter)
       .forEach(filtered::add);
-    notifyDataChange();
+    notifyDataChanged();
   }
 
   @Override
   public void removeFilter() {
     filtered = null;
-    notifyDataChange();
+    notifyDataChanged();
   }
 
   @Override
@@ -166,7 +179,7 @@ public class DataRegistryImpl implements DataRegistry {
   public void clear() {
     total.clear();
     filtered = null;
-    notifyDataChange();
+    notifyDataChanged();
   }
 
   private static class _DataRegistry implements DataRegistry {
@@ -181,7 +194,12 @@ public class DataRegistryImpl implements DataRegistry {
     }
 
     @Override
-    public void onDataChange(Runnable action) {
+    public void onDataChanged(Runnable action) {
+      throw new UnbelievableException();
+    }
+
+    @Override
+    public void onDataAdded(Consumer<DataEntry> consumer) {
       throw new UnbelievableException();
     }
 

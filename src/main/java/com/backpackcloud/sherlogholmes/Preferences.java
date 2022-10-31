@@ -50,6 +50,12 @@ public enum Preferences implements PreferenceSpec {
     "sets the default fallback behavior to use when parsing content fails",
     Type.TEXT,
     "ignore"
+  ),
+
+  SHOW_ADDED_ENTRIES(
+    "shows entries as they are added in the registry",
+    Type.FLAG,
+    "false"
   );
 
   private final String id;

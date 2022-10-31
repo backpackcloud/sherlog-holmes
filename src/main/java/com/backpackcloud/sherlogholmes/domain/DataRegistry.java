@@ -32,6 +32,7 @@ import java.util.Map;
 import java.util.NavigableSet;
 import java.util.Optional;
 import java.util.Set;
+import java.util.function.Consumer;
 import java.util.stream.Stream;
 
 public interface DataRegistry extends Registry {
@@ -41,7 +42,9 @@ public interface DataRegistry extends Registry {
     return "data";
   }
 
-  void onDataChange(Runnable action);
+  void onDataChanged(Runnable action);
+
+  void onDataAdded(Consumer<DataEntry> consumer);
 
   void add(DataEntry entry);
 
