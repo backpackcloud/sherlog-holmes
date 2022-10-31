@@ -27,11 +27,13 @@ package com.backpackcloud.sherlogholmes.commands.data;
 import com.backpackcloud.cli.Action;
 import com.backpackcloud.cli.AnnotatedCommand;
 import com.backpackcloud.cli.CommandDefinition;
-import com.backpackcloud.cli.ui.Paginator;
+import com.backpackcloud.cli.Paginate;
+import com.backpackcloud.sherlogholmes.domain.DataEntry;
 import com.backpackcloud.sherlogholmes.domain.DataRegistry;
 import io.quarkus.runtime.annotations.RegisterForReflection;
 
 import javax.enterprise.context.ApplicationScoped;
+import java.util.stream.Stream;
 
 @ApplicationScoped
 @CommandDefinition(
@@ -51,8 +53,9 @@ public class ListDataCommand implements AnnotatedCommand {
   }
 
   @Action
-  public void execute(Paginator paginator) {
-    paginator.from(registry.stream()).paginate();
+  @Paginate
+  public Stream<DataEntry> execute() {
+    return registry.stream();
   }
 
 }

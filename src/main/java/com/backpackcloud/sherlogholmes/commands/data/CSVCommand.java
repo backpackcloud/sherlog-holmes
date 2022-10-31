@@ -28,9 +28,9 @@ import com.backpackcloud.UnbelievableException;
 import com.backpackcloud.cli.Action;
 import com.backpackcloud.cli.AnnotatedCommand;
 import com.backpackcloud.cli.CommandDefinition;
+import com.backpackcloud.cli.Paginate;
 import com.backpackcloud.cli.PreferenceValue;
 import com.backpackcloud.cli.Suggestions;
-import com.backpackcloud.cli.ui.Paginator;
 import com.backpackcloud.cli.ui.Suggestion;
 import com.backpackcloud.sherlogholmes.domain.DataRegistry;
 import com.backpackcloud.sherlogholmes.ui.suggestions.AttributeSuggester;
@@ -60,18 +60,17 @@ public class CSVCommand implements AnnotatedCommand {
   }
 
   @Action
-  public void printRawData(Paginator paginator,
-                           @PreferenceValue("csv-header") boolean showHeader,
-                           String... fields) {
+  @Paginate
+  public List<String> execute(@PreferenceValue("csv-header") boolean showHeader, String... fields) {
     if (fields.length == 0) {
       throw new UnbelievableException("No field given");
     }
 
-    List<List<String>> data = new ArrayList<>();
+    List<String> data = new ArrayList<>();
     List<String> selectedFields = List.of(fields);
 
     if (showHeader) {
-      data.add(selectedFields);
+      data.add(String.join(",", selectedFields));
     }
 
     registry.entries().stream().map(entry -> {
@@ -83,12 +82,10 @@ public class CSVCommand implements AnnotatedCommand {
             .orElseThrow())
         .forEach(row::add);
 
-      return row;
+      return String.join(",", row);
     }).forEach(data::add);
 
-    paginator.from(data)
-      .print((writer, row) -> writer.writeln(String.join(",", row)))
-      .paginate();
+    return data;
   }
 
   @Suggestions

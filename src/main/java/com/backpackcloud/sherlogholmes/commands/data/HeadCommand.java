@@ -27,8 +27,8 @@ package com.backpackcloud.sherlogholmes.commands.data;
 import com.backpackcloud.cli.Action;
 import com.backpackcloud.cli.AnnotatedCommand;
 import com.backpackcloud.cli.CommandDefinition;
+import com.backpackcloud.cli.Paginate;
 import com.backpackcloud.cli.Suggestions;
-import com.backpackcloud.cli.ui.Paginator;
 import com.backpackcloud.cli.ui.Suggestion;
 import com.backpackcloud.sherlogholmes.domain.Attribute;
 import com.backpackcloud.sherlogholmes.domain.DataEntry;
@@ -62,15 +62,14 @@ public class HeadCommand implements AnnotatedCommand {
   }
 
   @Action
-  public void execute(Paginator paginator, Integer amount, ChronoUnit unit) {
+  @Paginate
+  public Stream<DataEntry> execute(Integer amount, ChronoUnit unit) {
     if (registry.isEmpty()) {
-      return;
+      return Stream.empty();
     }
 
-    Stream<DataEntry> stream;
-
     if (unit == null) {
-      stream = registry.stream()
+      return registry.stream()
         .limit(amount);
     } else {
       NavigableSet<DataEntry> entries = registry.entries();
@@ -79,7 +78,7 @@ public class HeadCommand implements AnnotatedCommand {
         .flatMap(Attribute::value)
         .map(temporal -> temporal.plus(amount, unit))
         .orElseThrow();
-      stream = entries.stream()
+      return entries.stream()
         .filter(entry ->
           entry.attribute("timestamp", Temporal.class)
             .flatMap(Attribute::value)
@@ -88,7 +87,6 @@ public class HeadCommand implements AnnotatedCommand {
               .compare(timestamp, reference) <= 0)
             .orElse(false));
     }
-    paginator.from(stream).paginate();
   }
 
   @Suggestions

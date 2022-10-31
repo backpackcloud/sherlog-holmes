@@ -27,11 +27,9 @@ package com.backpackcloud.sherlogholmes.commands.data;
 import com.backpackcloud.cli.Action;
 import com.backpackcloud.cli.AnnotatedCommand;
 import com.backpackcloud.cli.CommandDefinition;
+import com.backpackcloud.cli.Paginate;
 import com.backpackcloud.cli.Suggestions;
-import com.backpackcloud.cli.preferences.UserPreferences;
-import com.backpackcloud.cli.ui.Paginator;
 import com.backpackcloud.cli.ui.Suggestion;
-import com.backpackcloud.cli.ui.Theme;
 import com.backpackcloud.sherlogholmes.domain.Attribute;
 import com.backpackcloud.sherlogholmes.domain.DataEntry;
 import com.backpackcloud.sherlogholmes.domain.DataRegistry;
@@ -57,20 +55,17 @@ import java.util.stream.Stream;
 @RegisterForReflection
 public class TailCommand implements AnnotatedCommand {
 
-  private final UserPreferences preferences;
   private final DataRegistry registry;
-  private final Theme theme;
 
-  public TailCommand(UserPreferences preferences, DataRegistry registry, Theme theme) {
-    this.preferences = preferences;
+  public TailCommand(DataRegistry registry) {
     this.registry = registry;
-    this.theme = theme;
   }
 
+  @Paginate
   @Action
-  public void execute(Paginator paginator, Integer amount, ChronoUnit unit) {
+  public Stream<DataEntry> execute(Integer amount, ChronoUnit unit) {
     if (registry.isEmpty()) {
-      return;
+      return Stream.empty();
     }
 
     Stream<DataEntry> stream;
@@ -84,7 +79,7 @@ public class TailCommand implements AnnotatedCommand {
 
       Collections.reverse(entries);
 
-      stream = entries.stream();
+      return entries.stream();
 
     } else {
       Temporal reference = registry.entries().first()
@@ -92,7 +87,7 @@ public class TailCommand implements AnnotatedCommand {
         .flatMap(Attribute::value)
         .map(temporal -> temporal.minus(amount, unit))
         .orElseThrow();
-      stream = registry.entries()
+      return registry.entries()
         .stream()
         .filter(entry ->
           entry.attribute("timestamp", Temporal.class)
@@ -102,7 +97,6 @@ public class TailCommand implements AnnotatedCommand {
               .compare(timestamp, reference) >= 0)
             .orElse(false));
     }
-    paginator.from(stream).paginate();
   }
 
   @Suggestions
