@@ -22,21 +22,45 @@
  * SOFTWARE.
  */
 
-package com.backpackcloud.sherlogholmes.config.reader;
+package com.backpackcloud.sherlogholmes.domain.readers;
 
-import com.backpackcloud.sherlogholmes.config.ConfigObject;
+import com.backpackcloud.UnbelievableException;
 import com.backpackcloud.sherlogholmes.domain.DataReader;
-import com.fasterxml.jackson.annotation.JsonSubTypes;
-import com.fasterxml.jackson.annotation.JsonTypeInfo;
-import io.quarkus.runtime.annotations.RegisterForReflection;
 
-@JsonTypeInfo(use = JsonTypeInfo.Id.NAME, property = "type")
-@JsonSubTypes({
-  @JsonSubTypes.Type(name = "file", value = FileDataReaderConfig.class),
-  @JsonSubTypes.Type(name = "http", value = HttpDataReaderConfig.class),
-  @JsonSubTypes.Type(name = "socket", value = SocketDataReaderConfig.class),
-})
-@RegisterForReflection
-public interface DataReaderConfig extends ConfigObject<DataReader> {
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.net.ServerSocket;
+import java.net.Socket;
+import java.nio.charset.Charset;
+import java.util.function.Consumer;
+
+public class SocketDataReader implements DataReader {
+
+  private final Charset charset;
+
+  public SocketDataReader(Charset charset) {
+    this.charset = charset;
+  }
+
+  @Override
+  public void read(String location, Consumer<String> consumer) {
+    try (
+      ServerSocket serverSocket = new ServerSocket(Integer.parseInt(location));
+      Socket socket = serverSocket.accept();
+      InputStream inputStream = socket.getInputStream()
+    ) {
+      BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream, charset));
+      String line;
+      while ((line = reader.readLine()) != null) {
+        consumer.accept(line);
+      }
+      reader.close();
+    } catch (IOException e) {
+      throw new UnbelievableException(e);
+    }
+
+  }
 
 }

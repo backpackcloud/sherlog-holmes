@@ -24,19 +24,32 @@
 
 package com.backpackcloud.sherlogholmes.config.reader;
 
-import com.backpackcloud.sherlogholmes.config.ConfigObject;
+import com.backpackcloud.configuration.Configuration;
+import com.backpackcloud.sherlogholmes.config.Config;
 import com.backpackcloud.sherlogholmes.domain.DataReader;
-import com.fasterxml.jackson.annotation.JsonSubTypes;
-import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import com.backpackcloud.sherlogholmes.domain.readers.SocketDataReader;
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import io.quarkus.runtime.annotations.RegisterForReflection;
 
-@JsonTypeInfo(use = JsonTypeInfo.Id.NAME, property = "type")
-@JsonSubTypes({
-  @JsonSubTypes.Type(name = "file", value = FileDataReaderConfig.class),
-  @JsonSubTypes.Type(name = "http", value = HttpDataReaderConfig.class),
-  @JsonSubTypes.Type(name = "socket", value = SocketDataReaderConfig.class),
-})
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
+
 @RegisterForReflection
-public interface DataReaderConfig extends ConfigObject<DataReader> {
+public class SocketDataReaderConfig implements DataReaderConfig {
+
+  private final Configuration charset;
+
+  @JsonCreator
+  public SocketDataReaderConfig(@JsonProperty("charset") Configuration charset) {
+    this.charset = charset;
+  }
+
+  @Override
+  public DataReader get(Config config) {
+    return new SocketDataReader(
+      charset.map(Charset::forName).orElse(StandardCharsets.UTF_8)
+    );
+  }
 
 }

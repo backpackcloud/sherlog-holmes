@@ -37,6 +37,10 @@ readers:
     type:    file
     charset: UTF-8
 
+  socket:
+    type:    socket
+    charset: UTF-8
+
 parsers:
   java:
     type:               regex
