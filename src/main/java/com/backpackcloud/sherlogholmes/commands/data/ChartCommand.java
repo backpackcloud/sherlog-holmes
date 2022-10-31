@@ -64,9 +64,7 @@ public class ChartCommand implements AnnotatedCommand {
   }
 
   @Action
-  public void printData(Writer writer,
-                        TimeUnit unit,
-                        String attribute) {
+  public void printData(Writer writer, TimeUnit unit, String attribute) {
     if (attribute == null || attribute.isBlank()) {
       throw new UnbelievableException("No attribute given");
     }
