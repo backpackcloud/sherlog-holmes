@@ -40,18 +40,13 @@
 
   <properties>
     <quarkus.version>2.13.2.Final</quarkus.version>
-
-    <compiler-plugin.version>3.8.1</compiler-plugin.version>
-    <surefire-plugin.version>2.22.1</surefire-plugin.version>
-
     <quarkus.package.type>native</quarkus.package.type>
 
-    <jaxrs-api.version>2.1.1</jaxrs-api.version>
-    <jakarta.version>4.0.1</jakarta.version>
-    <jakarta.inject-api.version>2.0.1</jakarta.inject-api.version>
-
     <zipper.version>1.0.0-SNAPSHOT</zipper.version>
+
     <opencsv.version>5.7.0</opencsv.version>
+
+    <surefire-plugin.version>2.22.1</surefire-plugin.version>
   </properties>
 
   <dependencyManagement>
