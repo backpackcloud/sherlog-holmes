@@ -27,10 +27,13 @@ package com.backpackcloud.sherlogholmes.domain.readers;
 import com.backpackcloud.UnbelievableException;
 import com.backpackcloud.sherlogholmes.domain.DataReader;
 
+import java.io.File;
 import java.io.IOException;
 import java.nio.charset.Charset;
+import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.PathMatcher;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
@@ -49,10 +52,26 @@ public class FileLineReader implements DataReader {
 
   @Override
   public void read(String location, Consumer<String> consumer) {
+    PathMatcher matcher = FileSystems.getDefault().getPathMatcher("glob:" + location);
+    File directory = new File(location).getParentFile();
+
+    if (directory != null) {
+      for (File file : directory.listFiles()) {
+        Path path = Path.of(file.getPath());
+        if (matcher.matches(path)) {
+          readLines(path, consumer);
+        }
+      }
+    } else {
+      readLines(Path.of(location), consumer);
+    }
+  }
+
+  private void readLines(Path path, Consumer<String> consumer) {
     AtomicInteger count = new AtomicInteger(0);
     Predicate<String> ignoredLines = s -> count.incrementAndGet() > linesToSkip;
     try {
-      Files.lines(Path.of(location), charset)
+      Files.lines(path, charset)
         .filter(ignoredLines)
         .forEach(line -> consumer.accept(removeAnsiColors ?
           line.replaceAll("\\x1B(?:[@-Z\\\\-_]|\\[[0-?]*[ -/]*[@-~])", "") :

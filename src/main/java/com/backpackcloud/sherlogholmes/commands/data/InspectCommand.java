@@ -32,15 +32,12 @@ import com.backpackcloud.cli.ui.Suggestion;
 import com.backpackcloud.cli.ui.impl.FileSuggester;
 import com.backpackcloud.cli.ui.impl.PromptSuggestion;
 import com.backpackcloud.sherlogholmes.config.Config;
+import com.backpackcloud.sherlogholmes.domain.DataReader;
 import com.backpackcloud.sherlogholmes.domain.DataRegistry;
 import com.backpackcloud.sherlogholmes.domain.Investigation;
 import io.quarkus.runtime.annotations.RegisterForReflection;
 
 import javax.enterprise.context.ApplicationScoped;
-import java.io.File;
-import java.nio.file.FileSystems;
-import java.nio.file.Path;
-import java.nio.file.PathMatcher;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -64,27 +61,20 @@ public class InspectCommand implements AnnotatedCommand {
   }
 
   @Action
-  public void execute(String investigationId, String location) {
+  public void execute(String readerId, String investigationId, String location) {
+    DataReader dataReader = config.dataReaderFor(readerId);
     Investigation investigation = config.investigationFor(investigationId);
 
-    PathMatcher matcher = FileSystems.getDefault().getPathMatcher("glob:" + location);
-    File directory = new File(location).getParentFile();
-
-    if (directory != null) {
-      for (File file : directory.listFiles()) {
-        String path = file.getPath();
-        if (matcher.matches(Path.of(path))) {
-          registry.add(investigation.analyze(path));
-        }
-      }
-    } else {
-      registry.add(investigation.analyze(location));
-    }
-
+    registry.add(investigation.analyze(dataReader, location));
   }
 
   @Suggestions
-  public List<Suggestion> suggest(String id, String location) {
+  public List<Suggestion> suggest(String readerId, String investigationId, String location) {
+    if (investigationId == null) {
+      return config.readers().keySet()
+        .stream().map(PromptSuggestion::suggest)
+        .collect(Collectors.toList());
+    }
     if (location == null) {
       return config.investigations().keySet()
         .stream().map(PromptSuggestion::suggest)

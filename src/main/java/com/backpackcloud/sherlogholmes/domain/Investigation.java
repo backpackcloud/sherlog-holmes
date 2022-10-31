@@ -31,27 +31,24 @@ import java.util.function.Consumer;
 public class Investigation {
 
   private final DataModel dataModel;
-  private final DataReader dataReader;
   private final DataParser<Object> dataParser;
   private final DataMapper<Object> dataMapper;
   private final List<PipelineStep> analysisSteps;
   private final FallbackMode fallbackMode;
 
   public Investigation(DataModel dataModel,
-                       DataReader dataReader,
                        DataParser dataParser,
                        DataMapper dataMapper,
                        List<PipelineStep> analysisSteps,
                        FallbackMode fallbackMode) {
     this.dataModel = dataModel;
-    this.dataReader = dataReader;
     this.dataParser = dataParser;
     this.dataMapper = dataMapper;
     this.analysisSteps = analysisSteps;
     this.fallbackMode = fallbackMode;
   }
 
-  public List<DataEntry> analyze(String location) {
+  public List<DataEntry> analyze(DataReader dataReader, String location) {
     List<DataEntry> result = new ArrayList<>();
     switch (fallbackMode) {
       case IGNORE -> dataReader.read(location, content -> dataParser.parse(content)

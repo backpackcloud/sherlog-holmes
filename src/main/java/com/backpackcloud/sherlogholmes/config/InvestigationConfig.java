@@ -35,7 +35,6 @@ import io.quarkus.runtime.annotations.RegisterForReflection;
 public class InvestigationConfig implements ConfigObject<Investigation> {
 
   private final String modelId;
-  private final String readerId;
   private final String parserId;
   private final String mapperId;
   private final String stepsId;
@@ -43,13 +42,11 @@ public class InvestigationConfig implements ConfigObject<Investigation> {
 
   @JsonCreator
   public InvestigationConfig(@JsonProperty("model") String modelId,
-                             @JsonProperty("reader") String readerId,
                              @JsonProperty("parser") String parserId,
                              @JsonProperty("mapper") String mapperId,
                              @JsonProperty("steps") String stepsId,
                              @JsonProperty("fallback") String fallbackMode) {
     this.modelId = modelId;
-    this.readerId = readerId;
     this.parserId = parserId;
     this.mapperId = mapperId;
     this.stepsId = stepsId;
@@ -60,7 +57,6 @@ public class InvestigationConfig implements ConfigObject<Investigation> {
   public Investigation get(Config config) {
     return new Investigation(
       config.dataModelFor(modelId),
-      config.dataReaderFor(readerId),
       config.dataParserFor(parserId),
       config.dataMapperFor(mapperId),
       config.stepsFor(stepsId),

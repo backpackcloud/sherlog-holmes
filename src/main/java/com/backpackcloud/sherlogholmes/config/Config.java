@@ -80,7 +80,7 @@ public class Config {
                 @JsonProperty("parsers") Map<String, DataParserConfig> parsers,
                 @JsonProperty("mappers") Map<String, DataMapperConfig> mappers,
                 @JsonProperty("steps") Map<String, List<PipelineStep>> steps,
-                @JsonProperty("paths") Map<String, InvestigationConfig> investigations) {
+                @JsonProperty("pipelines") Map<String, InvestigationConfig> investigations) {
     this.preferences = userPreferences;
     this.commands = commands != null ? commands : Collections.emptyList();
     this.macros = macros != null ? macros : Collections.emptyMap();
@@ -113,9 +113,9 @@ public class Config {
       styles.forEach(styleMap::put);
     }
 
-    readers.forEach((id, map) -> {
+    models.forEach((id, map) -> {
       if (this.parsers.containsKey(id) && this.mappers.containsKey(id)) {
-        this.investigations.put(id, new InvestigationConfig(id, id, id, id, id, null));
+        this.investigations.put(id, new InvestigationConfig(id, id, id, id, null));
       }
     });
   }
@@ -161,6 +161,10 @@ public class Config {
 
   public Investigation investigationFor(String id) {
     return getObject(investigations, id);
+  }
+
+  public Map<String, DataReaderConfig> readers() {
+    return readers;
   }
 
   public Map<String, InvestigationConfig> investigations() {
