@@ -1,5 +1,6 @@
 preferences:
   default-fallback-mode: append
+  show-added-entries:    true
 
 models:
   java:
@@ -42,9 +43,14 @@ readers:
     charset: UTF-8
 
 parsers:
-  java:
+  infinispan:
     type:               regex
-    pattern:            '{{timestamp}} {{level}} {{category}} {{thread}} {{message}}'
+    pattern:            '{{timestamp}} {{level}}\s+{{thread}} {{category}} {{message}}'
+    remove-ansi-colors: true
+
+  wildfly:
+    type:               regex
+    pattern:            '{{timestamp}} {{level}}\s+{{category}} {{thread}} {{message}}'
     remove-ansi-colors: true
 
 mappers:
@@ -55,8 +61,8 @@ mappers:
 patterns:
   timestamp: '(?<timestamp>\d{2,4}-\d{2}-\d{2,4} \d{2}:\d{2}:\d{2},\d{3})'
   level:     '(?<level>\w+)'
-  category:  '\[(?<category>[^]]+)]'
-  thread:    '\((?<thread>[^)]+)\)'
+  category:  '\[(?<thread>[^]]+)]'
+  thread:    '\((?<category>[^)]+)\)'
   message:   '(?<message>.+)'
 
 steps:
@@ -64,6 +70,19 @@ steps:
     - map:
         from:  message
         regex: '(?<exception>\w+(\.\w+)+(Exception|Error))'
+
+pipelines:
+  wildfly:
+    model:  java
+    parser: wildfly
+    mapper: java
+    steps:  java
+
+  infinispan:
+    model:  java
+    parser: infinispan
+    mapper: java
+    steps:  java
 
 icons:
   attribute-timestamp: nf-fa-calendar
