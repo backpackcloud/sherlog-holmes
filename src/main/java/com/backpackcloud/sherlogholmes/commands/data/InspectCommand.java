@@ -29,6 +29,7 @@ import com.backpackcloud.cli.AnnotatedCommand;
 import com.backpackcloud.cli.CommandDefinition;
 import com.backpackcloud.cli.PreferenceValue;
 import com.backpackcloud.cli.Suggestions;
+import com.backpackcloud.cli.Writer;
 import com.backpackcloud.cli.ui.Suggestion;
 import com.backpackcloud.cli.ui.impl.FileSuggester;
 import com.backpackcloud.cli.ui.impl.PromptSuggestion;
@@ -65,6 +66,8 @@ public class InspectCommand implements AnnotatedCommand {
 
   @Action
   public void execute(@PreferenceValue("add-metadata") boolean addMetadata,
+                      @PreferenceValue("show-added-entries") boolean showEntries,
+                      Writer writer,
                       String readerId,
                       String investigationId,
                       String location) {
@@ -77,7 +80,7 @@ public class InspectCommand implements AnnotatedCommand {
         .forEach(registry::addIndex);
     }
 
-    registry.add(investigation.analyze(dataReader, location, entry -> {
+    investigation.analyze(dataReader, location, entry -> {
       if (addMetadata) {
         entry.addAttribute("model").withValue(objConfig.modelId());
         entry.addAttribute("reader").withValue(readerId);
@@ -85,7 +88,11 @@ public class InspectCommand implements AnnotatedCommand {
         entry.addAttribute("mapper").withValue(objConfig.mapperId());
         entry.addAttribute("steps").withValue(objConfig.stepsId());
       }
-    }));
+      if (showEntries) {
+        writer.writeln(entry);
+      }
+      registry.add(entry);
+    });
   }
 
   @Suggestions

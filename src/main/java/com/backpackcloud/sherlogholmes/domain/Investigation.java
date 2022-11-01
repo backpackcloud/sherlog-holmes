@@ -24,7 +24,6 @@
 
 package com.backpackcloud.sherlogholmes.domain;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
 
@@ -48,17 +47,15 @@ public class Investigation {
     this.fallbackMode = fallbackMode;
   }
 
-  public List<DataEntry> analyze(DataReader dataReader, String location, Consumer<DataEntry> consumer) {
-    List<DataEntry> result = new ArrayList<>();
-    final Consumer<DataEntry> addToResult = result::add;
+  public void analyze(DataReader dataReader, String location, Consumer<DataEntry> consumer) {
     switch (fallbackMode) {
       case IGNORE -> dataReader.read(location, content -> dataParser.parse(content)
         .ifPresent(struct -> dataMapper.map(dataModel.dataSupplier(), struct)
           .stream()
           .peek(entry -> analysisSteps.forEach(step -> step.analyze(entry)))
-          .forEach(consumer.andThen(addToResult))));
+          .forEach(consumer)));
       case APPEND -> {
-        StagingArea stagingArea = new StagingArea(consumer.andThen(addToResult));
+        StagingArea stagingArea = new StagingArea(consumer);
 
         dataReader.read(location, content ->
           dataParser.parse(content)
@@ -70,7 +67,6 @@ public class Investigation {
         stagingArea.push();
       }
     }
-    return result;
   }
 
   private class StagingArea {
