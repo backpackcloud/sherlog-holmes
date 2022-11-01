@@ -76,7 +76,7 @@ public class InspectCommand implements AnnotatedCommand {
     Investigation investigation = config.investigationFor(investigationId);
 
     if (addMetadata) {
-      Stream.of("model", "reader", "parser", "mapper", "steps")
+      Stream.of("model", "reader", "parser", "mapper")
         .forEach(registry::addIndex);
     }
 
@@ -86,7 +86,6 @@ public class InspectCommand implements AnnotatedCommand {
         entry.addAttribute("reader").withValue(readerId);
         entry.addAttribute("parser").withValue(objConfig.parserId());
         entry.addAttribute("mapper").withValue(objConfig.mapperId());
-        entry.addAttribute("steps").withValue(objConfig.stepsId());
       }
       if (showEntries) {
         writer.writeln(entry);
