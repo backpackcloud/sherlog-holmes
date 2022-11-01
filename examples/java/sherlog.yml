@@ -5,7 +5,7 @@ preferences:
 
 models:
   java:
-    format: '{#timestamp} {#level|-5} {#category} {#thread} {@exception}{#message}'
+    format: '{@exception}{#timestamp} {#level|-5} {#category} {#thread} {#message}'
     attributes:
       timestamp:
         type:      datetime
@@ -40,12 +40,14 @@ models:
 
 readers:
   file:
-    type:    file
-    charset: UTF-8
+    type:               file
+    charset:            UTF-8
+    remove-ansi-colors: true
 
   socket:
-    type:    socket
-    charset: UTF-8
+    type:               socket
+    charset:            UTF-8
+    remove-ansi-colors: true
 
 parsers:
   infinispan:
@@ -68,7 +70,7 @@ patterns:
   level:     '(?<level>\w+)'
   category:  '\[(?<thread>[^]]+)]'
   thread:    '\((?<category>[^)]+)\)'
-  message:   '(?<message>((?<code>\w{10}): )?.+)'
+  message:   '(?<message>((?<code>\w{4,}): )?.+)'
 
 steps:
   java:
