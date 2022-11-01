@@ -1,0 +1,29 @@
+2022-11-01 06:10:07,538 INFO  (main) [BOOT] JVM OpenJDK 64-Bit Server VM Oracle Corporation 17+35-2724
+2022-11-01 06:10:07,551 INFO  (main) [BOOT] JVM arguments = [-server, -Xlog:gc*:file=/home/ataxexe/middleware/redhat-datagrid-8.3.1-server/server/log/gc.log:time,uptimemillis:filecount=5,filesize=3M, -Xms64m, -Xmx512m, -XX:MetaspaceSize=64M, -Djava.net.preferIPv4Stack=true, -Djava.awt.headless=true, -Dvisualvm.display.name=redhat-datagrid-server, -Djava.util.logging.manager=org.apache.logging.log4j.jul.LogManager, -Dinfinispan.server.home.path=/home/ataxexe/middleware/redhat-datagrid-8.3.1-server, -classpath, :/home/ataxexe/middleware/redhat-datagrid-8.3.1-server/boot/infinispan-server-runtime-13.0.10.Final-redhat-00001-loader.jar, org.infinispan.server.loader.Loader, org.infinispan.server.Bootstrap]
+2022-11-01 06:10:07,552 INFO  (main) [BOOT] PID = 25678
+2022-11-01 06:10:07,601 INFO  (main) [org.infinispan.SERVER] ISPN080000: Red Hat Data Grid Server starting
+2022-11-01 06:10:07,602 INFO  (main) [org.infinispan.SERVER] ISPN080017: Server configuration: infinispan.xml
+2022-11-01 06:10:07,602 INFO  (main) [org.infinispan.SERVER] ISPN080032: Logging configuration: /home/ataxexe/middleware/redhat-datagrid-8.3.1-server/server/conf/log4j2.xml
+2022-11-01 06:10:08,221 INFO  (main) [org.infinispan.SERVER] ISPN080027: Loaded extension 'query-dsl-filter-converter-factory'
+2022-11-01 06:10:08,222 INFO  (main) [org.infinispan.SERVER] ISPN080027: Loaded extension 'continuous-query-filter-converter-factory'
+2022-11-01 06:10:08,238 INFO  (main) [org.infinispan.SERVER] ISPN080027: Loaded extension 'iteration-filter-converter-factory'
+2022-11-01 06:10:08,240 WARN  (main) [org.infinispan.SERVER] ISPN080059: No script engines are available
+2022-11-01 06:10:08,898 WARN  (main) [org.infinispan.PERSISTENCE] ISPN000554: jboss-marshalling is deprecated and planned for removal
+2022-11-01 06:10:08,924 INFO  (main) [org.infinispan.CONTAINER] ISPN000556: Starting user marshaller 'org.infinispan.commons.marshall.ImmutableProtoStreamMarshaller'
+2022-11-01 06:10:09,174 INFO  (main) [org.infinispan.CONTAINER] ISPN000128: Infinispan version: Red Hat Data Grid 'Infinispan 13.0.10.Final-redhat-00001' 8.3.1.GA
+2022-11-01 06:10:09,177 INFO  (main) [org.infinispan.CONTAINER] ISPN000389: Loaded global state, version=13.0.10.Final-redhat-00001 timestamp=2022-11-01T04:35:37.693112985Z
+2022-11-01 06:10:09,301 INFO  (main) [org.infinispan.CLUSTER] ISPN000078: Starting JGroups channel `cluster` with stack `tcp`
+2022-11-01 06:10:11,436 INFO  (main) [org.jgroups.protocols.pbcast.GMS] Aerolito-39608: no members discovered after 2010 ms: creating cluster as coordinator
+2022-11-01 06:10:11,446 INFO  (main) [org.infinispan.CLUSTER] ISPN000094: Received new cluster view for channel cluster: [Aerolito-39608|0] (1) [Aerolito-39608]
+2022-11-01 06:10:11,480 INFO  (main) [org.infinispan.CLUSTER] ISPN000079: Channel `cluster` local address is `Aerolito-39608`, physical addresses are `[172.21.24.26:7800]`
+2022-11-01 06:10:11,708 INFO  (main) [org.jboss.threads] JBoss Threads version 2.3.3.Final-redhat-00001
+2022-11-01 06:10:11,771 INFO  (main) [org.infinispan.CONTAINER] ISPN000104: Using EmbeddedTransactionManager
+2022-11-01 06:10:12,202 INFO  (main) [org.infinispan.server.core.RequestTracer] OpenTracing integration is disabled
+2022-11-01 06:10:12,283 INFO  (ForkJoinPool.commonPool-worker-1) [org.infinispan.SERVER] ISPN080018: Started connector HotRod (internal)
+2022-11-01 06:10:12,377 INFO  (main) [org.infinispan.SERVER] ISPN080018: Started connector REST (internal)
+2022-11-01 06:10:12,468 INFO  (main) [org.infinispan.SERVER] ISPN080004: Connector SinglePort (default) listening on 127.0.0.1:11222
+2022-11-01 06:10:12,469 INFO  (main) [org.infinispan.SERVER] ISPN080034: Server 'Aerolito-39608' listening on http://127.0.0.1:11222
+2022-11-01 06:10:12,506 INFO  (main) [org.infinispan.SERVER] ISPN080001: Red Hat Data Grid Server 8.3.1.GA started in 4902ms
+2022-11-01 06:10:22,043 INFO  (Thread-0) [org.infinispan.SERVER] ISPN080002: Red Hat Data Grid Server stopping
+2022-11-01 06:10:22,178 INFO  (Thread-0) [org.infinispan.CLUSTER] ISPN000080: Disconnecting JGroups channel `cluster`
+2022-11-01 06:10:22,187 INFO  (Thread-0) [org.infinispan.CONTAINER] ISPN000390: Persisted state, version=13.0.10.Final-redhat-00001 timestamp=2022-11-01T05:10:22.185340576Z

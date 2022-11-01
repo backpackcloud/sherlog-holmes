@@ -1,0 +1,590 @@
+2022-10-31 21:35:56,602 INFO  [org.jboss.modules] (main) JBoss Modules version 1.12.0.Final-redhat-00001
+2022-10-31 21:35:56,810 INFO  [org.jboss.msc] (main) JBoss MSC version 1.4.12.Final-redhat-00001
+2022-10-31 21:35:56,814 INFO  [org.jboss.threads] (main) JBoss Threads version 2.4.0.Final-redhat-00001
+2022-10-31 21:35:56,875 INFO  [org.jboss.as] (MSC service thread 1-2) WFLYSRV0049: JBoss EAP 7.4.7.GA (WildFly Core 15.0.18.Final-redhat-00001) starting
+2022-10-31 21:35:56,876 DEBUG [org.jboss.as.config] (MSC service thread 1-2) Configured system properties:
+	[Standalone] = 
+	file.encoding = UTF-8
+	file.separator = /
+	java.awt.headless = true
+	java.class.path = /home/ataxexe/middleware/jboss-eap-7.4/jboss-modules.jar
+	java.class.version = 61.0
+	java.home = /home/ataxexe/.asdf/installs/java/openjdk-17
+	java.io.tmpdir = /tmp
+	java.library.path = /usr/java/packages/lib:/usr/lib64:/lib64:/lib:/usr/lib
+	java.net.preferIPv4Stack = true
+	java.runtime.name = OpenJDK Runtime Environment
+	java.runtime.version = 17+35-2724
+	java.specification.name = Java Platform API Specification
+	java.specification.vendor = Oracle Corporation
+	java.specification.version = 17
+	java.util.logging.manager = org.jboss.logmanager.LogManager
+	java.vendor = Oracle Corporation
+	java.vendor.url = https://java.oracle.com/
+	java.vendor.url.bug = https://bugreport.java.com/bugreport/
+	java.version = 17
+	java.version.date = 2021-09-14
+	java.vm.compressedOopsMode = 32-bit
+	java.vm.info = mixed mode, sharing
+	java.vm.name = OpenJDK 64-Bit Server VM
+	java.vm.specification.name = Java Virtual Machine Specification
+	java.vm.specification.vendor = Oracle Corporation
+	java.vm.specification.version = 17
+	java.vm.vendor = Oracle Corporation
+	java.vm.version = 17+35-2724
+	javax.management.builder.initial = org.jboss.as.jmx.PluggableMBeanServerBuilder
+	jboss.home.dir = /home/ataxexe/middleware/jboss-eap-7.4
+	jboss.host.name = aerolito
+	jboss.modules.dir = /home/ataxexe/middleware/jboss-eap-7.4/modules
+	jboss.modules.system.pkgs = org.jboss.byteman
+	jboss.node.name = aerolito
+	jboss.qualified.host.name = aerolito
+	jboss.server.base.dir = /home/ataxexe/middleware/jboss-eap-7.4/standalone
+	jboss.server.config.dir = /home/ataxexe/middleware/jboss-eap-7.4/standalone/configuration
+	jboss.server.data.dir = /home/ataxexe/middleware/jboss-eap-7.4/standalone/data
+	jboss.server.deploy.dir = /home/ataxexe/middleware/jboss-eap-7.4/standalone/data/content
+	jboss.server.log.dir = /home/ataxexe/middleware/jboss-eap-7.4/standalone/log
+	jboss.server.name = aerolito
+	jboss.server.persist.config = true
+	jboss.server.temp.dir = /home/ataxexe/middleware/jboss-eap-7.4/standalone/tmp
+	jdk.debug = release
+	line.separator = 
+
+	logging.configuration = file:/home/ataxexe/middleware/jboss-eap-7.4/standalone/configuration/logging.properties
+	module.path = /home/ataxexe/middleware/jboss-eap-7.4/modules
+	native.encoding = UTF-8
+	org.jboss.boot.log.file = /home/ataxexe/middleware/jboss-eap-7.4/standalone/log/server.log
+	org.jboss.resolver.warning = true
+	os.arch = amd64
+	os.name = Linux
+	os.version = 5.15.68.1-microsoft-standard-WSL2
+	path.separator = :
+	sun.arch.data.model = 64
+	sun.boot.library.path = /home/ataxexe/.asdf/installs/java/openjdk-17/lib
+	sun.cpu.endian = little
+	sun.io.unicode.encoding = UnicodeLittle
+	sun.java.command = /home/ataxexe/middleware/jboss-eap-7.4/jboss-modules.jar -mp /home/ataxexe/middleware/jboss-eap-7.4/modules org.jboss.as.standalone -Djboss.home.dir=/home/ataxexe/middleware/jboss-eap-7.4 -Djboss.server.base.dir=/home/ataxexe/middleware/jboss-eap-7.4/standalone
+	sun.java.launcher = SUN_STANDARD
+	sun.jnu.encoding = UTF-8
+	sun.management.compiler = HotSpot 64-Bit Tiered Compilers
+	sun.stderr.encoding = UTF-8
+	sun.stdout.encoding = UTF-8
+	user.country = US
+	user.dir = /home/ataxexe/middleware/jboss-eap-7.4/bin
+	user.home = /home/ataxexe
+	user.language = en
+	user.name = ataxexe
+	user.timezone = Europe/Paris
+2022-10-31 21:35:56,877 DEBUG [org.jboss.as.config] (MSC service thread 1-2) VM Arguments: -D[Standalone] -Xlog:gc*:file=/home/ataxexe/middleware/jboss-eap-7.4/standalone/log/gc.log:time,uptimemillis:filecount=5,filesize=3M -Xms1303m -Xmx1303m -XX:MetaspaceSize=96M -XX:MaxMetaspaceSize=256m -Djava.net.preferIPv4Stack=true -Djboss.modules.system.pkgs=org.jboss.byteman -Djava.awt.headless=true --add-exports=java.base/sun.nio.ch=ALL-UNNAMED --add-exports=jdk.unsupported/sun.misc=ALL-UNNAMED --add-exports=jdk.unsupported/sun.reflect=ALL-UNNAMED --add-exports=java.desktop/sun.awt=ALL-UNNAMED --add-exports=java.naming/com.sun.jndi.ldap=ALL-UNNAMED --add-exports=java.naming/com.sun.jndi.url.ldap=ALL-UNNAMED --add-exports=java.naming/com.sun.jndi.url.ldaps=ALL-UNNAMED --add-opens=java.base/java.lang=ALL-UNNAMED --add-opens=java.base/java.lang.invoke=ALL-UNNAMED --add-opens=java.base/java.lang.reflect=ALL-UNNAMED --add-opens=java.base/java.io=ALL-UNNAMED --add-opens=java.base/java.security=ALL-UNNAMED --add-opens=java.base/java.util=ALL-UNNAMED --add-opens=java.base/java.util.concurrent=ALL-UNNAMED --add-opens=java.management/javax.management=ALL-UNNAMED --add-opens=java.naming/javax.naming=ALL-UNNAMED -Dorg.jboss.boot.log.file=/home/ataxexe/middleware/jboss-eap-7.4/standalone/log/server.log -Dlogging.configuration=file:/home/ataxexe/middleware/jboss-eap-7.4/standalone/configuration/logging.properties 
+2022-10-31 21:35:57,292 INFO  [org.wildfly.security] (ServerService Thread Pool -- 5) ELY00001: WildFly Elytron version 1.15.14.Final-redhat-00001
+2022-10-31 21:35:57,447 INFO  [org.jboss.as.controller.management-deprecated] (ServerService Thread Pool -- 10) WFLYCTL0033: Extension 'security' is deprecated and may not be supported in future versions
+2022-10-31 21:35:57,584 INFO  [org.jboss.as.controller.management-deprecated] (Controller Boot Thread) WFLYCTL0028: Attribute 'security-realm' in the resource at address '/core-service=management/management-interface=http-interface' is deprecated, and may be removed in a future version. See the attribute description in the output of the read-resource-description operation to learn more about the deprecation.
+2022-10-31 21:35:57,605 INFO  [org.jboss.as.controller.management-deprecated] (ServerService Thread Pool -- 34) WFLYCTL0028: Attribute 'security-realm' in the resource at address '/subsystem=undertow/server=default-server/https-listener=https' is deprecated, and may be removed in a future version. See the attribute description in the output of the read-resource-description operation to learn more about the deprecation.
+2022-10-31 21:35:57,642 ERROR [org.jboss.as.controller.management-operation] (Controller Boot Thread) WFLYCTL0013: Operation ("add") failed - address: ([
+    ("core-service" => "management"),
+    ("security-realm" => "ManagementRealm")
+]) - failure description: "WFLYDM0145: The resource 'security-realm' is unsupported since Java 14"
+2022-10-31 21:35:57,643 ERROR [org.jboss.as.controller.management-operation] (Controller Boot Thread) WFLYCTL0013: Operation ("add") failed - address: ([
+    ("core-service" => "management"),
+    ("security-realm" => "ApplicationRealm")
+]) - failure description: "WFLYDM0145: The resource 'security-realm' is unsupported since Java 14"
+2022-10-31 21:35:57,648 INFO  [org.jboss.as.server] (Controller Boot Thread) WFLYSRV0039: Creating http management service using socket-binding (management-http)
+2022-10-31 21:35:57,657 INFO  [org.xnio] (MSC service thread 1-5) XNIO version 3.8.7.SP1-redhat-00001
+2022-10-31 21:35:57,661 INFO  [org.xnio.nio] (MSC service thread 1-5) XNIO NIO Implementation Version 3.8.7.SP1-redhat-00001
+2022-10-31 21:35:57,682 INFO  [org.jboss.as.clustering.infinispan] (ServerService Thread Pool -- 50) WFLYCLINF0001: Activating Infinispan subsystem.
+2022-10-31 21:35:57,685 INFO  [org.wildfly.extension.io] (ServerService Thread Pool -- 51) WFLYIO001: Worker 'default' has auto-configured to 16 IO threads with 128 max task threads based on your 8 available processors
+2022-10-31 21:35:57,689 INFO  [org.jboss.as.jaxrs] (ServerService Thread Pool -- 52) WFLYRS0016: RESTEasy version 3.15.4.Final-redhat-00001
+2022-10-31 21:35:57,691 INFO  [org.wildfly.extension.health] (ServerService Thread Pool -- 49) WFLYHEALTH0001: Activating Base Health Subsystem
+2022-10-31 21:35:57,695 INFO  [org.jboss.as.jsf] (ServerService Thread Pool -- 57) WFLYJSF0007: Activated the following Jakarta Server Faces Implementations: [main]
+2022-10-31 21:35:57,697 INFO  [org.jboss.as.naming] (ServerService Thread Pool -- 60) WFLYNAM0001: Activating Naming Subsystem
+2022-10-31 21:35:57,700 WARN  [org.jboss.as.txn] (ServerService Thread Pool -- 68) WFLYTX0013: The node-identifier attribute on the /subsystem=transactions is set to the default value. This is a danger for environments running multiple servers. Please make sure the attribute value is unique.
+2022-10-31 21:35:57,700 INFO  [org.jboss.as.connector.subsystems.datasources] (ServerService Thread Pool -- 41) WFLYJCA0004: Deploying JDBC-compliant driver class org.h2.Driver (version 1.4)
+2022-10-31 21:35:57,703 INFO  [org.jboss.as.connector.deployers.jdbc] (MSC service thread 1-2) WFLYJCA0018: Started Driver service with driver-name = h2
+2022-10-31 21:35:57,715 INFO  [org.wildfly.extension.metrics] (ServerService Thread Pool -- 59) WFLYMETRICS0001: Activating Base Metrics Subsystem
+2022-10-31 21:35:57,717 INFO  [org.jboss.as.connector] (MSC service thread 1-3) WFLYJCA0009: Starting Jakarta Connectors Subsystem (WildFly/IronJacamar 1.5.3.SP2-redhat-00001)
+2022-10-31 21:35:57,719 ERROR [org.jboss.as.controller.management-operation] (ServerService Thread Pool -- 66) WFLYCTL0013: Operation ("add") failed - address: ([("subsystem" => "security")]) - failure description: "WFLYSEC0106: The resource 'security' is unsupported since Java 14"
+2022-10-31 21:35:57,732 INFO  [org.jboss.as.webservices] (ServerService Thread Pool -- 70) WFLYWS0002: Activating WebServices Extension
+2022-10-31 21:35:57,743 INFO  [org.jboss.remoting] (MSC service thread 1-5) JBoss Remoting version 5.0.25.SP1-redhat-00001
+2022-10-31 21:35:57,754 INFO  [org.jboss.as.naming] (MSC service thread 1-2) WFLYNAM0003: Starting Naming Service
+2022-10-31 21:35:57,754 INFO  [org.jboss.as.mail.extension] (MSC service thread 1-2) WFLYMAIL0001: Bound mail session [java:jboss/mail/Default]
+2022-10-31 21:35:57,754 INFO  [org.wildfly.extension.undertow] (MSC service thread 1-4) WFLYUT0003: Undertow 2.2.19.SP2-redhat-00001 starting
+2022-10-31 21:35:57,756 WARN  [org.wildfly.extension.elytron] (MSC service thread 1-1) WFLYELY00023: KeyStore file '/home/ataxexe/middleware/jboss-eap-7.4/standalone/configuration/application.keystore' does not exist. Used blank.
+2022-10-31 21:35:57,781 WARN  [org.wildfly.extension.elytron] (MSC service thread 1-8) WFLYELY01084: KeyStore /home/ataxexe/middleware/jboss-eap-7.4/standalone/configuration/application.keystore not found, it will be auto generated on first use with a self-signed certificate for host localhost
+2022-10-31 21:35:57,806 INFO  [org.jboss.as.ejb3] (MSC service thread 1-2) WFLYEJB0481: Strict pool slsb-strict-max-pool is using a max instance size of 128 (per class), which is derived from thread worker pool sizing.
+2022-10-31 21:35:57,806 INFO  [org.jboss.as.ejb3] (MSC service thread 1-7) WFLYEJB0482: Strict pool mdb-strict-max-pool is using a max instance size of 32 (per class), which is derived from the number of CPUs on this host.
+2022-10-31 21:35:57,831 INFO  [org.wildfly.extension.undertow] (MSC service thread 1-3) WFLYUT0012: Started server default-server.
+2022-10-31 21:35:57,830 INFO  [org.wildfly.extension.undertow] (ServerService Thread Pool -- 69) WFLYUT0014: Creating file handler for path '/home/ataxexe/middleware/jboss-eap-7.4/welcome-content' with options [directory-listing: 'false', follow-symlink: 'false', case-sensitive: 'true', safe-symlink-paths: '[]']
+2022-10-31 21:35:57,831 INFO  [org.wildfly.extension.undertow] (MSC service thread 1-6) Queuing requests.
+2022-10-31 21:35:57,835 INFO  [org.wildfly.extension.undertow] (MSC service thread 1-6) WFLYUT0018: Host default-host starting
+2022-10-31 21:35:57,896 INFO  [org.wildfly.extension.undertow] (MSC service thread 1-4) WFLYUT0006: Undertow HTTP listener default listening on 127.0.0.1:8080
+2022-10-31 21:35:57,906 INFO  [org.jboss.as.ejb3] (MSC service thread 1-8) WFLYEJB0493: Jakarta Enterprise Beans subsystem suspension complete
+2022-10-31 21:35:57,939 INFO  [org.jboss.as.connector.subsystems.datasources] (MSC service thread 1-8) WFLYJCA0001: Bound data source [java:jboss/datasources/ExampleDS]
+2022-10-31 21:35:58,079 INFO  [org.jboss.as.patching] (MSC service thread 1-3) WFLYPAT0050: JBoss EAP cumulative patch ID is: jboss-eap-7.4.7.CP, one-off patches include: none
+2022-10-31 21:35:58,082 INFO  [org.jboss.as.server.deployment.scanner] (MSC service thread 1-1) WFLYDS0013: Started FileSystemDeploymentService for directory /home/ataxexe/middleware/jboss-eap-7.4/standalone/deployments
+2022-10-31 21:35:58,084 ERROR [org.jboss.as.controller.management-operation] (Controller Boot Thread) WFLYCTL0013: Operation ("add") failed - address: ([
+    ("core-service" => "management"),
+    ("management-interface" => "http-interface")
+]) - failure description: {
+    "WFLYCTL0412: Required services that are not installed:" => [
+        "org.wildfly.core.management.security.realm.ManagementRealm",
+        "jboss.http-upgrade-registry.http-management"
+    ],
+    "WFLYCTL0180: Services with missing/unavailable dependencies" => [
+        "org.wildfly.management.http.extensible is missing [org.wildfly.core.management.security.realm.ManagementRealm]",
+        "jboss.remoting.remoting-http-upgrade-service.http-management is missing [org.wildfly.core.management.security.realm.ManagementRealm, jboss.http-upgrade-registry.http-management]"
+    ]
+}
+2022-10-31 21:35:58,114 ERROR [org.jboss.as.controller.management-operation] (Controller Boot Thread) WFLYCTL0013: Operation ("add") failed - address: ([
+    ("subsystem" => "remoting"),
+    ("http-connector" => "http-remoting-connector")
+]) - failure description: {
+    "WFLYCTL0412: Required services that are not installed:" => ["org.wildfly.core.management.security.realm.ApplicationRealm"],
+    "WFLYCTL0180: Services with missing/unavailable dependencies" => ["jboss.remoting.remoting-http-upgrade-service.http-remoting-connector is missing [org.wildfly.core.management.security.realm.ApplicationRealm]"]
+}
+2022-10-31 21:35:58,115 ERROR [org.jboss.as.controller.management-operation] (Controller Boot Thread) WFLYCTL0013: Operation ("add") failed - address: ([
+    ("subsystem" => "security"),
+    ("security-domain" => "other")
+]) - failure description: {
+    "WFLYCTL0412: Required services that are not installed:" => [
+        "jboss.security.security-management",
+        "jboss.security.jaas"
+    ],
+    "WFLYCTL0180: Services with missing/unavailable dependencies" => ["jboss.security.security-domain.other is missing [jboss.security.security-management, jboss.security.jaas]"]
+}
+2022-10-31 21:35:58,116 ERROR [org.jboss.as.controller.management-operation] (Controller Boot Thread) WFLYCTL0013: Operation ("add") failed - address: ([
+    ("subsystem" => "security"),
+    ("security-domain" => "jboss-web-policy")
+]) - failure description: {
+    "WFLYCTL0412: Required services that are not installed:" => [
+        "jboss.security.security-management",
+        "jboss.security.jaas"
+    ],
+    "WFLYCTL0180: Services with missing/unavailable dependencies" => ["jboss.security.security-domain.jboss-web-policy is missing [jboss.security.security-management, jboss.security.jaas]"]
+}
+2022-10-31 21:35:58,116 ERROR [org.jboss.as.controller.management-operation] (Controller Boot Thread) WFLYCTL0013: Operation ("add") failed - address: ([
+    ("subsystem" => "security"),
+    ("security-domain" => "jaspitest")
+]) - failure description: {
+    "WFLYCTL0412: Required services that are not installed:" => [
+        "jboss.security.security-management",
+        "jboss.security.jaas"
+    ],
+    "WFLYCTL0180: Services with missing/unavailable dependencies" => ["jboss.security.security-domain.jaspitest is missing [jboss.security.security-management, jboss.security.jaas]"]
+}
+2022-10-31 21:35:58,117 ERROR [org.jboss.as.controller.management-operation] (Controller Boot Thread) WFLYCTL0013: Operation ("add") failed - address: ([
+    ("subsystem" => "undertow"),
+    ("server" => "default-server"),
+    ("https-listener" => "https")
+]) - failure description: {
+    "WFLYCTL0412: Required services that are not installed:" => ["org.wildfly.core.management.security.realm.ApplicationRealm"],
+    "WFLYCTL0180: Services with missing/unavailable dependencies" => ["org.wildfly.undertow.listener.https is missing [org.wildfly.core.management.security.realm.ApplicationRealm]"]
+}
+2022-10-31 21:35:58,117 ERROR [org.jboss.as.controller.management-operation] (Controller Boot Thread) WFLYCTL0013: Operation ("add") failed - address: ([
+    ("subsystem" => "security"),
+    ("security-domain" => "jboss-ejb-policy")
+]) - failure description: {
+    "WFLYCTL0412: Required services that are not installed:" => [
+        "jboss.security.security-management",
+        "jboss.security.jaas"
+    ],
+    "WFLYCTL0180: Services with missing/unavailable dependencies" => ["jboss.security.security-domain.jboss-ejb-policy is missing [jboss.security.security-management, jboss.security.jaas]"]
+}
+2022-10-31 21:35:58,118 ERROR [org.jboss.as.controller.management-operation] (Controller Boot Thread) WFLYCTL0013: Operation ("add") failed - address: ([
+    ("subsystem" => "undertow"),
+    ("server" => "default-server"),
+    ("host" => "default-host"),
+    ("setting" => "http-invoker")
+]) - failure description: {
+    "WFLYCTL0412: Required services that are not installed:" => ["org.wildfly.core.management.security.realm.ApplicationRealm"],
+    "WFLYCTL0180: Services with missing/unavailable dependencies" => ["org.wildfly.undertow.http-invoker.host.default-host.http-invoker is missing [org.wildfly.core.management.security.realm.ApplicationRealm]"]
+}
+2022-10-31 21:35:58,119 ERROR [org.jboss.as.controller.management-operation] (Controller Boot Thread) WFLYCTL0013: Operation ("add") failed - address: ([
+    ("core-service" => "management"),
+    ("security-realm" => "ManagementRealm")
+]) - failure description: "WFLYDM0145: The resource 'security-realm' is unsupported since Java 14"
+2022-10-31 21:35:58,119 ERROR [org.jboss.as.controller] (Controller Boot Thread) WFLYCTL0459: Triggering roll back due to missing management services.
+2022-10-31 21:35:58,119 ERROR [org.jboss.as.controller.management-operation] (Controller Boot Thread) WFLYCTL0013: Operation ("add") failed - address: ([
+    ("core-service" => "management"),
+    ("management-interface" => "http-interface")
+]) - failure description: {
+    "WFLYCTL0412: Required services that are not installed:" => [
+        "org.wildfly.core.management.security.realm.ManagementRealm",
+        "jboss.http-upgrade-registry.http-management"
+    ],
+    "WFLYCTL0180: Services with missing/unavailable dependencies" => [
+        "org.wildfly.management.http.extensible is missing [org.wildfly.core.management.security.realm.ManagementRealm]",
+        "jboss.remoting.remoting-http-upgrade-service.http-management is missing [org.wildfly.core.management.security.realm.ManagementRealm, jboss.http-upgrade-registry.http-management]"
+    ]
+}
+2022-10-31 21:35:58,127 INFO  [org.jboss.as.mail.extension] (MSC service thread 1-8) WFLYMAIL0002: Unbound mail session [java:jboss/mail/Default]
+2022-10-31 21:35:58,128 INFO  [org.wildfly.extension.undertow] (MSC service thread 1-5) WFLYUT0019: Host default-host stopping
+2022-10-31 21:35:58,128 INFO  [org.jboss.as.connector.subsystems.datasources] (MSC service thread 1-7) WFLYJCA0010: Unbound data source [java:jboss/datasources/ExampleDS]
+2022-10-31 21:35:58,129 INFO  [org.wildfly.extension.undertow] (MSC service thread 1-4) WFLYUT0008: Undertow HTTP listener default suspending
+2022-10-31 21:35:58,134 INFO  [org.jboss.as.connector.deployers.jdbc] (MSC service thread 1-2) WFLYJCA0019: Stopped Driver service with driver-name = h2
+2022-10-31 21:35:58,135 INFO  [org.wildfly.extension.undertow] (MSC service thread 1-4) WFLYUT0007: Undertow HTTP listener default stopped, was bound to 127.0.0.1:8080
+2022-10-31 21:35:58,136 INFO  [org.wildfly.extension.undertow] (MSC service thread 1-4) WFLYUT0004: Undertow 2.2.19.SP2-redhat-00001 stopping
+2022-10-31 21:35:58,153 FATAL [org.jboss.as.server] (Controller Boot Thread) WFLYSRV0056: Server boot has failed in an unrecoverable manner; exiting. See previous messages for details.
+2022-10-31 21:35:58,160 INFO  [org.jboss.as] (MSC service thread 1-7) WFLYSRV0050: JBoss EAP 7.4.7.GA (WildFly Core 15.0.18.Final-redhat-00001) stopped in 4ms
+2022-10-31 23:58:12,887 INFO  [org.jboss.modules] (main) JBoss Modules version 1.12.0.Final-redhat-00001
+2022-10-31 23:58:13,171 INFO  [org.jboss.msc] (main) JBoss MSC version 1.4.12.Final-redhat-00001
+2022-10-31 23:58:13,178 INFO  [org.jboss.threads] (main) JBoss Threads version 2.4.0.Final-redhat-00001
+2022-10-31 23:58:13,258 INFO  [org.jboss.as] (MSC service thread 1-2) WFLYSRV0049: JBoss EAP 7.4.7.GA (WildFly Core 15.0.18.Final-redhat-00001) starting
+2022-10-31 23:58:13,259 DEBUG [org.jboss.as.config] (MSC service thread 1-2) Configured system properties:
+	[Standalone] = 
+	file.encoding = UTF-8
+	file.separator = /
+	java.awt.headless = true
+	java.class.path = /home/ataxexe/middleware/jboss-eap-7.4/jboss-modules.jar
+	java.class.version = 61.0
+	java.home = /home/ataxexe/.asdf/installs/java/openjdk-17
+	java.io.tmpdir = /tmp
+	java.library.path = /usr/java/packages/lib:/usr/lib64:/lib64:/lib:/usr/lib
+	java.net.preferIPv4Stack = true
+	java.runtime.name = OpenJDK Runtime Environment
+	java.runtime.version = 17+35-2724
+	java.specification.name = Java Platform API Specification
+	java.specification.vendor = Oracle Corporation
+	java.specification.version = 17
+	java.util.logging.manager = org.jboss.logmanager.LogManager
+	java.vendor = Oracle Corporation
+	java.vendor.url = https://java.oracle.com/
+	java.vendor.url.bug = https://bugreport.java.com/bugreport/
+	java.version = 17
+	java.version.date = 2021-09-14
+	java.vm.compressedOopsMode = 32-bit
+	java.vm.info = mixed mode, sharing
+	java.vm.name = OpenJDK 64-Bit Server VM
+	java.vm.specification.name = Java Virtual Machine Specification
+	java.vm.specification.vendor = Oracle Corporation
+	java.vm.specification.version = 17
+	java.vm.vendor = Oracle Corporation
+	java.vm.version = 17+35-2724
+	javax.management.builder.initial = org.jboss.as.jmx.PluggableMBeanServerBuilder
+	jboss.home.dir = /home/ataxexe/middleware/jboss-eap-7.4
+	jboss.host.name = aerolito
+	jboss.modules.dir = /home/ataxexe/middleware/jboss-eap-7.4/modules
+	jboss.modules.system.pkgs = org.jboss.byteman
+	jboss.node.name = aerolito
+	jboss.qualified.host.name = aerolito
+	jboss.server.base.dir = /home/ataxexe/middleware/jboss-eap-7.4/standalone
+	jboss.server.config.dir = /home/ataxexe/middleware/jboss-eap-7.4/standalone/configuration
+	jboss.server.data.dir = /home/ataxexe/middleware/jboss-eap-7.4/standalone/data
+	jboss.server.deploy.dir = /home/ataxexe/middleware/jboss-eap-7.4/standalone/data/content
+	jboss.server.log.dir = /home/ataxexe/middleware/jboss-eap-7.4/standalone/log
+	jboss.server.name = aerolito
+	jboss.server.persist.config = true
+	jboss.server.temp.dir = /home/ataxexe/middleware/jboss-eap-7.4/standalone/tmp
+	jdk.debug = release
+	line.separator = 
+
+	logging.configuration = file:/home/ataxexe/middleware/jboss-eap-7.4/standalone/configuration/logging.properties
+	module.path = /home/ataxexe/middleware/jboss-eap-7.4/modules
+	native.encoding = UTF-8
+	org.jboss.boot.log.file = /home/ataxexe/middleware/jboss-eap-7.4/standalone/log/server.log
+	org.jboss.resolver.warning = true
+	os.arch = amd64
+	os.name = Linux
+	os.version = 5.15.68.1-microsoft-standard-WSL2
+	path.separator = :
+	sun.arch.data.model = 64
+	sun.boot.library.path = /home/ataxexe/.asdf/installs/java/openjdk-17/lib
+	sun.cpu.endian = little
+	sun.io.unicode.encoding = UnicodeLittle
+	sun.java.command = /home/ataxexe/middleware/jboss-eap-7.4/jboss-modules.jar -mp /home/ataxexe/middleware/jboss-eap-7.4/modules org.jboss.as.standalone -Djboss.home.dir=/home/ataxexe/middleware/jboss-eap-7.4 -Djboss.server.base.dir=/home/ataxexe/middleware/jboss-eap-7.4/standalone
+	sun.java.launcher = SUN_STANDARD
+	sun.jnu.encoding = UTF-8
+	sun.management.compiler = HotSpot 64-Bit Tiered Compilers
+	sun.stderr.encoding = UTF-8
+	sun.stdout.encoding = UTF-8
+	user.country = US
+	user.dir = /home/ataxexe/middleware/jboss-eap-7.4/bin
+	user.home = /home/ataxexe
+	user.language = en
+	user.name = ataxexe
+	user.timezone = Europe/Paris
+2022-10-31 23:58:13,260 DEBUG [org.jboss.as.config] (MSC service thread 1-2) VM Arguments: -D[Standalone] -Xlog:gc*:file=/home/ataxexe/middleware/jboss-eap-7.4/standalone/log/gc.log:time,uptimemillis:filecount=5,filesize=3M -Xms1303m -Xmx1303m -XX:MetaspaceSize=96M -XX:MaxMetaspaceSize=256m -Djava.net.preferIPv4Stack=true -Djboss.modules.system.pkgs=org.jboss.byteman -Djava.awt.headless=true --add-exports=java.base/sun.nio.ch=ALL-UNNAMED --add-exports=jdk.unsupported/sun.misc=ALL-UNNAMED --add-exports=jdk.unsupported/sun.reflect=ALL-UNNAMED --add-exports=java.desktop/sun.awt=ALL-UNNAMED --add-exports=java.naming/com.sun.jndi.ldap=ALL-UNNAMED --add-exports=java.naming/com.sun.jndi.url.ldap=ALL-UNNAMED --add-exports=java.naming/com.sun.jndi.url.ldaps=ALL-UNNAMED --add-opens=java.base/java.lang=ALL-UNNAMED --add-opens=java.base/java.lang.invoke=ALL-UNNAMED --add-opens=java.base/java.lang.reflect=ALL-UNNAMED --add-opens=java.base/java.io=ALL-UNNAMED --add-opens=java.base/java.security=ALL-UNNAMED --add-opens=java.base/java.util=ALL-UNNAMED --add-opens=java.base/java.util.concurrent=ALL-UNNAMED --add-opens=java.management/javax.management=ALL-UNNAMED --add-opens=java.naming/javax.naming=ALL-UNNAMED -Dorg.jboss.boot.log.file=/home/ataxexe/middleware/jboss-eap-7.4/standalone/log/server.log -Dlogging.configuration=file:/home/ataxexe/middleware/jboss-eap-7.4/standalone/configuration/logging.properties 
+2022-10-31 23:58:13,765 INFO  [org.wildfly.security] (ServerService Thread Pool -- 21) ELY00001: WildFly Elytron version 1.15.14.Final-redhat-00001
+2022-10-31 23:58:14,004 INFO  [org.jboss.as.controller.management-deprecated] (ServerService Thread Pool -- 14) WFLYCTL0033: Extension 'security' is deprecated and may not be supported in future versions
+2022-10-31 23:58:14,138 INFO  [org.jboss.as.controller.management-deprecated] (Controller Boot Thread) WFLYCTL0028: Attribute 'security-realm' in the resource at address '/core-service=management/management-interface=http-interface' is deprecated, and may be removed in a future version. See the attribute description in the output of the read-resource-description operation to learn more about the deprecation.
+2022-10-31 23:58:14,152 INFO  [org.jboss.as.controller.management-deprecated] (ServerService Thread Pool -- 34) WFLYCTL0028: Attribute 'security-realm' in the resource at address '/subsystem=undertow/server=default-server/https-listener=https' is deprecated, and may be removed in a future version. See the attribute description in the output of the read-resource-description operation to learn more about the deprecation.
+2022-10-31 23:58:14,189 ERROR [org.jboss.as.controller.management-operation] (Controller Boot Thread) WFLYCTL0013: Operation ("add") failed - address: ([
+    ("core-service" => "management"),
+    ("security-realm" => "ManagementRealm")
+]) - failure description: "WFLYDM0145: The resource 'security-realm' is unsupported since Java 14"
+2022-10-31 23:58:14,190 ERROR [org.jboss.as.controller.management-operation] (Controller Boot Thread) WFLYCTL0013: Operation ("add") failed - address: ([
+    ("core-service" => "management"),
+    ("security-realm" => "ApplicationRealm")
+]) - failure description: "WFLYDM0145: The resource 'security-realm' is unsupported since Java 14"
+2022-10-31 23:58:14,195 INFO  [org.jboss.as.server] (Controller Boot Thread) WFLYSRV0039: Creating http management service using socket-binding (management-http)
+2022-10-31 23:58:14,204 INFO  [org.xnio] (MSC service thread 1-7) XNIO version 3.8.7.SP1-redhat-00001
+2022-10-31 23:58:14,210 INFO  [org.xnio.nio] (MSC service thread 1-7) XNIO NIO Implementation Version 3.8.7.SP1-redhat-00001
+2022-10-31 23:58:14,231 INFO  [org.wildfly.extension.io] (ServerService Thread Pool -- 51) WFLYIO001: Worker 'default' has auto-configured to 16 IO threads with 128 max task threads based on your 8 available processors
+2022-10-31 23:58:14,234 INFO  [org.jboss.as.clustering.infinispan] (ServerService Thread Pool -- 50) WFLYCLINF0001: Activating Infinispan subsystem.
+2022-10-31 23:58:14,236 INFO  [org.wildfly.extension.health] (ServerService Thread Pool -- 49) WFLYHEALTH0001: Activating Base Health Subsystem
+2022-10-31 23:58:14,240 INFO  [org.jboss.as.connector.subsystems.datasources] (ServerService Thread Pool -- 41) WFLYJCA0004: Deploying JDBC-compliant driver class org.h2.Driver (version 1.4)
+2022-10-31 23:58:14,267 INFO  [org.jboss.as.jaxrs] (ServerService Thread Pool -- 52) WFLYRS0016: RESTEasy version 3.15.4.Final-redhat-00001
+2022-10-31 23:58:14,272 INFO  [org.jboss.as.jsf] (ServerService Thread Pool -- 57) WFLYJSF0007: Activated the following Jakarta Server Faces Implementations: [main]
+2022-10-31 23:58:14,277 INFO  [org.wildfly.extension.metrics] (ServerService Thread Pool -- 59) WFLYMETRICS0001: Activating Base Metrics Subsystem
+2022-10-31 23:58:14,282 INFO  [org.jboss.as.connector] (MSC service thread 1-4) WFLYJCA0009: Starting Jakarta Connectors Subsystem (WildFly/IronJacamar 1.5.3.SP2-redhat-00001)
+2022-10-31 23:58:14,287 INFO  [org.jboss.as.naming] (ServerService Thread Pool -- 60) WFLYNAM0001: Activating Naming Subsystem
+2022-10-31 23:58:14,290 WARN  [org.jboss.as.txn] (ServerService Thread Pool -- 68) WFLYTX0013: The node-identifier attribute on the /subsystem=transactions is set to the default value. This is a danger for environments running multiple servers. Please make sure the attribute value is unique.
+2022-10-31 23:58:14,291 ERROR [org.jboss.as.controller.management-operation] (ServerService Thread Pool -- 66) WFLYCTL0013: Operation ("add") failed - address: ([("subsystem" => "security")]) - failure description: "WFLYSEC0106: The resource 'security' is unsupported since Java 14"
+2022-10-31 23:58:14,302 INFO  [org.jboss.as.connector.deployers.jdbc] (MSC service thread 1-3) WFLYJCA0018: Started Driver service with driver-name = h2
+2022-10-31 23:58:14,310 WARN  [org.wildfly.extension.elytron] (MSC service thread 1-1) WFLYELY00023: KeyStore file '/home/ataxexe/middleware/jboss-eap-7.4/standalone/configuration/application.keystore' does not exist. Used blank.
+2022-10-31 23:58:14,317 INFO  [org.wildfly.extension.undertow] (MSC service thread 1-3) WFLYUT0003: Undertow 2.2.19.SP2-redhat-00001 starting
+2022-10-31 23:58:14,320 WARN  [org.wildfly.extension.elytron] (MSC service thread 1-6) WFLYELY01084: KeyStore /home/ataxexe/middleware/jboss-eap-7.4/standalone/configuration/application.keystore not found, it will be auto generated on first use with a self-signed certificate for host localhost
+2022-10-31 23:58:14,322 INFO  [org.jboss.remoting] (MSC service thread 1-5) JBoss Remoting version 5.0.25.SP1-redhat-00001
+2022-10-31 23:58:14,325 INFO  [org.jboss.as.webservices] (ServerService Thread Pool -- 70) WFLYWS0002: Activating WebServices Extension
+2022-10-31 23:58:14,343 INFO  [org.jboss.as.naming] (MSC service thread 1-1) WFLYNAM0003: Starting Naming Service
+2022-10-31 23:58:14,344 INFO  [org.jboss.as.mail.extension] (MSC service thread 1-1) WFLYMAIL0001: Bound mail session [java:jboss/mail/Default]
+2022-10-31 23:58:14,398 INFO  [org.jboss.as.ejb3] (MSC service thread 1-5) WFLYEJB0481: Strict pool slsb-strict-max-pool is using a max instance size of 128 (per class), which is derived from thread worker pool sizing.
+2022-10-31 23:58:14,398 INFO  [org.jboss.as.ejb3] (MSC service thread 1-6) WFLYEJB0482: Strict pool mdb-strict-max-pool is using a max instance size of 32 (per class), which is derived from the number of CPUs on this host.
+2022-10-31 23:58:14,411 INFO  [org.wildfly.extension.undertow] (ServerService Thread Pool -- 69) WFLYUT0014: Creating file handler for path '/home/ataxexe/middleware/jboss-eap-7.4/welcome-content' with options [directory-listing: 'false', follow-symlink: 'false', case-sensitive: 'true', safe-symlink-paths: '[]']
+2022-10-31 23:58:14,417 INFO  [org.wildfly.extension.undertow] (MSC service thread 1-4) WFLYUT0012: Started server default-server.
+2022-10-31 23:58:14,421 INFO  [org.wildfly.extension.undertow] (MSC service thread 1-5) Queuing requests.
+2022-10-31 23:58:14,422 INFO  [org.wildfly.extension.undertow] (MSC service thread 1-5) WFLYUT0018: Host default-host starting
+2022-10-31 23:58:14,472 INFO  [org.wildfly.extension.undertow] (MSC service thread 1-6) WFLYUT0006: Undertow HTTP listener default listening on 127.0.0.1:8080
+2022-10-31 23:58:14,521 INFO  [org.jboss.as.ejb3] (MSC service thread 1-7) WFLYEJB0493: Jakarta Enterprise Beans subsystem suspension complete
+2022-10-31 23:58:14,554 INFO  [org.jboss.as.connector.subsystems.datasources] (MSC service thread 1-4) WFLYJCA0001: Bound data source [java:jboss/datasources/ExampleDS]
+2022-10-31 23:58:14,684 INFO  [org.jboss.as.patching] (MSC service thread 1-1) WFLYPAT0050: JBoss EAP cumulative patch ID is: jboss-eap-7.4.7.CP, one-off patches include: none
+2022-10-31 23:58:14,688 INFO  [org.jboss.as.server.deployment.scanner] (MSC service thread 1-5) WFLYDS0013: Started FileSystemDeploymentService for directory /home/ataxexe/middleware/jboss-eap-7.4/standalone/deployments
+2022-10-31 23:58:14,690 ERROR [org.jboss.as.controller.management-operation] (Controller Boot Thread) WFLYCTL0013: Operation ("add") failed - address: ([
+    ("core-service" => "management"),
+    ("management-interface" => "http-interface")
+]) - failure description: {
+    "WFLYCTL0412: Required services that are not installed:" => [
+        "org.wildfly.core.management.security.realm.ManagementRealm",
+        "jboss.http-upgrade-registry.http-management"
+    ],
+    "WFLYCTL0180: Services with missing/unavailable dependencies" => [
+        "jboss.remoting.remoting-http-upgrade-service.http-management is missing [org.wildfly.core.management.security.realm.ManagementRealm, jboss.http-upgrade-registry.http-management]",
+        "org.wildfly.management.http.extensible is missing [org.wildfly.core.management.security.realm.ManagementRealm]"
+    ]
+}
+2022-10-31 23:58:14,722 ERROR [org.jboss.as.controller.management-operation] (Controller Boot Thread) WFLYCTL0013: Operation ("add") failed - address: ([
+    ("subsystem" => "remoting"),
+    ("http-connector" => "http-remoting-connector")
+]) - failure description: {
+    "WFLYCTL0412: Required services that are not installed:" => ["org.wildfly.core.management.security.realm.ApplicationRealm"],
+    "WFLYCTL0180: Services with missing/unavailable dependencies" => ["jboss.remoting.remoting-http-upgrade-service.http-remoting-connector is missing [org.wildfly.core.management.security.realm.ApplicationRealm]"]
+}
+2022-10-31 23:58:14,722 ERROR [org.jboss.as.controller.management-operation] (Controller Boot Thread) WFLYCTL0013: Operation ("add") failed - address: ([
+    ("subsystem" => "security"),
+    ("security-domain" => "other")
+]) - failure description: {
+    "WFLYCTL0412: Required services that are not installed:" => [
+        "jboss.security.security-management",
+        "jboss.security.jaas"
+    ],
+    "WFLYCTL0180: Services with missing/unavailable dependencies" => ["jboss.security.security-domain.other is missing [jboss.security.jaas, jboss.security.security-management]"]
+}
+2022-10-31 23:58:14,723 ERROR [org.jboss.as.controller.management-operation] (Controller Boot Thread) WFLYCTL0013: Operation ("add") failed - address: ([
+    ("subsystem" => "security"),
+    ("security-domain" => "jboss-web-policy")
+]) - failure description: {
+    "WFLYCTL0412: Required services that are not installed:" => [
+        "jboss.security.security-management",
+        "jboss.security.jaas"
+    ],
+    "WFLYCTL0180: Services with missing/unavailable dependencies" => ["jboss.security.security-domain.jboss-web-policy is missing [jboss.security.jaas, jboss.security.security-management]"]
+}
+2022-10-31 23:58:14,723 ERROR [org.jboss.as.controller.management-operation] (Controller Boot Thread) WFLYCTL0013: Operation ("add") failed - address: ([
+    ("subsystem" => "security"),
+    ("security-domain" => "jaspitest")
+]) - failure description: {
+    "WFLYCTL0412: Required services that are not installed:" => [
+        "jboss.security.security-management",
+        "jboss.security.jaas"
+    ],
+    "WFLYCTL0180: Services with missing/unavailable dependencies" => ["jboss.security.security-domain.jaspitest is missing [jboss.security.jaas, jboss.security.security-management]"]
+}
+2022-10-31 23:58:14,723 ERROR [org.jboss.as.controller.management-operation] (Controller Boot Thread) WFLYCTL0013: Operation ("add") failed - address: ([
+    ("subsystem" => "security"),
+    ("security-domain" => "jboss-ejb-policy")
+]) - failure description: {
+    "WFLYCTL0412: Required services that are not installed:" => [
+        "jboss.security.security-management",
+        "jboss.security.jaas"
+    ],
+    "WFLYCTL0180: Services with missing/unavailable dependencies" => ["jboss.security.security-domain.jboss-ejb-policy is missing [jboss.security.jaas, jboss.security.security-management]"]
+}
+2022-10-31 23:58:14,724 ERROR [org.jboss.as.controller.management-operation] (Controller Boot Thread) WFLYCTL0013: Operation ("add") failed - address: ([
+    ("subsystem" => "undertow"),
+    ("server" => "default-server"),
+    ("https-listener" => "https")
+]) - failure description: {
+    "WFLYCTL0412: Required services that are not installed:" => ["org.wildfly.core.management.security.realm.ApplicationRealm"],
+    "WFLYCTL0180: Services with missing/unavailable dependencies" => ["org.wildfly.undertow.listener.https is missing [org.wildfly.core.management.security.realm.ApplicationRealm]"]
+}
+2022-10-31 23:58:14,724 ERROR [org.jboss.as.controller.management-operation] (Controller Boot Thread) WFLYCTL0013: Operation ("add") failed - address: ([
+    ("subsystem" => "undertow"),
+    ("server" => "default-server"),
+    ("host" => "default-host"),
+    ("setting" => "http-invoker")
+]) - failure description: {
+    "WFLYCTL0412: Required services that are not installed:" => ["org.wildfly.core.management.security.realm.ApplicationRealm"],
+    "WFLYCTL0180: Services with missing/unavailable dependencies" => ["org.wildfly.undertow.http-invoker.host.default-host.http-invoker is missing [org.wildfly.core.management.security.realm.ApplicationRealm]"]
+}
+2022-10-31 23:58:14,725 ERROR [org.jboss.as.controller.management-operation] (Controller Boot Thread) WFLYCTL0013: Operation ("add") failed - address: ([
+    ("core-service" => "management"),
+    ("security-realm" => "ManagementRealm")
+]) - failure description: "WFLYDM0145: The resource 'security-realm' is unsupported since Java 14"
+2022-10-31 23:58:14,725 ERROR [org.jboss.as.controller] (Controller Boot Thread) WFLYCTL0459: Triggering roll back due to missing management services.
+2022-10-31 23:58:14,725 ERROR [org.jboss.as.controller.management-operation] (Controller Boot Thread) WFLYCTL0013: Operation ("add") failed - address: ([
+    ("core-service" => "management"),
+    ("management-interface" => "http-interface")
+]) - failure description: {
+    "WFLYCTL0412: Required services that are not installed:" => [
+        "org.wildfly.core.management.security.realm.ManagementRealm",
+        "jboss.http-upgrade-registry.http-management"
+    ],
+    "WFLYCTL0180: Services with missing/unavailable dependencies" => [
+        "jboss.remoting.remoting-http-upgrade-service.http-management is missing [org.wildfly.core.management.security.realm.ManagementRealm, jboss.http-upgrade-registry.http-management]",
+        "org.wildfly.management.http.extensible is missing [org.wildfly.core.management.security.realm.ManagementRealm]"
+    ]
+}
+2022-10-31 23:58:14,733 INFO  [org.wildfly.extension.undertow] (MSC service thread 1-3) WFLYUT0008: Undertow HTTP listener default suspending
+2022-10-31 23:58:14,733 INFO  [org.jboss.as.mail.extension] (MSC service thread 1-7) WFLYMAIL0002: Unbound mail session [java:jboss/mail/Default]
+2022-10-31 23:58:14,733 INFO  [org.wildfly.extension.undertow] (MSC service thread 1-7) WFLYUT0019: Host default-host stopping
+2022-10-31 23:58:14,734 INFO  [org.jboss.as.connector.subsystems.datasources] (MSC service thread 1-8) WFLYJCA0010: Unbound data source [java:jboss/datasources/ExampleDS]
+2022-10-31 23:58:14,739 INFO  [org.jboss.as.connector.deployers.jdbc] (MSC service thread 1-8) WFLYJCA0019: Stopped Driver service with driver-name = h2
+2022-10-31 23:58:14,741 INFO  [org.wildfly.extension.undertow] (MSC service thread 1-3) WFLYUT0007: Undertow HTTP listener default stopped, was bound to 127.0.0.1:8080
+2022-10-31 23:58:14,742 INFO  [org.wildfly.extension.undertow] (MSC service thread 1-8) WFLYUT0004: Undertow 2.2.19.SP2-redhat-00001 stopping
+2022-10-31 23:58:14,758 FATAL [org.jboss.as.server] (Controller Boot Thread) WFLYSRV0056: Server boot has failed in an unrecoverable manner; exiting. See previous messages for details.
+2022-10-31 23:58:14,764 INFO  [org.jboss.as] (MSC service thread 1-3) WFLYSRV0050: JBoss EAP 7.4.7.GA (WildFly Core 15.0.18.Final-redhat-00001) stopped in 3ms
+2022-10-31 23:58:54,684 INFO  [org.jboss.modules] (main) JBoss Modules version 1.12.0.Final-redhat-00001
+2022-10-31 23:58:54,923 INFO  [org.jboss.msc] (main) JBoss MSC version 1.4.12.Final-redhat-00001
+2022-10-31 23:58:54,929 INFO  [org.jboss.threads] (main) JBoss Threads version 2.4.0.Final-redhat-00001
+2022-10-31 23:58:55,002 INFO  [org.jboss.as] (MSC service thread 1-2) WFLYSRV0049: JBoss EAP 7.4.0.GA (WildFly Core 15.0.2.Final-redhat-00001) starting
+2022-10-31 23:58:55,003 DEBUG [org.jboss.as.config] (MSC service thread 1-2) Configured system properties:
+	[Standalone] = 
+	file.encoding = UTF-8
+	file.separator = /
+	java.awt.headless = true
+	java.class.path = /home/ataxexe/middleware/jboss-eap-7.4/jboss-modules.jar
+	java.class.version = 61.0
+	java.home = /home/ataxexe/.asdf/installs/java/openjdk-17
+	java.io.tmpdir = /tmp
+	java.library.path = /usr/java/packages/lib:/usr/lib64:/lib64:/lib:/usr/lib
+	java.net.preferIPv4Stack = true
+	java.runtime.name = OpenJDK Runtime Environment
+	java.runtime.version = 17+35-2724
+	java.specification.name = Java Platform API Specification
+	java.specification.vendor = Oracle Corporation
+	java.specification.version = 17
+	java.util.logging.manager = org.jboss.logmanager.LogManager
+	java.vendor = Oracle Corporation
+	java.vendor.url = https://java.oracle.com/
+	java.vendor.url.bug = https://bugreport.java.com/bugreport/
+	java.version = 17
+	java.version.date = 2021-09-14
+	java.vm.compressedOopsMode = 32-bit
+	java.vm.info = mixed mode, sharing
+	java.vm.name = OpenJDK 64-Bit Server VM
+	java.vm.specification.name = Java Virtual Machine Specification
+	java.vm.specification.vendor = Oracle Corporation
+	java.vm.specification.version = 17
+	java.vm.vendor = Oracle Corporation
+	java.vm.version = 17+35-2724
+	javax.management.builder.initial = org.jboss.as.jmx.PluggableMBeanServerBuilder
+	jboss.home.dir = /home/ataxexe/middleware/jboss-eap-7.4
+	jboss.host.name = aerolito
+	jboss.modules.dir = /home/ataxexe/middleware/jboss-eap-7.4/modules
+	jboss.modules.system.pkgs = org.jboss.byteman
+	jboss.node.name = aerolito
+	jboss.qualified.host.name = aerolito
+	jboss.server.base.dir = /home/ataxexe/middleware/jboss-eap-7.4/standalone
+	jboss.server.config.dir = /home/ataxexe/middleware/jboss-eap-7.4/standalone/configuration
+	jboss.server.data.dir = /home/ataxexe/middleware/jboss-eap-7.4/standalone/data
+	jboss.server.deploy.dir = /home/ataxexe/middleware/jboss-eap-7.4/standalone/data/content
+	jboss.server.log.dir = /home/ataxexe/middleware/jboss-eap-7.4/standalone/log
+	jboss.server.name = aerolito
+	jboss.server.persist.config = true
+	jboss.server.temp.dir = /home/ataxexe/middleware/jboss-eap-7.4/standalone/tmp
+	jdk.debug = release
+	line.separator = 
+
+	logging.configuration = file:/home/ataxexe/middleware/jboss-eap-7.4/standalone/configuration/logging.properties
+	module.path = /home/ataxexe/middleware/jboss-eap-7.4/modules
+	native.encoding = UTF-8
+	org.jboss.boot.log.file = /home/ataxexe/middleware/jboss-eap-7.4/standalone/log/server.log
+	org.jboss.resolver.warning = true
+	os.arch = amd64
+	os.name = Linux
+	os.version = 5.15.68.1-microsoft-standard-WSL2
+	path.separator = :
+	sun.arch.data.model = 64
+	sun.boot.library.path = /home/ataxexe/.asdf/installs/java/openjdk-17/lib
+	sun.cpu.endian = little
+	sun.io.unicode.encoding = UnicodeLittle
+	sun.java.command = /home/ataxexe/middleware/jboss-eap-7.4/jboss-modules.jar -mp /home/ataxexe/middleware/jboss-eap-7.4/modules org.jboss.as.standalone -Djboss.home.dir=/home/ataxexe/middleware/jboss-eap-7.4 -Djboss.server.base.dir=/home/ataxexe/middleware/jboss-eap-7.4/standalone
+	sun.java.launcher = SUN_STANDARD
+	sun.jnu.encoding = UTF-8
+	sun.management.compiler = HotSpot 64-Bit Tiered Compilers
+	sun.stderr.encoding = UTF-8
+	sun.stdout.encoding = UTF-8
+	user.country = US
+	user.dir = /home/ataxexe/middleware/jboss-eap-7.4/bin
+	user.home = /home/ataxexe
+	user.language = en
+	user.name = ataxexe
+	user.timezone = Europe/Paris
+2022-10-31 23:58:55,004 DEBUG [org.jboss.as.config] (MSC service thread 1-2) VM Arguments: -D[Standalone] -Xlog:gc*:file=/home/ataxexe/middleware/jboss-eap-7.4/standalone/log/gc.log:time,uptimemillis:filecount=5,filesize=3M -Xms1303m -Xmx1303m -XX:MetaspaceSize=96M -XX:MaxMetaspaceSize=256m -Djava.net.preferIPv4Stack=true -Djboss.modules.system.pkgs=org.jboss.byteman -Djava.awt.headless=true --add-exports=java.base/sun.nio.ch=ALL-UNNAMED --add-exports=jdk.unsupported/sun.misc=ALL-UNNAMED --add-exports=jdk.unsupported/sun.reflect=ALL-UNNAMED --add-exports=java.desktop/sun.awt=ALL-UNNAMED --add-exports=java.naming/com.sun.jndi.ldap=ALL-UNNAMED --add-exports=java.naming/com.sun.jndi.url.ldap=ALL-UNNAMED --add-exports=java.naming/com.sun.jndi.url.ldaps=ALL-UNNAMED --add-opens=java.base/java.lang=ALL-UNNAMED --add-opens=java.base/java.lang.invoke=ALL-UNNAMED --add-opens=java.base/java.lang.reflect=ALL-UNNAMED --add-opens=java.base/java.io=ALL-UNNAMED --add-opens=java.base/java.security=ALL-UNNAMED --add-opens=java.base/java.util=ALL-UNNAMED --add-opens=java.base/java.util.concurrent=ALL-UNNAMED --add-opens=java.management/javax.management=ALL-UNNAMED --add-opens=java.naming/javax.naming=ALL-UNNAMED -Dorg.jboss.boot.log.file=/home/ataxexe/middleware/jboss-eap-7.4/standalone/log/server.log -Dlogging.configuration=file:/home/ataxexe/middleware/jboss-eap-7.4/standalone/configuration/logging.properties 
+2022-10-31 23:58:55,486 INFO  [org.wildfly.security] (ServerService Thread Pool -- 21) ELY00001: WildFly Elytron version 1.15.3.Final-redhat-00001
+2022-10-31 23:58:55,659 INFO  [org.jboss.as.controller.management-deprecated] (ServerService Thread Pool -- 20) WFLYCTL0033: Extension 'security' is deprecated and may not be supported in future versions
+2022-10-31 23:58:55,784 INFO  [org.jboss.as.controller.management-deprecated] (Controller Boot Thread) WFLYCTL0028: Attribute 'security-realm' in the resource at address '/core-service=management/management-interface=http-interface' is deprecated, and may be removed in a future version. See the attribute description in the output of the read-resource-description operation to learn more about the deprecation.
+2022-10-31 23:58:55,796 INFO  [org.jboss.as.controller.management-deprecated] (ServerService Thread Pool -- 29) WFLYCTL0028: Attribute 'security-realm' in the resource at address '/subsystem=undertow/server=default-server/https-listener=https' is deprecated, and may be removed in a future version. See the attribute description in the output of the read-resource-description operation to learn more about the deprecation.
+2022-10-31 23:58:55,834 INFO  [org.jboss.as.server] (Controller Boot Thread) WFLYSRV0039: Creating http management service using socket-binding (management-http)
+2022-10-31 23:58:55,843 INFO  [org.xnio] (MSC service thread 1-6) XNIO version 3.8.4.Final-redhat-00001
+2022-10-31 23:58:55,848 INFO  [org.xnio.nio] (MSC service thread 1-6) XNIO NIO Implementation Version 3.8.4.Final-redhat-00001
+2022-10-31 23:58:55,867 INFO  [org.wildfly.extension.health] (ServerService Thread Pool -- 49) WFLYHEALTH0001: Activating Base Health Subsystem
+2022-10-31 23:58:55,869 INFO  [org.jboss.as.clustering.infinispan] (ServerService Thread Pool -- 50) WFLYCLINF0001: Activating Infinispan subsystem.
+2022-10-31 23:58:55,879 INFO  [org.jboss.as.jaxrs] (ServerService Thread Pool -- 52) WFLYRS0016: RESTEasy version 3.15.1.Final-redhat-00001
+2022-10-31 23:58:55,881 INFO  [org.jboss.as.connector.subsystems.datasources] (ServerService Thread Pool -- 41) WFLYJCA0004: Deploying JDBC-compliant driver class org.h2.Driver (version 1.4)
+2022-10-31 23:58:55,891 INFO  [org.wildfly.extension.io] (ServerService Thread Pool -- 51) WFLYIO001: Worker 'default' has auto-configured to 16 IO threads with 128 max task threads based on your 8 available processors
+2022-10-31 23:58:55,904 INFO  [org.jboss.as.connector] (MSC service thread 1-6) WFLYJCA0009: Starting Jakarta Connectors Subsystem (WildFly/IronJacamar 1.4.30.Final-redhat-00001)
+2022-10-31 23:58:55,904 INFO  [org.jboss.as.connector.deployers.jdbc] (MSC service thread 1-7) WFLYJCA0018: Started Driver service with driver-name = h2
+2022-10-31 23:58:55,906 INFO  [org.jboss.as.naming] (ServerService Thread Pool -- 60) WFLYNAM0001: Activating Naming Subsystem
+2022-10-31 23:58:55,908 INFO  [org.jboss.as.jsf] (ServerService Thread Pool -- 57) WFLYJSF0007: Activated the following Jakarta Server Faces Implementations: [main]
+2022-10-31 23:58:55,909 INFO  [org.jboss.remoting] (MSC service thread 1-1) JBoss Remoting version 5.0.20.SP1-redhat-00001
+2022-10-31 23:58:55,911 INFO  [org.wildfly.extension.metrics] (ServerService Thread Pool -- 59) WFLYMETRICS0001: Activating Base Metrics Subsystem
+2022-10-31 23:58:55,916 INFO  [org.jboss.as.security] (ServerService Thread Pool -- 66) WFLYSEC0002: Activating Security Subsystem
+2022-10-31 23:58:55,920 WARN  [org.jboss.as.txn] (ServerService Thread Pool -- 68) WFLYTX0013: The node-identifier attribute on the /subsystem=transactions is set to the default value. This is a danger for environments running multiple servers. Please make sure the attribute value is unique.
+2022-10-31 23:58:55,922 INFO  [org.jboss.as.security] (MSC service thread 1-5) WFLYSEC0001: Current PicketBox version=5.0.3.Final-redhat-00007
+2022-10-31 23:58:55,925 INFO  [org.jboss.as.webservices] (ServerService Thread Pool -- 70) WFLYWS0002: Activating WebServices Extension
+2022-10-31 23:58:55,927 INFO  [org.jboss.as.naming] (MSC service thread 1-8) WFLYNAM0003: Starting Naming Service
+2022-10-31 23:58:55,929 INFO  [org.jboss.as.mail.extension] (MSC service thread 1-2) WFLYMAIL0001: Bound mail session [java:jboss/mail/Default]
+2022-10-31 23:58:55,952 INFO  [org.wildfly.extension.undertow] (MSC service thread 1-2) WFLYUT0003: Undertow 2.2.5.Final-redhat-00001 starting
+2022-10-31 23:58:55,962 WARN  [org.wildfly.extension.elytron] (MSC service thread 1-1) WFLYELY00023: KeyStore file '/home/ataxexe/middleware/jboss-eap-7.4/standalone/configuration/application.keystore' does not exist. Used blank.
+2022-10-31 23:58:55,979 WARN  [org.wildfly.extension.elytron] (MSC service thread 1-6) WFLYELY01084: KeyStore /home/ataxexe/middleware/jboss-eap-7.4/standalone/configuration/application.keystore not found, it will be auto generated on first use with a self-signed certificate for host localhost
+2022-10-31 23:58:56,010 INFO  [org.jboss.as.ejb3] (MSC service thread 1-2) WFLYEJB0482: Strict pool mdb-strict-max-pool is using a max instance size of 32 (per class), which is derived from the number of CPUs on this host.
+2022-10-31 23:58:56,010 INFO  [org.jboss.as.ejb3] (MSC service thread 1-4) WFLYEJB0481: Strict pool slsb-strict-max-pool is using a max instance size of 128 (per class), which is derived from thread worker pool sizing.
+2022-10-31 23:58:56,074 INFO  [org.wildfly.extension.undertow] (ServerService Thread Pool -- 69) WFLYUT0014: Creating file handler for path '/home/ataxexe/middleware/jboss-eap-7.4/welcome-content' with options [directory-listing: 'false', follow-symlink: 'false', case-sensitive: 'true', safe-symlink-paths: '[]']
+2022-10-31 23:58:56,078 INFO  [org.wildfly.extension.undertow] (MSC service thread 1-6) WFLYUT0012: Started server default-server.
+2022-10-31 23:58:56,079 INFO  [org.wildfly.extension.undertow] (MSC service thread 1-2) Queuing requests.
+2022-10-31 23:58:56,080 INFO  [org.wildfly.extension.undertow] (MSC service thread 1-2) WFLYUT0018: Host default-host starting
+2022-10-31 23:58:56,114 INFO  [org.wildfly.extension.undertow] (MSC service thread 1-7) WFLYUT0006: Undertow HTTP listener default listening on 127.0.0.1:8080
+2022-10-31 23:58:56,154 INFO  [org.jboss.as.ejb3] (MSC service thread 1-8) WFLYEJB0493: Jakarta Enterprise Beans subsystem suspension complete
+2022-10-31 23:58:56,190 INFO  [org.jboss.as.connector.subsystems.datasources] (MSC service thread 1-8) WFLYJCA0001: Bound data source [java:jboss/datasources/ExampleDS]
+2022-10-31 23:58:56,228 INFO  [org.jboss.as.patching] (MSC service thread 1-8) WFLYPAT0050: JBoss EAP cumulative patch ID is: jboss-eap-7.4.7.CP, one-off patches include: none
+2022-10-31 23:58:56,237 WARN  [org.jboss.as.domain.management.security] (MSC service thread 1-2) WFLYDM0111: Keystore /home/ataxexe/middleware/jboss-eap-7.4/standalone/configuration/application.keystore not found, it will be auto generated on first use with a self signed certificate for host localhost
+2022-10-31 23:58:56,244 INFO  [org.jboss.as.server.deployment.scanner] (MSC service thread 1-6) WFLYDS0013: Started FileSystemDeploymentService for directory /home/ataxexe/middleware/jboss-eap-7.4/standalone/deployments
+2022-10-31 23:58:56,257 INFO  [org.wildfly.extension.undertow] (MSC service thread 1-4) WFLYUT0006: Undertow HTTPS listener https listening on 127.0.0.1:8443
+2022-10-31 23:58:56,308 INFO  [org.jboss.ws.common.management] (MSC service thread 1-1) JBWS022052: Starting JBossWS 5.4.2.Final-redhat-00001 (Apache CXF 3.3.9.redhat-00001) 
+2022-10-31 23:58:56,365 INFO  [org.jboss.as.server] (Controller Boot Thread) WFLYSRV0212: Resuming server
+2022-10-31 23:58:56,366 INFO  [org.jboss.as] (Controller Boot Thread) WFLYSRV0025: JBoss EAP 7.4.0.GA (WildFly Core 15.0.2.Final-redhat-00001) started in 1911ms - Started 317 of 556 services (343 services are lazy, passive or on-demand)
+2022-10-31 23:58:56,368 INFO  [org.jboss.as] (Controller Boot Thread) WFLYSRV0060: Http management interface listening on http://127.0.0.1:9990/management
+2022-10-31 23:58:56,368 INFO  [org.jboss.as] (Controller Boot Thread) WFLYSRV0051: Admin console listening on http://127.0.0.1:9990
+2022-10-31 23:59:12,158 INFO  [org.jboss.as.server] (Thread-1) WFLYSRV0272: Suspending server
+2022-10-31 23:59:12,159 INFO  [org.jboss.as.ejb3] (Thread-1) WFLYEJB0493: Jakarta Enterprise Beans subsystem suspension complete
+2022-10-31 23:59:12,161 INFO  [org.jboss.as.server] (Thread-1) WFLYSRV0220: Server shutdown has been requested via an OS signal
+2022-10-31 23:59:12,167 INFO  [org.jboss.as.connector.subsystems.datasources] (MSC service thread 1-5) WFLYJCA0010: Unbound data source [java:jboss/datasources/ExampleDS]
+2022-10-31 23:59:12,168 INFO  [org.wildfly.extension.undertow] (MSC service thread 1-8) WFLYUT0019: Host default-host stopping
+2022-10-31 23:59:12,168 INFO  [org.jboss.as.mail.extension] (MSC service thread 1-1) WFLYMAIL0002: Unbound mail session [java:jboss/mail/Default]
+2022-10-31 23:59:12,170 INFO  [org.jboss.as.connector.deployers.jdbc] (MSC service thread 1-3) WFLYJCA0019: Stopped Driver service with driver-name = h2
+2022-10-31 23:59:12,170 INFO  [org.wildfly.extension.undertow] (MSC service thread 1-8) WFLYUT0008: Undertow HTTPS listener https suspending
+2022-10-31 23:59:12,170 INFO  [org.wildfly.extension.undertow] (MSC service thread 1-1) WFLYUT0008: Undertow HTTP listener default suspending
+2022-10-31 23:59:12,172 INFO  [org.wildfly.extension.undertow] (MSC service thread 1-8) WFLYUT0007: Undertow HTTPS listener https stopped, was bound to 127.0.0.1:8443
+2022-10-31 23:59:12,172 INFO  [org.wildfly.extension.undertow] (MSC service thread 1-1) WFLYUT0007: Undertow HTTP listener default stopped, was bound to 127.0.0.1:8080
+2022-10-31 23:59:12,173 INFO  [org.wildfly.extension.undertow] (MSC service thread 1-5) WFLYUT0004: Undertow 2.2.5.Final-redhat-00001 stopping
+2022-10-31 23:59:12,179 INFO  [org.jboss.as] (MSC service thread 1-5) WFLYSRV0050: JBoss EAP 7.4.0.GA (WildFly Core 15.0.2.Final-redhat-00001) stopped in 15ms
