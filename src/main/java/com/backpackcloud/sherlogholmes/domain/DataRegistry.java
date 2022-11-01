@@ -27,12 +27,10 @@ package com.backpackcloud.sherlogholmes.domain;
 import com.backpackcloud.cli.Registry;
 
 import java.time.Duration;
-import java.util.Collection;
 import java.util.Map;
 import java.util.NavigableSet;
 import java.util.Optional;
 import java.util.Set;
-import java.util.function.Consumer;
 import java.util.stream.Stream;
 
 public interface DataRegistry extends Registry {
@@ -42,13 +40,7 @@ public interface DataRegistry extends Registry {
     return "data";
   }
 
-  void onDataChanged(Runnable action);
-
-  void onDataAdded(Consumer<DataEntry> consumer);
-
   void add(DataEntry entry);
-
-  void add(Collection<DataEntry> entries);
 
   void apply(DataFilter filter);
 

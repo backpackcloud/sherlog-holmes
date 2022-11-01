@@ -34,15 +34,19 @@ import com.backpackcloud.sherlogholmes.domain.DataRegistry;
 import javax.enterprise.context.ApplicationScoped;
 import java.time.Duration;
 import java.time.temporal.Temporal;
-import java.util.*;
-import java.util.function.Consumer;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.NavigableSet;
+import java.util.Optional;
+import java.util.Set;
+import java.util.TreeSet;
 import java.util.stream.Stream;
 
 @ApplicationScoped
 public class DataRegistryImpl implements DataRegistry {
 
-  private final List<Runnable> dataChangedListeners = new ArrayList<>();
-  private final List<Consumer<DataEntry>> dataAddedListeners = new ArrayList<>();
   private final DataRegistry total = new _DataRegistry();
   private DataRegistry filtered;
 
@@ -60,39 +64,9 @@ public class DataRegistryImpl implements DataRegistry {
   }
 
   @Override
-  public void onDataChanged(Runnable action) {
-    this.dataChangedListeners.add(action);
-  }
-
-  @Override
-  public void onDataAdded(Consumer<DataEntry> consumer) {
-    this.dataAddedListeners.add(consumer);
-  }
-
-  private void notifyDataChanged() {
-    dataChangedListeners.forEach(Runnable::run);
-  }
-
-  private void notifyDataAdded(DataEntry entry) {
-    dataAddedListeners.forEach(consumer -> consumer.accept(entry));
-  }
-
-  @Override
   public void add(DataEntry entry) {
     total.add(entry);
     filtered().ifPresent(registry -> registry.add(entry));
-    notifyDataAdded(entry);
-    notifyDataChanged();
-  }
-
-  @Override
-  public void add(Collection<DataEntry> entries) {
-    entries.forEach(entry -> {
-      total.add(entry);
-      filtered().ifPresent(registry -> registry.add(entry));
-      notifyDataAdded(entry);
-    });
-    notifyDataChanged();
   }
 
   @Override
@@ -102,13 +76,11 @@ public class DataRegistryImpl implements DataRegistry {
     total.stream()
       .filter(filter)
       .forEach(filtered::add);
-    notifyDataChanged();
   }
 
   @Override
   public void removeFilter() {
     filtered = null;
-    notifyDataChanged();
   }
 
   @Override
@@ -179,7 +151,6 @@ public class DataRegistryImpl implements DataRegistry {
   public void clear() {
     total.clear();
     filtered = null;
-    notifyDataChanged();
   }
 
   private static class _DataRegistry implements DataRegistry {
@@ -191,16 +162,6 @@ public class DataRegistryImpl implements DataRegistry {
       this.entries = new TreeSet<>();
       this.index = new HashMap<>();
       this.attributeTypes = new HashMap<>();
-    }
-
-    @Override
-    public void onDataChanged(Runnable action) {
-      throw new UnbelievableException();
-    }
-
-    @Override
-    public void onDataAdded(Consumer<DataEntry> consumer) {
-      throw new UnbelievableException();
     }
 
     @Override
@@ -219,11 +180,6 @@ public class DataRegistryImpl implements DataRegistry {
             }
             valuesMap.get(value).add(entry);
           })));
-    }
-
-    @Override
-    public void add(Collection<DataEntry> entries) {
-      entries.forEach(this::add);
     }
 
     @Override
