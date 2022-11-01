@@ -60,22 +60,22 @@ public class DataEntryImpl implements DataEntry {
   }
 
   @Override
-  public void add(Attribute attribute) {
+  public void addAttribute(Attribute attribute) {
     this.attributes.put(attribute.name(), attribute);
   }
 
   @Override
-  public AttributeBuilder add(String name) {
+  public AttributeBuilder addAttribute(String name) {
     return new AttributeBuilderImpl(name, dataAttribute -> this.attributes.put(name, dataAttribute));
   }
 
   @Override
-  public <E> AttributeBuilder<E> add(String name, Class<E> valueType) {
+  public <E> AttributeBuilder<E> addAttribute(String name, Class<E> valueType) {
     return new AttributeBuilderImpl(name, valueType, dataAttribute -> this.attributes.put(name, dataAttribute));
   }
 
   @Override
-  public <E> AttributeBuilder<E> add(String name, E value) {
+  public <E> AttributeBuilder<E> addAttribute(String name, E value) {
     return new AttributeBuilderImpl(name, value, dataAttribute -> this.attributes.put(name, dataAttribute));
   }
 

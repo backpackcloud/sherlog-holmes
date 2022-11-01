@@ -53,6 +53,26 @@ public class InvestigationConfig implements ConfigObject<Investigation> {
     this.fallbackMode = fallbackMode;
   }
 
+  public String modelId() {
+    return modelId;
+  }
+
+  public String parserId() {
+    return parserId;
+  }
+
+  public String mapperId() {
+    return mapperId;
+  }
+
+  public String stepsId() {
+    return stepsId;
+  }
+
+  public String fallbackMode() {
+    return fallbackMode;
+  }
+
   @Override
   public Investigation get(Config config) {
     return new Investigation(

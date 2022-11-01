@@ -48,16 +48,17 @@ public class Investigation {
     this.fallbackMode = fallbackMode;
   }
 
-  public List<DataEntry> analyze(DataReader dataReader, String location) {
+  public List<DataEntry> analyze(DataReader dataReader, String location, Consumer<DataEntry> consumer) {
     List<DataEntry> result = new ArrayList<>();
+    final Consumer<DataEntry> addToResult = result::add;
     switch (fallbackMode) {
       case IGNORE -> dataReader.read(location, content -> dataParser.parse(content)
         .ifPresent(struct -> dataMapper.map(dataModel.dataSupplier(), struct)
           .stream()
           .peek(entry -> analysisSteps.forEach(step -> step.analyze(entry)))
-          .forEach(result::add)));
+          .forEach(consumer.andThen(addToResult))));
       case APPEND -> {
-        StagingArea stagingArea = new StagingArea(result::add);
+        StagingArea stagingArea = new StagingArea(consumer.andThen(addToResult));
 
         dataReader.read(location, content ->
           dataParser.parse(content)

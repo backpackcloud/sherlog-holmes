@@ -42,9 +42,9 @@ public class DataRegistryTest {
 
   private DataEntry newEntry() {
     DataEntry entry = new DataEntryImpl();
-    entry.add("timestamp", LocalDateTime.now());
-    entry.add("random", Math.random());
-    entry.add("fooBar", String.class)
+    entry.addAttribute("timestamp", LocalDateTime.now());
+    entry.addAttribute("random", Math.random());
+    entry.addAttribute("fooBar", String.class)
       .ofType(fooBarType)
       .withValue(count++ % 2 == 0 ? "foo" : "bar");
 

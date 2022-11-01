@@ -56,7 +56,15 @@ public enum Preferences implements PreferenceSpec {
     "shows entries as they are added in the registry",
     Type.FLAG,
     "false"
-  );
+  ),
+
+  ADD_METADATA(
+    "adds metadata about the data analysis (model, reader, parser, mapper and steps)",
+    Type.FLAG,
+    "false"
+  ),
+
+  ;
 
   private final String id;
   private final String description;

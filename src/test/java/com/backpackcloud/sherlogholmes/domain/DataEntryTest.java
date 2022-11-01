@@ -46,7 +46,7 @@ public class DataEntryTest {
     Backstage.describe(DataEntry.class)
       .given(dataEntry())
 
-      .then(entry -> entry.add("timestamp").ofType(AttributeType.DATE))
+      .then(entry -> entry.addAttribute("timestamp").ofType(AttributeType.DATE))
 
       .from(entry -> entry.attributes().size()).expect(1);
   }
@@ -55,7 +55,7 @@ public class DataEntryTest {
   public void testAddAndRemoveAttribute() {
     Backstage.describe(DataEntry.class)
       .given(dataEntry())
-      .then(entry -> entry.add("foo"))
+      .then(entry -> entry.addAttribute("foo"))
 
       .from(entry -> entry.hasAttribute("foo")).expect(true)
 

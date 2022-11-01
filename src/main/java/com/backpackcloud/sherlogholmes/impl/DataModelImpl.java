@@ -77,9 +77,9 @@ public class DataModelImpl implements DataModel {
       DataEntry dataEntry = new DataEntryImpl();
       typeMap.forEach((name, type) -> {
         if (multivaluedAttributes.contains(name)) {
-          dataEntry.add(name).multivalued().ofType(type);
+          dataEntry.addAttribute(name).multivalued().ofType(type);
         } else {
-          dataEntry.add(name).ofType(type);
+          dataEntry.addAttribute(name).ofType(type);
         }
       });
       if (format != null) {

@@ -27,11 +27,13 @@ package com.backpackcloud.sherlogholmes.commands.data;
 import com.backpackcloud.cli.Action;
 import com.backpackcloud.cli.AnnotatedCommand;
 import com.backpackcloud.cli.CommandDefinition;
+import com.backpackcloud.cli.PreferenceValue;
 import com.backpackcloud.cli.Suggestions;
 import com.backpackcloud.cli.ui.Suggestion;
 import com.backpackcloud.cli.ui.impl.FileSuggester;
 import com.backpackcloud.cli.ui.impl.PromptSuggestion;
 import com.backpackcloud.sherlogholmes.config.Config;
+import com.backpackcloud.sherlogholmes.config.InvestigationConfig;
 import com.backpackcloud.sherlogholmes.domain.DataReader;
 import com.backpackcloud.sherlogholmes.domain.DataRegistry;
 import com.backpackcloud.sherlogholmes.domain.Investigation;
@@ -40,6 +42,7 @@ import io.quarkus.runtime.annotations.RegisterForReflection;
 import javax.enterprise.context.ApplicationScoped;
 import java.util.List;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @CommandDefinition(
   name = "inspect",
@@ -61,11 +64,28 @@ public class InspectCommand implements AnnotatedCommand {
   }
 
   @Action
-  public void execute(String readerId, String investigationId, String location) {
+  public void execute(@PreferenceValue("add-metadata") boolean addMetadata,
+                      String readerId,
+                      String investigationId,
+                      String location) {
     DataReader dataReader = config.dataReaderFor(readerId);
+    InvestigationConfig objConfig = config.investigations().get(investigationId);
     Investigation investigation = config.investigationFor(investigationId);
 
-    registry.add(investigation.analyze(dataReader, location));
+    if (addMetadata) {
+      Stream.of("model", "reader", "parser", "mapper", "steps")
+        .forEach(registry::addIndex);
+    }
+
+    registry.add(investigation.analyze(dataReader, location, entry -> {
+      if (addMetadata) {
+        entry.addAttribute("model").withValue(objConfig.modelId());
+        entry.addAttribute("reader").withValue(readerId);
+        entry.addAttribute("parser").withValue(objConfig.parserId());
+        entry.addAttribute("mapper").withValue(objConfig.mapperId());
+        entry.addAttribute("steps").withValue(objConfig.stepsId());
+      }
+    }));
   }
 
   @Suggestions

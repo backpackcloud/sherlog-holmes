@@ -33,13 +33,13 @@ public interface DataEntry extends Comparable<DataEntry>, Displayable {
 
   DataModel dataModel();
 
-  void add(Attribute attribute);
+  void addAttribute(Attribute attribute);
 
-  AttributeBuilder add(String name);
+  AttributeBuilder addAttribute(String name);
 
-  <E> AttributeBuilder<E> add(String name, Class<E> valueType);
+  <E> AttributeBuilder<E> addAttribute(String name, Class<E> valueType);
 
-  <E> AttributeBuilder<E> add(String name, E value);
+  <E> AttributeBuilder<E> addAttribute(String name, E value);
 
   boolean hasAttribute(String name);
 
