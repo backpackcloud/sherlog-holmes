@@ -42,8 +42,8 @@ public class FileDataReaderConfig implements DataReaderConfig {
   private final boolean removeAnsiColors;
 
   public FileDataReaderConfig(@JsonProperty("charset") Configuration charset,
-                              @JsonProperty("linesToSkip") Configuration linesToSkip,
-                              @JsonProperty("removeAnsiColors") Configuration removeAnsiColors) {
+                              @JsonProperty("skip") Configuration linesToSkip,
+                              @JsonProperty("remove-ansi-colors") Configuration removeAnsiColors) {
     this.charset = charset.map(Charset::forName).orElse(StandardCharsets.UTF_8);
     this.linesToSkip = linesToSkip.orElse(0);
     this.removeAnsiColors = removeAnsiColors.orElse(false);
