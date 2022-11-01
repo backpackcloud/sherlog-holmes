@@ -30,11 +30,13 @@ import com.backpackcloud.sherlogholmes.domain.DataParser;
 import com.backpackcloud.sherlogholmes.domain.parsers.JsonDataParser;
 import io.quarkus.runtime.annotations.RegisterForReflection;
 
+import java.util.function.Function;
+
 @RegisterForReflection
 public class JsonDataParserConfig implements DataParserConfig {
 
   @Override
-  public DataParser get(Config config) {
+  public DataParser<Function<String, String>> get(Config config) {
     return new JsonDataParser(Serializer.json());
   }
 

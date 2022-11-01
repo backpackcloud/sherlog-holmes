@@ -37,6 +37,6 @@ import io.quarkus.runtime.annotations.RegisterForReflection;
   @JsonSubTypes.Type(name = "json", value = JsonDataParserConfig.class),
 })
 @RegisterForReflection
-public interface DataParserConfig extends ConfigObject<DataParser> {
+public interface DataParserConfig extends ConfigObject<DataParser<?>> {
 
 }

@@ -34,6 +34,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import io.quarkus.runtime.annotations.RegisterForReflection;
 
 import java.util.Map;
+import java.util.function.Function;
 import java.util.regex.Pattern;
 
 @RegisterForReflection
@@ -47,7 +48,7 @@ public class RegexDataParserConfig implements DataParserConfig {
   }
 
   @Override
-  public DataParser get(Config config) {
+  public DataParser<Function<String, String>> get(Config config) {
     Map<String, String> patterns = config.patterns();
 
     String result = new Interpolator(
