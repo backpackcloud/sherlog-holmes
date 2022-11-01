@@ -39,16 +39,20 @@ import java.nio.charset.StandardCharsets;
 public class SocketDataReaderConfig implements DataReaderConfig {
 
   private final Configuration charset;
+  private final Configuration removeAnsiColors;
 
   @JsonCreator
-  public SocketDataReaderConfig(@JsonProperty("charset") Configuration charset) {
+  public SocketDataReaderConfig(@JsonProperty("charset") Configuration charset,
+                                @JsonProperty("remove-ansi-colors") Configuration removeAnsiColors) {
     this.charset = charset;
+    this.removeAnsiColors = removeAnsiColors;
   }
 
   @Override
   public DataReader get(Config config) {
     return new SocketDataReader(
-      charset.map(Charset::forName).orElse(StandardCharsets.UTF_8)
+      charset.map(Charset::forName).orElse(StandardCharsets.UTF_8),
+      removeAnsiColors.orElse(false)
     );
   }
 
