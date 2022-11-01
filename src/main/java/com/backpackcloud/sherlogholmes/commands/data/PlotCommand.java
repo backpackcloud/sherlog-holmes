@@ -24,7 +24,6 @@
 
 package com.backpackcloud.sherlogholmes.commands.data;
 
-import com.backpackcloud.UnbelievableException;
 import com.backpackcloud.cli.Action;
 import com.backpackcloud.cli.AnnotatedCommand;
 import com.backpackcloud.cli.CommandDefinition;
@@ -80,7 +79,6 @@ public class PlotCommand implements AnnotatedCommand {
     this.preferences = preferences;
     this.serializer = Serializer.json();
     this.preferences.get(Preferences.MAX_SERIES_COUNT).listen(o -> redrawChart());
-    registry.onDataChanged(this::redrawChart);
   }
 
   @OnOpen
@@ -97,15 +95,15 @@ public class PlotCommand implements AnnotatedCommand {
   }
 
   @Action
-  public void printData(TimeUnit unit, String field) {
-    if (field == null || field.isBlank()) {
-      throw new UnbelievableException("No field given");
+  public void drawChart(TimeUnit unit, String field) {
+    if (unit == null && field == null) {
+      redrawChart();
+    } else {
+      this.lastTimeUnit = unit;
+      this.lastField = field;
+
+      redrawChart();
     }
-
-    this.lastTimeUnit = unit;
-    this.lastField = field;
-
-    redrawChart();
   }
 
   @Suggestions
