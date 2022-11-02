@@ -1,0 +1,322 @@
+# The preferences section tunes the global preferences for Sherlog Holmes
+#
+# Preferences can also be adjusted from the command line using the "preferences"
+# command.
+preferences:
+  # Adds metadata to parsed entries
+  add-metadata:          true
+  # Displays all entries that are parsed and added to the registry
+  show-added-entries:    true
+  # Removes the ANSI colors from the content before parsing it
+  remove-ansi-colors:    true
+  # Defines how the content that wasn't parsed will be handled
+  # append: appends the content to the last parsed content (useful for log stacktraces)
+  # ignore: ignores the content
+  #
+  # This preference is used when the fallback mode is not explicitly set
+  default-fallback-mode: append
+
+  # Sets the header for exporting csv content
+  csv-header:            true
+
+  # Sets the max number of series shown in the web chart
+  max-series-count:      5
+  # Sets the data attribute which holds the timestamp information
+  # This is used for plotting the web chart
+  timestamp-attribute:   timestamp
+
+  # Enables data paging for commands that displays data
+  result-paging:         true
+  # Sets the number of entries shown on each page
+  results-per-page:      25
+
+# In the patterns section it's possible to define regex snippets to reuse across the configurations
+# The pattern names don't imply a named group to exist inside
+patterns:
+  timestamp: '(?<timestamp>\d{2,4}-\d{2}-\d{2,4} \d{2}:\d{2}:\d{2},\d{3})'
+  level:     '(?<level>\w+)'
+  category:  '\[(?<thread>[^]]+)]'
+  thread:    '\((?<category>[^)]+)\)'
+  message:   '(?<message>.+)'
+
+# Data models are the structure Sherlog Holmes uses to work
+models:
+  # all data models should have an id for reference
+  log:
+
+    # Defines how this data model will be rendered in the command line
+    # Attributes should be enclosed with "{ }", with the optional features as follows:
+    #
+    # - '#' uses the attribute's value and its correspondent icon
+    # - '@' uses just the attribute's icon (if the attribute holds a value)
+    # - '|' passes the attribute's value through a String.format() call using the given arguments in the right
+    format: '{@exception}{#timestamp} {#level|-5} {#category} {#thread} {#message}'
+
+    # The list of attributes for this data model
+    #
+    # Attributes can be of the following types:
+    # - time:            a java LocalTime
+    # - datetime:        a java LocalDateTime
+    # - zoned-datetime:  a java ZonedDateTime
+    # - offset-datetime: a java OffsetDateTime
+    # - text:            a java String
+    # - number:          a java Integer
+    # - decimal:         a java Double
+    # - flag:            a java Boolean
+    # - enum:            a set of possible String values
+    #
+    # Attributes can also be indexable, which means the registry will keep track of
+    # all assigned values and which entries hold the values. Indexed attributes that also
+    # have an icon will appear in the prompt together with a counter for how many values
+    # were indexed.
+    #
+    # Attributes might have multiple values, which can be useful in situations where you
+    # need a collection of values like exceptions that are shown in a stacktrace.
+    attributes:
+
+      timestamp:
+        type:      datetime
+        indexable: false
+        # this will also apply for printing out the value
+        format:    yyyy-MM-dd HH:mm:ss,SSS
+
+      level:
+        type:      enum
+        indexable: true
+        # if you query for "level > WARN", you will get ERROR and FATAL entries
+        values:    TRACE,DEBUG,INFO,WARN,ERROR,FATAL
+
+      category:
+        type:      text
+        indexable: true
+
+      thread:
+        type:      text
+        indexable: true
+
+      exception:
+        type:        text
+        indexable:   true
+        # this will make possible to add more than one exception to the attribute
+        multivalued: true
+
+      message:
+        type:      text
+        indexable: false
+
+# Readers are the first component in the chain, responsible for getting the raw content and
+# forward them line by line.
+#
+# Currently, there are 3 different types of readers:
+# - file: read the content of a file
+# - http: reads the content get through an HTTP request
+# - socket: opens a port to receive contents, you can then use netcat to forward contents to it
+readers:
+  file:
+    type: file
+    # the bellow structure is possible with all other charset configurations
+    charset:
+      # regardless the order of appearance, the precedence will always be:
+      # 1. env       - environment variable
+      # 2. property  - system property
+      # 3. value     - hard coded value
+      env:      FILE_CHARSET
+      property: file.charset
+      value:    UTF-8
+
+  csv-file:
+    type:    file
+    # skips the first line (assuming it's a header on the csv file)
+    # defaults to 0 if not configured
+    skip:    1
+    charset: UTF-8
+
+  socket:
+    type:    socket
+    charset: UTF-8
+
+# Parsers are the next component in the chain, responsible for getting the contents
+# read by a reader and converting it into a structure
+#
+# Currently, there are 3 different types of parsers:
+# - csv: parses the lines as a CSV row
+# - json: parses the lines as JSON data
+# - regex: parses the lines using a regular expression with named capture groups
+parsers:
+  log:
+    # A regex parser exposes the named groups found in the pattern
+    type:    regex
+    # You can reuse patterns across the configuration by enclosing the names with '{{ }}'
+    # the names enclosed must be defined in the 'patterns' section
+    pattern: '{{timestamp}} {{level}} {{thread}} {{category}} {{message}}'
+
+  json-log:
+    # a json parser exposes the json structure via json pointers
+    type: json
+
+  csv-file:
+    # a csv parser exposes the row as an array of strings
+    type: csv
+
+# Next in the chain are the Mappers, responsible for taking values from the parsed structure
+# to form an entry defined in a data model
+#
+# Mappers can be:
+# - function: passes a string as an argument an expects to get a value from the structure in return
+#             (useful for json and regex parsed data)
+# - column: passes the attributes in the order they appear in the given array structure
+#           (useful for csv parsed data)
+mappers:
+  log:
+    type: function
+    # The given names would be directly passed to the data structure and the result
+    # will be assigned to an attribute with the same name.
+    # This is useful to map regex named groups to a data model
+    copy: timestamp,level,category,thread,message
+
+  json-log:
+    type: function
+    # As the data structure exposed by the json parser requires json pointers,
+    # the best approach is to provide a map which an attribute name will have its
+    # value assigned to a json pointer
+    map:
+      timestamp: /timestamp
+      level:     /attributes/level
+      category:  /attributes/category
+      thread:    /attributes/thread
+      message:   /attributes/message
+
+  csv-log:
+    type:       column
+    # You can ignore any column by providing an attribute name that
+    # would not be present in the data model
+    attributes: timestamp,level,_,category,thread,_,message
+
+# After the model is populated, it's possible to run a series of steps to
+# refine the data as needed. The steps are identified, so you can apply
+# different steps depending on the scenario
+#
+# A step is defined by the given structure:
+#
+# when    : a filter for applying the step only for entries matching it.
+#
+#           If a multiline string is given, each line will represent one
+#           filter and the entry must match all of them
+#
+#           If a filter is not defined, the step will run for all entries
+#
+#           The filter syntax is the same used in the UI
+#
+# assign  : assigns a value to a named attribute
+#
+#           It's possible to reference attributes' values by enclosing their names
+#           with '{ }'.
+#
+# extract : searches for a value inside an attribute and, if it's found, uses it to
+#           populate another attribute
+#
+# map     : uses a regex to extract named capture groups and use them to
+#           populate the correspondent attributes.
+#
+#           The operation continues as long as there are matches, so you can use
+#           this step to populate attributes with multiple values
+#
+# replace : replaces any occurrences of a given text with another text for a defined
+#           attribute
+steps:
+  java:
+    - map:
+        from:  message
+        regex: '(?<exception>\w+(\.\w+)+(Exception|Error))'
+
+  maven:
+    - map:
+        from:  file
+        regex: '(?<fullVersion>(?<version>(?<majorVersion>[0-9]+)\.(?<minorVersion>[0-9]+))\.(?<microVersion>[0-9]+))'
+
+    - replace:
+        attribute: groupId
+        text: '/'
+        with: '.'
+
+  download:
+    - when: product unset
+      extract:
+        from: file
+        to:   product
+        any:
+          - sherlog-holmes
+          - fakeomatic
+          - cheat-loader
+
+    - when: |
+            product set
+            version set
+      assign:
+        release: "{product}-{version}"
+
+# Pipelines are the way Sherlog Holmes binds a reader with the rest of the chain.
+#
+# A pipeline defines which data model, parser, mapper and steps will be used to
+# process data coming from a reader.
+#
+# If you have the same names defined for all the four components, then Sherlog Holmes
+# automatically registers a pipeline with the same name.
+pipelines:
+  wildfly:
+    model:  java
+    parser: wildfly
+    mapper: java
+    steps:  java
+
+  infinispan:
+    model:  java
+    parser: infinispan
+    mapper: java
+    steps:  java
+
+# If you define an icon with a prefix of "attribute-" and an attribute name, the icon
+# will be used as a graphical representation of that attribute, so you can use it for
+# the output format.
+#
+# If the attribute is also indexed, then its icon will show up in the command prompt
+# together with a counter showing how many values were indexed.
+#
+# Icons are the classes for the Nerd Fonts, you can see more at
+# https://www.nerdfonts.com/cheat-sheet
+icons:
+  # timestamp is not indexed, so this icon will only appear in the output
+  attribute-timestamp: nf-fa-calendar
+  # level is indexed, so this icon will appear in the prompt
+  attribute-level:     nf-fa-signal
+  attribute-category:  nf-fa-folder_open
+  attribute-thread:    nf-fa-code_fork
+  attribute-message:   nf-mdi-message
+  # exception is indexed, so the prompt will show how many exceptions were indexed
+  attribute-exception: nf-fa-bug
+
+# Styles defines how the values will appear in the console.
+#
+# The format is foreground/background/effects, or just the foreground color.
+#
+# The possible effects are:
+#
+# b - bold
+# i - italic
+# u - underline
+# k - blink
+# c - crossedOut
+styles:
+  attribute-timestamp:   grey//i
+
+  attribute-level-TRACE: cyan
+  attribute-level-DEBUG: cyan
+  attribute-level-INFO:  orange
+  attribute-level-WARN:  yellow
+  attribute-level-ERROR: red//b
+  attribute-level-FATAL: red//bi
+
+  attribute-category:    blue
+  attribute-thread:      grey
+  attribute-message:     white
+  attribute-exception:   red
