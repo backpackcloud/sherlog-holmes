@@ -24,6 +24,9 @@
 
 package com.backpackcloud.sherlogholmes.domain;
 
+import com.backpackcloud.cli.preferences.UserPreferences;
+import com.backpackcloud.sherlogholmes.Preferences;
+
 import java.util.List;
 import java.util.function.Consumer;
 
@@ -34,22 +37,32 @@ public class Investigation {
   private final DataMapper<Object> dataMapper;
   private final List<PipelineStep> analysisSteps;
   private final FallbackMode fallbackMode;
+  private final UserPreferences preferences;
 
   public Investigation(DataModel dataModel,
                        DataParser dataParser,
                        DataMapper dataMapper,
                        List<PipelineStep> analysisSteps,
-                       FallbackMode fallbackMode) {
+                       FallbackMode fallbackMode,
+                       UserPreferences preferences) {
     this.dataModel = dataModel;
     this.dataParser = dataParser;
     this.dataMapper = dataMapper;
     this.analysisSteps = analysisSteps;
     this.fallbackMode = fallbackMode;
+    this.preferences = preferences;
+  }
+
+  private String normalize(String content) {
+    if (preferences.isEnabled(Preferences.REMOVE_ANSI_COLORS)) {
+      return content.replaceAll("\\x1B(?:[@-Z\\\\-_]|\\[[0-?]*[ -/]*[@-~])", "");
+    }
+    return content;
   }
 
   public void analyze(DataReader dataReader, String location, Consumer<DataEntry> consumer) {
     switch (fallbackMode) {
-      case IGNORE -> dataReader.read(location, content -> dataParser.parse(content)
+      case IGNORE -> dataReader.read(location, content -> dataParser.parse(normalize(content))
         .ifPresent(struct -> dataMapper.map(dataModel.dataSupplier(), struct)
           .stream()
           .peek(entry -> analysisSteps.forEach(step -> step.analyze(entry)))
@@ -58,7 +71,7 @@ public class Investigation {
         StagingArea stagingArea = new StagingArea(consumer);
 
         dataReader.read(location, content ->
-          dataParser.parse(content)
+          dataParser.parse(normalize(content))
             .ifPresentOrElse(
               structure -> stagingArea.push(content, structure),
               () -> stagingArea.push(content)

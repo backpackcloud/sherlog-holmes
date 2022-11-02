@@ -83,7 +83,8 @@ public class InvestigationConfig implements ConfigObject<Investigation> {
       FallbackMode.valueOf(
         (fallbackMode != null ? fallbackMode : config.preferences().text(Preferences.DEFAULT_FALLBACK_MODE).get())
           .toUpperCase()
-      )
+      ),
+      config.preferences()
     );
   }
 

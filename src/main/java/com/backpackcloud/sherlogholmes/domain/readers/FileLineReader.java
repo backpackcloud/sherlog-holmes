@@ -42,12 +42,10 @@ public class FileLineReader implements DataReader {
 
   private final Charset charset;
   private final int linesToSkip;
-  private final boolean removeAnsiColors;
 
-  public FileLineReader(Charset charset, int linesToSkip, boolean removeAnsiColors) {
+  public FileLineReader(Charset charset, int linesToSkip) {
     this.charset = charset;
     this.linesToSkip = linesToSkip;
-    this.removeAnsiColors = removeAnsiColors;
   }
 
   @Override
@@ -73,10 +71,7 @@ public class FileLineReader implements DataReader {
     try {
       Files.lines(path, charset)
         .filter(ignoredLines)
-        .forEach(line -> consumer.accept(removeAnsiColors ?
-          line.replaceAll("\\x1B(?:[@-Z\\\\-_]|\\[[0-?]*[ -/]*[@-~])", "") :
-          line
-        ));
+        .forEach(consumer);
     } catch (IOException e) {
       throw new UnbelievableException(e);
     }

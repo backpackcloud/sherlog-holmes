@@ -34,18 +34,14 @@ import java.io.InputStreamReader;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.nio.charset.Charset;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 import java.util.function.Consumer;
 
 public class SocketDataReader implements DataReader {
 
   private final Charset charset;
-  private final boolean removeAnsiColors;
 
-  public SocketDataReader(Charset charset, boolean removeAnsiColors) {
+  public SocketDataReader(Charset charset) {
     this.charset = charset;
-    this.removeAnsiColors = removeAnsiColors;
   }
 
   @Override
@@ -58,10 +54,7 @@ public class SocketDataReader implements DataReader {
       BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream, charset));
       String line;
       while ((line = reader.readLine()) != null) {
-        consumer.accept(removeAnsiColors ?
-          line.replaceAll("\\x1B(?:[@-Z\\\\-_]|\\[[0-?]*[ -/]*[@-~])", "") :
-          line
-        );
+        consumer.accept(line);
       }
       reader.close();
     } catch (IOException e) {

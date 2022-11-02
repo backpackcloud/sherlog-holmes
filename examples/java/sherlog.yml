@@ -2,6 +2,7 @@ preferences:
   default-fallback-mode: append
   show-added-entries:    true
   add-metadata:          true
+  remove-ansi-colors:    true
 
 models:
   java:
@@ -40,25 +41,21 @@ models:
 
 readers:
   file:
-    type:               file
-    charset:            UTF-8
-    remove-ansi-colors: true
+    type:    file
+    charset: UTF-8
 
   socket:
-    type:               socket
-    charset:            UTF-8
-    remove-ansi-colors: true
+    type:    socket
+    charset: UTF-8
 
 parsers:
   infinispan:
-    type:               regex
-    pattern:            '{{timestamp}} {{level}}\s+{{thread}} {{category}} {{message}}'
-    remove-ansi-colors: true
+    type:    regex
+    pattern: '{{timestamp}} {{level}}\s+{{thread}} {{category}} {{message}}'
 
   wildfly:
-    type:               regex
-    pattern:            '{{timestamp}} {{level}}\s+{{category}} {{thread}} {{message}}'
-    remove-ansi-colors: true
+    type:    regex
+    pattern: '{{timestamp}} {{level}}\s+{{category}} {{thread}} {{message}}'
 
 mappers:
   java:

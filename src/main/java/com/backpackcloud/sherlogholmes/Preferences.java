@@ -64,7 +64,11 @@ public enum Preferences implements PreferenceSpec {
     "false"
   ),
 
-  ;
+  REMOVE_ANSI_COLORS(
+    "removes the ansi colors from the readed content",
+    Type.FLAG,
+    "true"
+  );
 
   private final String id;
   private final String description;

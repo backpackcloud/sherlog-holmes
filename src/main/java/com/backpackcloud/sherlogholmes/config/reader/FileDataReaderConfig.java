@@ -37,21 +37,21 @@ import java.nio.charset.StandardCharsets;
 @RegisterForReflection
 public class FileDataReaderConfig implements DataReaderConfig {
 
-  private final Charset charset;
-  private final int linesToSkip;
-  private final boolean removeAnsiColors;
+  private final Configuration charset;
+  private final Configuration linesToSkip;
 
   public FileDataReaderConfig(@JsonProperty("charset") Configuration charset,
-                              @JsonProperty("skip") Configuration linesToSkip,
-                              @JsonProperty("remove-ansi-colors") Configuration removeAnsiColors) {
-    this.charset = charset.map(Charset::forName).orElse(StandardCharsets.UTF_8);
-    this.linesToSkip = linesToSkip.orElse(0);
-    this.removeAnsiColors = removeAnsiColors.orElse(false);
+                              @JsonProperty("skip") Configuration linesToSkip) {
+    this.charset = charset;
+    this.linesToSkip = linesToSkip;
   }
 
   @Override
   public DataReader get(Config config) {
-    return new FileLineReader(charset, linesToSkip, removeAnsiColors);
+    return new FileLineReader(
+      charset.map(Charset::forName).orElse(StandardCharsets.UTF_8),
+      linesToSkip.orElse(0)
+    );
   }
 
 }
