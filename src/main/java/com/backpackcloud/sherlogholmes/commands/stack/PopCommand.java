@@ -48,10 +48,12 @@ public class PopCommand implements AnnotatedCommand {
   }
 
   @Action
-  public void execute() {
+  public FilterStack execute() {
     if (!stack.isEmpty()) {
       stack.pop();
     }
+
+    return stack;
   }
 
 }

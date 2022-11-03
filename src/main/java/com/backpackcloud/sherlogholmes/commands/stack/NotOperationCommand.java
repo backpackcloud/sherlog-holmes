@@ -48,8 +48,9 @@ public class NotOperationCommand implements AnnotatedCommand {
   }
 
   @Action
-  public void execute() {
+  public FilterStack execute() {
     stack.apply(FilterStack.Operation.NOT);
+    return stack;
   }
 
 }

@@ -48,8 +48,9 @@ public class AndOperationCommand implements AnnotatedCommand {
   }
 
   @Action
-  public void execute() {
+  public FilterStack execute() {
     stack.apply(FilterStack.Operation.AND);
+    return stack;
   }
 
 }

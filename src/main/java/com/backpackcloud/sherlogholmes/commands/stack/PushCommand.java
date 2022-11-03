@@ -60,12 +60,14 @@ public class PushCommand implements AnnotatedCommand {
   }
 
   @Action
-  public void execute(@RawInput String expression) {
+  public FilterStack execute(@RawInput String expression) {
     if (expression == null) {
       throw new UnbelievableException("No filter expression given");
     }
 
     stack.push(filterFactory.create(expression));
+
+    return stack;
   }
 
   @Suggestions

@@ -26,9 +26,7 @@ package com.backpackcloud.sherlogholmes.commands.stack;
 
 import com.backpackcloud.cli.Action;
 import com.backpackcloud.cli.AnnotatedCommand;
-import com.backpackcloud.cli.CLIStateMonitor;
 import com.backpackcloud.cli.CommandDefinition;
-import com.backpackcloud.cli.Writer;
 import com.backpackcloud.sherlogholmes.domain.FilterStack;
 import io.quarkus.runtime.annotations.RegisterForReflection;
 
@@ -44,17 +42,14 @@ import javax.enterprise.context.ApplicationScoped;
 public class ShowStackCommand implements AnnotatedCommand {
 
   private final FilterStack stack;
-  private final Writer console;
 
-  public ShowStackCommand(FilterStack stack, Writer console, CLIStateMonitor cliState) {
+  public ShowStackCommand(FilterStack stack) {
     this.stack = stack;
-    this.console = console;
-    cliState.onceStarted(() -> this.stack.onStackChange(this::execute));
   }
 
   @Action
-  public void execute() {
-    stack.toDisplay(console);
+  public FilterStack execute() {
+    return stack;
   }
 
 }

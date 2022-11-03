@@ -48,8 +48,10 @@ public class OrOperationCommand implements AnnotatedCommand {
   }
 
   @Action
-  public void execute() {
+  public FilterStack execute() {
     stack.apply(FilterStack.Operation.OR);
+
+    return stack;
   }
 
 }

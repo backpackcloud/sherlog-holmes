@@ -48,8 +48,9 @@ public class DupCommand implements AnnotatedCommand {
   }
 
   @Action
-  public void execute() {
+  public FilterStack execute() {
     stack.apply(FilterStack.Operation.DUP);
+    return stack;
   }
 
 }
