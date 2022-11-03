@@ -74,11 +74,7 @@ models:
         indexable: false
 
 readers:
-  log:
-    type:               file
-    charset:            UTF-8
-
-  audit:
+  file:
     type:    file
     charset: UTF-8
 
