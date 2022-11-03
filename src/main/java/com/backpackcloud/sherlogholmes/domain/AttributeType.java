@@ -57,7 +57,6 @@ public interface AttributeType<E> extends Converter<E>, Formatter<E>, Validator<
   AttributeType<LocalDate> DATE = new TemporalType<>(DateTimeFormatter.ISO_DATE, LocalDate::from);
   AttributeType<LocalDateTime> DATETIME = new TemporalType<>(DateTimeFormatter.ISO_DATE_TIME, LocalDateTime::from);
   AttributeType<Boolean> FLAG = input -> Boolean.parseBoolean(input);
-  AttributeType LIST = input -> input;
 
   static AttributeType<String> enumOf(String... values) {
     return new EnumType(values);
