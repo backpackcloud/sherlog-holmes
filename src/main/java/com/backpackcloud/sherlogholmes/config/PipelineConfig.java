@@ -26,13 +26,13 @@ package com.backpackcloud.sherlogholmes.config;
 
 import com.backpackcloud.sherlogholmes.Preferences;
 import com.backpackcloud.sherlogholmes.domain.FallbackMode;
-import com.backpackcloud.sherlogholmes.domain.Investigation;
+import com.backpackcloud.sherlogholmes.domain.Pipeline;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.quarkus.runtime.annotations.RegisterForReflection;
 
 @RegisterForReflection
-public class InvestigationConfig implements ConfigObject<Investigation> {
+public class PipelineConfig implements ConfigObject<Pipeline> {
 
   private final String modelId;
   private final String parserId;
@@ -41,11 +41,11 @@ public class InvestigationConfig implements ConfigObject<Investigation> {
   private final String fallbackMode;
 
   @JsonCreator
-  public InvestigationConfig(@JsonProperty("model") String modelId,
-                             @JsonProperty("parser") String parserId,
-                             @JsonProperty("mapper") String mapperId,
-                             @JsonProperty("steps") String stepsId,
-                             @JsonProperty("fallback") String fallbackMode) {
+  public PipelineConfig(@JsonProperty("model") String modelId,
+                        @JsonProperty("parser") String parserId,
+                        @JsonProperty("mapper") String mapperId,
+                        @JsonProperty("steps") String stepsId,
+                        @JsonProperty("fallback") String fallbackMode) {
     this.modelId = modelId;
     this.parserId = parserId;
     this.mapperId = mapperId;
@@ -74,8 +74,8 @@ public class InvestigationConfig implements ConfigObject<Investigation> {
   }
 
   @Override
-  public Investigation get(Config config) {
-    return new Investigation(
+  public Pipeline get(Config config) {
+    return new Pipeline(
       config.dataModelFor(modelId),
       config.dataParserFor(parserId),
       config.dataMapperFor(mapperId),

@@ -34,10 +34,10 @@ import com.backpackcloud.cli.ui.Suggestion;
 import com.backpackcloud.cli.ui.impl.FileSuggester;
 import com.backpackcloud.cli.ui.impl.PromptSuggestion;
 import com.backpackcloud.sherlogholmes.config.Config;
-import com.backpackcloud.sherlogholmes.config.InvestigationConfig;
+import com.backpackcloud.sherlogholmes.config.PipelineConfig;
 import com.backpackcloud.sherlogholmes.domain.DataReader;
 import com.backpackcloud.sherlogholmes.domain.DataRegistry;
-import com.backpackcloud.sherlogholmes.domain.Investigation;
+import com.backpackcloud.sherlogholmes.domain.Pipeline;
 import io.quarkus.runtime.annotations.RegisterForReflection;
 
 import javax.enterprise.context.ApplicationScoped;
@@ -69,18 +69,18 @@ public class InspectCommand implements AnnotatedCommand {
                       @PreferenceValue("show-added-entries") boolean showEntries,
                       Writer writer,
                       String readerId,
-                      String investigationId,
+                      String pipelineId,
                       String location) {
     DataReader dataReader = config.dataReaderFor(readerId);
-    InvestigationConfig objConfig = config.investigations().get(investigationId);
-    Investigation investigation = config.investigationFor(investigationId);
+    PipelineConfig objConfig = config.pipelines().get(pipelineId);
+    Pipeline pipeline = config.pipelineFor(pipelineId);
 
     if (addMetadata) {
       Stream.of("model", "reader", "parser", "mapper")
         .forEach(registry::addIndex);
     }
 
-    investigation.analyze(dataReader, location, entry -> {
+    pipeline.run(dataReader, location, entry -> {
       if (addMetadata) {
         entry.addAttribute("model").withValue(objConfig.modelId());
         entry.addAttribute("reader").withValue(readerId);
@@ -102,7 +102,7 @@ public class InspectCommand implements AnnotatedCommand {
         .collect(Collectors.toList());
     }
     if (location == null) {
-      return config.investigations().keySet()
+      return config.pipelines().keySet()
         .stream().map(PromptSuggestion::suggest)
         .collect(Collectors.toList());
     }

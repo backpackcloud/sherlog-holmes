@@ -30,7 +30,7 @@ import com.backpackcloud.sherlogholmes.Preferences;
 import java.util.List;
 import java.util.function.Consumer;
 
-public class Investigation {
+public class Pipeline {
 
   private final DataModel dataModel;
   private final DataParser<Object> dataParser;
@@ -39,12 +39,12 @@ public class Investigation {
   private final FallbackMode fallbackMode;
   private final UserPreferences preferences;
 
-  public Investigation(DataModel dataModel,
-                       DataParser dataParser,
-                       DataMapper dataMapper,
-                       List<PipelineStep> analysisSteps,
-                       FallbackMode fallbackMode,
-                       UserPreferences preferences) {
+  public Pipeline(DataModel dataModel,
+                  DataParser dataParser,
+                  DataMapper dataMapper,
+                  List<PipelineStep> analysisSteps,
+                  FallbackMode fallbackMode,
+                  UserPreferences preferences) {
     this.dataModel = dataModel;
     this.dataParser = dataParser;
     this.dataMapper = dataMapper;
@@ -60,7 +60,7 @@ public class Investigation {
     return content;
   }
 
-  public void analyze(DataReader dataReader, String location, Consumer<DataEntry> consumer) {
+  public void run(DataReader dataReader, String location, Consumer<DataEntry> consumer) {
     switch (fallbackMode) {
       case IGNORE -> dataReader.read(location, content -> dataParser.parse(normalize(content))
         .ifPresent(struct -> dataMapper.map(dataModel.dataSupplier(), struct)

@@ -40,7 +40,7 @@ import com.backpackcloud.sherlogholmes.domain.DataMapper;
 import com.backpackcloud.sherlogholmes.domain.DataModel;
 import com.backpackcloud.sherlogholmes.domain.DataParser;
 import com.backpackcloud.sherlogholmes.domain.DataReader;
-import com.backpackcloud.sherlogholmes.domain.Investigation;
+import com.backpackcloud.sherlogholmes.domain.Pipeline;
 import com.backpackcloud.sherlogholmes.domain.PipelineStep;
 import com.fasterxml.jackson.annotation.JacksonInject;
 import com.fasterxml.jackson.annotation.JsonCreator;
@@ -63,7 +63,7 @@ public class Config {
   private final Map<String, DataParserConfig> parsers;
   private final Map<String, DataMapperConfig> mappers;
   private final Map<String, List<PipelineStep>> steps;
-  private final Map<String, InvestigationConfig> investigations;
+  private final Map<String, PipelineConfig> pipelines;
 
   @JsonCreator
   public Config(@JacksonInject UserPreferences userPreferences,
@@ -80,7 +80,7 @@ public class Config {
                 @JsonProperty("parsers") Map<String, DataParserConfig> parsers,
                 @JsonProperty("mappers") Map<String, DataMapperConfig> mappers,
                 @JsonProperty("steps") Map<String, List<PipelineStep>> steps,
-                @JsonProperty("pipelines") Map<String, InvestigationConfig> investigations) {
+                @JsonProperty("pipelines") Map<String, PipelineConfig> pipelines) {
     this.preferences = userPreferences;
     this.commands = commands != null ? commands : Collections.emptyList();
     this.macros = macros != null ? macros : Collections.emptyMap();
@@ -89,7 +89,7 @@ public class Config {
     this.parsers = parsers;
     this.mappers = mappers;
     this.steps = steps != null ? steps : Collections.emptyMap();
-    this.investigations = investigations != null ? investigations : new HashMap<>();
+    this.pipelines = pipelines != null ? pipelines : new HashMap<>();
 
     this.preferences.register(Preferences.values());
     this.patterns = patterns != null ? patterns : Collections.emptyMap();
@@ -115,7 +115,7 @@ public class Config {
 
     models.forEach((id, map) -> {
       if (this.parsers.containsKey(id) && this.mappers.containsKey(id)) {
-        this.investigations.put(id, new InvestigationConfig(id, id, id, id, null));
+        this.pipelines.put(id, new PipelineConfig(id, id, id, id, null));
       }
     });
   }
@@ -159,16 +159,16 @@ public class Config {
     return steps.getOrDefault(id, Collections.emptyList());
   }
 
-  public Investigation investigationFor(String id) {
-    return getObject(investigations, id);
+  public Pipeline pipelineFor(String id) {
+    return getObject(pipelines, id);
   }
 
   public Map<String, DataReaderConfig> readers() {
     return readers;
   }
 
-  public Map<String, InvestigationConfig> investigations() {
-    return investigations;
+  public Map<String, PipelineConfig> pipelines() {
+    return pipelines;
   }
 
   public UserPreferences preferences() {
