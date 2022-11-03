@@ -59,9 +59,9 @@ public enum Preferences implements PreferenceSpec {
   ),
 
   ADD_METADATA(
-    "adds metadata about the data analysis (model, reader, parser, mapper and steps)",
+    "adds metadata about the data analysis (model, reader, parser and mapper)",
     Type.FLAG,
-    "false"
+    "true"
   ),
 
   REMOVE_ANSI_COLORS(
