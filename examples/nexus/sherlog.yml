@@ -77,7 +77,6 @@ readers:
   log:
     type:               file
     charset:            UTF-8
-    remove-ansi-colors: true
 
   audit:
     type:    file
@@ -107,6 +106,12 @@ mappers:
       thread:    /thread
       message:   /attributes/.message
 
+steps:
+  log:
+    - map:
+        from:  message
+        regex: '(?<exception>\w+(\.\w+)+(Exception|Error))'
+
 patterns:
   timestamp: '(?<timestamp>\d{2,4}-\d{2}-\d{2,4} \d{2}:\d{2}:\d{2},\d{3}[+-]\d{4})'
   level:     '(?<level>\w+)'
@@ -114,12 +119,6 @@ patterns:
   initiator: '(?<initiator>\*\S+)'
   class:     '(?<class>\S+)'
   message:   '(?<message>.+)'
-
-steps:
-  log:
-    - map:
-        from:  message
-        regex: '(?<exception>\w+(\.\w+)+(Exception|Error))'
 
 icons:
   attribute-timestamp: nf-fa-calendar

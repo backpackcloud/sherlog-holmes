@@ -236,8 +236,8 @@ steps:
 
     - replace:
         attribute: groupId
-        text: '/'
-        with: '.'
+        text:      '/'
+        with:      '.'
 
   download:
     - when: product unset
@@ -261,19 +261,25 @@ steps:
 # process data coming from a reader.
 #
 # If you have the same names defined for all the four components, then Sherlog Holmes
-# automatically registers a pipeline with the same name.
+# automatically registers a pipeline with the same name. In such cases, the default
+# fallback mode will be applied.
 pipelines:
   wildfly:
-    model:  java
-    parser: wildfly
-    mapper: java
-    steps:  java
+    model:    java
+    parser:   wildfly
+    mapper:   java
+    steps:    java
+    # Defines how the content that wasn't parsed will be handled
+    # append: appends the content to the last parsed content (useful for log stacktraces)
+    # ignore: ignores the content
+    fallback: append
 
   infinispan:
     model:  java
     parser: infinispan
     mapper: java
     steps:  java
+    fallback: append
 
 # If you define an icon with a prefix of "attribute-" and an attribute name, the icon
 # will be used as a graphical representation of that attribute, so you can use it for
