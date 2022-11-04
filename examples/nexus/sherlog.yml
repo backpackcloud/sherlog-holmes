@@ -78,6 +78,10 @@ readers:
     type:    file
     charset: UTF-8
 
+  socket:
+    type:    socket
+    charset: UTF-8
+
 parsers:
   log:
     type:    regex
