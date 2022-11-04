@@ -28,6 +28,7 @@ import com.backpackcloud.UnbelievableException;
 import com.backpackcloud.cli.Action;
 import com.backpackcloud.cli.AnnotatedCommand;
 import com.backpackcloud.cli.CommandDefinition;
+import com.backpackcloud.cli.ParameterCount;
 import com.backpackcloud.cli.RawInput;
 import com.backpackcloud.cli.Suggestions;
 import com.backpackcloud.cli.ui.Suggestion;
@@ -71,10 +72,10 @@ public class PushCommand implements AnnotatedCommand {
   }
 
   @Suggestions
-  public List<? extends Suggestion> suggest(String attribute, String operand, String value) {
-    if (operand == null) {
+  public List<? extends Suggestion> suggest(@ParameterCount int paramCount, String attribute) {
+    if (paramCount == 1) {
       return attributeSuggester.suggestAttributeNames();
-    } else if (value == null) {
+    } else if (paramCount == 2) {
       return attributeSuggester.suggestOperands();
     } else {
       return attributeSuggester.suggestRegistryAttributeValues(attribute);
