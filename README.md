@@ -116,6 +116,32 @@ To revert the changes to the registry, you can either:
 
 After that, remember to run `filter` to update the registry.
 
+Back on the `inspect` command, it is possible to run it multiple times, even with different data models.
+Let's try an example using a different source. Still in the current Sherlog Holmes session, run the following
+command:
+
+```shell
+inspect socket audit 3000
+```
+
+That will cause Sherlog Holmes to open a socket on port `3000` and wait until a client connects. On another
+terminal, navigate to the `examples/nexus/audit` folder and run:
+
+```shell
+nc localhost 3000 < *.log
+```
+
+After a couple of seconds, hit `CTRL+C` to exit `nc` and close the connection. You will notice that
+the number of entries changed, and if you run `ls` to display the entries you will see different formats
+in the output.
+
+A nice usage for a socket reader is to redirect the output of a program directly to Sherlog Holmes. In that case,
+you might also want to enable auto print for added entries with the following command:
+
+```shell
+preferences set show-added-entries true
+```
+
 ### Filtering
 
 Filters are a simple expression that analyses one attribute. The syntax is:
@@ -164,8 +190,10 @@ or
 not
 not
 ```
+
 Notice how the stack changes after each command. All operations have a negative form, so negating them
 produces simplified boolean expressions instead of a long and boring one.
 
 All filters in the stack must match the entries. So, if you require a filter made only by `and` operations,
 you might want to keep them individually in the stack.
+
