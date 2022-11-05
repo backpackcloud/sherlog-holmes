@@ -51,7 +51,7 @@ public class DefaultDataFilter implements DataFilter {
       .eval(reference)
       .orElse(reference);
     return entry.attribute(attribute)
-      .filter(attribute -> operand.execute(attribute, value.isBlank() ? null : attribute.type().convert(value)))
+      .filter(attribute -> operand.execute(attribute, value.isBlank() ? null : attribute.spec().type().convert(value)))
       .isPresent();
   }
 

@@ -28,7 +28,11 @@ public interface AttributeBuilder<T> {
 
   <E> AttributeBuilder<E> ofType(AttributeType<E> type);
 
-  <E> AttributeBuilder<E> multivalued();
+  default <E> AttributeBuilder<E> multivalued() {
+    return multivalued(true);
+  }
+
+  <E> AttributeBuilder<E> multivalued(boolean multivalued);
 
   Attribute<T> fromInput(String input);
 

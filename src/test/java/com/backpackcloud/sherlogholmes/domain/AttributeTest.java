@@ -25,10 +25,12 @@
 package com.backpackcloud.sherlogholmes.domain;
 
 import com.backpackcloud.sherlogholmes.impl.AttributeImpl;
+import com.backpackcloud.sherlogholmes.impl.AttributeSpecImpl;
 import com.backpackcloud.spectaculous.Backstage;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -38,10 +40,11 @@ public class AttributeTest {
   @Test
   public void testInstantiation() {
     AttributeType type = mock(AttributeType.class);
-    Attribute attribute = new AttributeImpl("test", type, "foo");
 
-    assertEquals(type, attribute.type());
-    assertEquals("foo", attribute.value().orElse(null));
+    Attribute attribute = new AttributeImpl("test", new AttributeSpecImpl(type, false));
+
+    assertEquals(type, attribute.spec().type());
+    assertTrue(attribute.value().isEmpty());
   }
 
   @Test
@@ -50,7 +53,7 @@ public class AttributeTest {
     when(type.isValid("bar")).thenReturn(true);
 
     Backstage.describe(Attribute.class)
-      .given(new AttributeImpl("test", type, "foo"))
+      .given(new AttributeImpl("test", new AttributeSpecImpl(type, false)))
       .then(attr -> attr.assign("bar"))
 
       .from(attr -> attr.value().orElse(null)).expect("bar");
@@ -61,10 +64,11 @@ public class AttributeTest {
   @Test
   public void testInvalidValueSet() {
     AttributeType type = mock(AttributeType.class);
+    when(type.isValid("foo")).thenReturn(true);
     when(type.isValid("bar")).thenReturn(false);
 
     Backstage.describe(Attribute.class)
-      .given(new AttributeImpl<String>("test", type, "foo"))
+      .given(new AttributeImpl("test", new AttributeSpecImpl(type, false)).assign("foo"))
 
       .when(attr -> attr.assign("bar")).expectFailure()
 

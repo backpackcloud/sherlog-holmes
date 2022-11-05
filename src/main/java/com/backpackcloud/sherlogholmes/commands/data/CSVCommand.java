@@ -78,7 +78,7 @@ public class CSVCommand implements AnnotatedCommand {
 
       selectedFields.stream().map(name ->
           entry.attribute(name)
-            .map(attribute -> attribute.type().format(attribute.value()))
+            .map(attribute -> attribute.spec().type().format(attribute.value()))
             .orElseThrow())
         .forEach(row::add);
 

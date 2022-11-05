@@ -55,7 +55,7 @@ public class FunctionDataMapper implements DataMapper<Function<String, String>> 
 
   public static FunctionDataMapper attributesFrom(DataModel dataModel) {
     Map<String, String> map = new HashMap<>();
-    dataModel.attributeNames().forEach(attr -> map.put(attr, attr));
+    dataModel.attributes().forEach((name, spec) -> map.put(name, name));
     return new FunctionDataMapper(map);
   }
 

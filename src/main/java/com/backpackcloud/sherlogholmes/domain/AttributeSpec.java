@@ -24,20 +24,10 @@
 
 package com.backpackcloud.sherlogholmes.domain;
 
-import java.util.Map;
-import java.util.Optional;
-import java.util.function.Supplier;
+public interface AttributeSpec<E> {
 
-public interface DataModel {
+  AttributeType<E> type();
 
-  DataModel add(String name, AttributeSpec<?> spec);
-
-  Optional<AttributeSpec<?>> attribute(String name);
-
-  Map<String, AttributeSpec<?>> attributes();
-
-  Supplier<DataEntry> dataSupplier();
-
-  void addFrom(DataModel base);
+  boolean multivalued();
 
 }

@@ -83,8 +83,8 @@ public class AttributeBuilderImpl implements AttributeBuilder {
   }
 
   @Override
-  public AttributeBuilder multivalued() {
-    this.multivalued = true;
+  public AttributeBuilder multivalued(boolean multivalued) {
+    this.multivalued = multivalued;
     return this;
   }
 
@@ -105,14 +105,11 @@ public class AttributeBuilderImpl implements AttributeBuilder {
   }
 
   private Attribute build() {
-    if (multivalued) {
-      Attribute attribute = new MultiValuedAttributeImpl(name, type);
-      if (value != null) {
-        attribute.assign(value);
-      }
-      return attribute;
+    Attribute attribute = new AttributeImpl(name, new AttributeSpecImpl(type, multivalued));
+    if (value != null) {
+      attribute.assign(value);
     }
-    return new AttributeImpl(name, type, value);
+    return attribute;
   }
 
 }

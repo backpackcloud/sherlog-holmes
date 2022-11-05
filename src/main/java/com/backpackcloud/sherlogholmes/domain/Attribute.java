@@ -31,7 +31,7 @@ public interface Attribute<E> extends Comparable<Attribute<E>> {
 
   String name();
 
-  AttributeType<E> type();
+  AttributeSpec<E> spec();
 
   Attribute<E> assign(E value);
 
@@ -40,8 +40,6 @@ public interface Attribute<E> extends Comparable<Attribute<E>> {
   Optional<E> value();
 
   Optional<String> formattedValue();
-
-  boolean multivalued();
 
   Stream<E> values();
 

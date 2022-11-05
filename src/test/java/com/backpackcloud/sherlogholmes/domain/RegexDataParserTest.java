@@ -27,6 +27,7 @@ package com.backpackcloud.sherlogholmes.domain;
 import com.backpackcloud.UnbelievableException;
 import com.backpackcloud.sherlogholmes.domain.mappers.FunctionDataMapper;
 import com.backpackcloud.sherlogholmes.domain.parsers.RegexDataParser;
+import com.backpackcloud.sherlogholmes.impl.AttributeSpecImpl;
 import com.backpackcloud.sherlogholmes.impl.DataModelImpl;
 import com.backpackcloud.spectaculous.Backstage;
 import com.backpackcloud.spectaculous.Operation;
@@ -41,11 +42,11 @@ public class RegexDataParserTest {
   private final String pattern = "(?<timestamp>\\d{2,4}-\\d{2}-\\d{2,4}T\\d{2}:\\d{2}:\\d{2}) (?<level>\\w+) \\[(?<category>[^]]+)] \\((?<origin>[^)]+)\\) (?<message>.+)";
 
   private final DataModel model = new DataModelImpl()
-    .add("timestamp", AttributeType.datetime())
-    .add("level", AttributeType.enumOf("TRACE", "DEBUG", "INFO", "WARN", "ERROR", "FATAL"))
-    .add("category", AttributeType.text())
-    .add("origin", AttributeType.text())
-    .add("message", AttributeType.text());
+    .add("timestamp", new AttributeSpecImpl<>(AttributeType.datetime(), false))
+    .add("level", new AttributeSpecImpl<>(AttributeType.enumOf("TRACE", "DEBUG", "INFO", "WARN", "ERROR", "FATAL"), false))
+    .add("category", new AttributeSpecImpl<>(AttributeType.text(), false))
+    .add("origin", new AttributeSpecImpl<>(AttributeType.text(), false))
+    .add("message", new AttributeSpecImpl<>(AttributeType.text(), false));
 
   private final RegexDataParser parser = new RegexDataParser(Pattern.compile(pattern, Pattern.DOTALL));
 

@@ -42,29 +42,31 @@ public class DataModelConfig implements ConfigObject<DataModel> {
 
   private final DataRegistry registry;
   private final Configuration format;
+  private final String baseModel;
   private final Map<String, DataAttributeConfig> attributes;
 
   @JsonCreator
   public DataModelConfig(@JacksonInject DataRegistry registry,
                          @JsonProperty("format") Configuration format,
+                         @JsonProperty("extends") String baseModel,
                          @JsonProperty("attributes") Map<String, DataAttributeConfig> attributes) {
     this.registry = registry;
     this.format = format;
+    this.baseModel = baseModel;
     this.attributes = attributes;
   }
 
   public DataModel get(Config config) {
     DataModel model = new DataModelImpl(format.get());
     attributes.forEach((name, attrConfig) -> {
-      if (attrConfig.multivalued()) {
-        model.addMultivalued(name, attrConfig.get(config));
-      } else {
-        model.add(name, attrConfig.get(config));
-      }
+      model.add(name, attrConfig.get(config));
       if (attrConfig.indexable()) {
         registry.addIndex(name);
       }
     });
+    if (baseModel != null) {
+      model.addFrom(config.dataModelFor(baseModel));
+    }
     return model;
   }
 

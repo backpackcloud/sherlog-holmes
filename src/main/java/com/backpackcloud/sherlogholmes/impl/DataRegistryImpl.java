@@ -170,7 +170,7 @@ public class DataRegistryImpl implements DataRegistry {
 
       entry.attributes()
         .forEach(attribute ->
-          attributeTypes.put(attribute.name(), attribute.type()));
+          attributeTypes.put(attribute.name(), attribute.spec().type()));
 
       index.forEach((attributeName, valuesMap) ->
         entry.attribute(attributeName)

@@ -31,9 +31,9 @@ import java.util.Optional;
 
 public interface DataEntry extends Comparable<DataEntry>, Displayable {
 
-  DataModel dataModel();
-
   void addAttribute(Attribute attribute);
+
+  void addAttribute(String name, AttributeSpec spec);
 
   AttributeBuilder addAttribute(String name);
 

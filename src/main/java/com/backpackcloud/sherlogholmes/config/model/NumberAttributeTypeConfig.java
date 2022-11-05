@@ -26,7 +26,9 @@ package com.backpackcloud.sherlogholmes.config.model;
 
 import com.backpackcloud.configuration.Configuration;
 import com.backpackcloud.sherlogholmes.config.Config;
+import com.backpackcloud.sherlogholmes.domain.AttributeSpec;
 import com.backpackcloud.sherlogholmes.domain.AttributeType;
+import com.backpackcloud.sherlogholmes.impl.AttributeSpecImpl;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.quarkus.runtime.annotations.RegisterForReflection;
@@ -45,18 +47,13 @@ public class NumberAttributeTypeConfig implements DataAttributeConfig {
   }
 
   @Override
-  public AttributeType get(Config config) {
-    return AttributeType.number();
+  public AttributeSpec get(Config config) {
+    return new AttributeSpecImpl(AttributeType.number(), multivalued);
   }
 
   @Override
   public boolean indexable() {
     return indexable.asBoolean();
-  }
-
-  @Override
-  public boolean multivalued() {
-    return multivalued;
   }
 
 }

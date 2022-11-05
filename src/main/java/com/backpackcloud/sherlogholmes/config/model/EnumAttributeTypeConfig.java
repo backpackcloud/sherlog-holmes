@@ -26,7 +26,9 @@ package com.backpackcloud.sherlogholmes.config.model;
 
 import com.backpackcloud.configuration.Configuration;
 import com.backpackcloud.sherlogholmes.config.Config;
+import com.backpackcloud.sherlogholmes.domain.AttributeSpec;
 import com.backpackcloud.sherlogholmes.domain.AttributeType;
+import com.backpackcloud.sherlogholmes.impl.AttributeSpecImpl;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.quarkus.runtime.annotations.RegisterForReflection;
@@ -50,13 +52,8 @@ public class EnumAttributeTypeConfig implements DataAttributeConfig {
   }
 
   @Override
-  public boolean multivalued() {
-    return multivalued;
-  }
-
-  @Override
-  public AttributeType get(Config config) {
-    return AttributeType.enumOf(values.toArray(new String[0]));
+  public AttributeSpec get(Config config) {
+    return new AttributeSpecImpl(AttributeType.enumOf(values.toArray(new String[0])), multivalued);
   }
 
   @Override

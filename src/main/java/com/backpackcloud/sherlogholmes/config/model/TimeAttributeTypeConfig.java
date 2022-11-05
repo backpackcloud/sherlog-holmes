@@ -26,8 +26,9 @@ package com.backpackcloud.sherlogholmes.config.model;
 
 import com.backpackcloud.configuration.Configuration;
 import com.backpackcloud.sherlogholmes.config.Config;
-import com.backpackcloud.sherlogholmes.domain.AttributeType;
+import com.backpackcloud.sherlogholmes.domain.AttributeSpec;
 import com.backpackcloud.sherlogholmes.domain.types.TemporalType;
+import com.backpackcloud.sherlogholmes.impl.AttributeSpecImpl;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.quarkus.runtime.annotations.RegisterForReflection;
@@ -52,17 +53,13 @@ public class TimeAttributeTypeConfig implements DataAttributeConfig {
   }
 
   @Override
-  public boolean multivalued() {
-    return multivalued;
-  }
-
-  @Override
-  public AttributeType get(Config config) {
-    return new TemporalType<>(
+  public AttributeSpec get(Config config) {
+    return new AttributeSpecImpl(new TemporalType<>(
       format == null ?
         DateTimeFormatter.ISO_TIME :
         DateTimeFormatter.ofPattern(format.get()),
-      LocalTime::from
+      LocalTime::from),
+      multivalued
     );
   }
 

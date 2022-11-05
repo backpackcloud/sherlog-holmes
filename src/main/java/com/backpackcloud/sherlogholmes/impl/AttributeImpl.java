@@ -26,43 +26,53 @@ package com.backpackcloud.sherlogholmes.impl;
 
 import com.backpackcloud.UnbelievableException;
 import com.backpackcloud.sherlogholmes.domain.Attribute;
-import com.backpackcloud.sherlogholmes.domain.AttributeType;
+import com.backpackcloud.sherlogholmes.domain.AttributeSpec;
 
+import java.util.HashSet;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Stream;
 
 public class AttributeImpl<E> implements Attribute<E> {
 
   private final String name;
-  private final AttributeType<E> type;
+  private final AttributeSpec<E> spec;
 
   private E value;
 
-  public AttributeImpl(String name, AttributeType<E> type) {
+  private Set<E> values;
+
+  public AttributeImpl(String name, AttributeSpec<E> spec) {
     this.name = name;
-    this.type = type;
+    this.spec = spec;
+    if (spec.multivalued()) {
+      this.values = new HashSet<>();
+    }
   }
 
-  public AttributeImpl(String name, AttributeType<E> type, E value) {
-    this(name, type);
-    this.value = value;
+  private void setValue(E value) {
+    if (spec.multivalued()) {
+      this.values.add(value);
+    } else {
+      this.value = value;
+    }
   }
 
   @Override
   public String name() {
-    return this.name;
+    return name;
   }
 
   @Override
-  public AttributeType<E> type() {
-    return this.type;
+  public AttributeSpec<E> spec() {
+    return spec;
   }
 
   @Override
   public Attribute<E> assign(E value) {
-    if (this.type.isValid(value)) {
-      this.value = value;
+    if (spec.type().isValid(value)) {
+      setValue(value);
     } else {
       throw new UnbelievableException("Invalid value: " + value);
     }
@@ -71,36 +81,46 @@ public class AttributeImpl<E> implements Attribute<E> {
 
   @Override
   public Attribute<E> assignFromInput(String input) {
-    return assign(type.convert(input));
+    return assign(spec.type().convert(input));
   }
 
   @Override
   public Optional<E> value() {
+    if (spec.multivalued()) {
+      return values.isEmpty() ? Optional.empty() : Optional.of(values.iterator().next());
+    }
     return Optional.ofNullable(value);
   }
 
   @Override
   public Optional<String> formattedValue() {
-    return value().map(type::format);
+    if (spec.multivalued()) {
+      return values.isEmpty() ? Optional.empty() : Optional.of(spec.type().format(values.iterator().next()));
+    }
+    return value().map(spec.type()::format);
   }
 
   @Override
   public Stream<E> values() {
+    if (spec.multivalued()) {
+      return values.stream();
+    }
     return value == null ? Stream.empty() : Stream.of(value);
   }
 
   @Override
   public Stream<String> formattedValues() {
-    return value == null ? Stream.empty() : Stream.of(type.format(value));
-  }
-
-  @Override
-  public boolean multivalued() {
-    return false;
+    if (spec.multivalued()) {
+      return values.stream().map(spec.type()::format);
+    }
+    return value == null ? Stream.empty() : Stream.of(spec.type().format(value));
   }
 
   @Override
   public int compareTo(Attribute<E> other) {
+    if (spec.multivalued()) {
+      return values.size() - (int) other.values().count();
+    }
     E otherValue = other.value().orElse(null);
     if (value == otherValue) {
       return 0;
@@ -111,21 +131,22 @@ public class AttributeImpl<E> implements Attribute<E> {
     if (otherValue == null) {
       return 1;
     }
-    return type.compare(value, otherValue);
+    return spec.type().compare(value, otherValue);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(name, type, value);
+    return Objects.hash(name, spec, value, values);
   }
 
   @Override
   public boolean equals(Object o) {
     if (this == o) return true;
-    if (!(o instanceof Attribute attribute)) return false;
-    return name.equals(attribute.name()) &&
-      type.equals(attribute.type()) &&
-      Objects.equals(value, attribute.value().orElse(null));
+    if (!(o instanceof AttributeImpl attribute)) return false;
+    return name.equals(attribute.name) &&
+      spec.equals(attribute.spec) &&
+      Objects.equals(value, attribute.value) &&
+      Objects.equals(values, attribute.values);
   }
 
 }

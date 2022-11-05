@@ -24,21 +24,19 @@
 
 package com.backpackcloud.sherlogholmes.impl;
 
-import com.backpackcloud.sherlogholmes.domain.AttributeType;
+import com.backpackcloud.sherlogholmes.domain.AttributeSpec;
 import com.backpackcloud.sherlogholmes.domain.DataEntry;
 import com.backpackcloud.sherlogholmes.domain.DataModel;
 
-import java.util.HashSet;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Optional;
-import java.util.Set;
 import java.util.function.Supplier;
 
 public class DataModelImpl implements DataModel {
 
-  private final Map<String, AttributeType> typeMap = new LinkedHashMap<>();
-  private final Set<String> multivaluedAttributes = new HashSet<>();
+  private final Map<String, AttributeSpec<?>> attributes = new LinkedHashMap<>();
   private final String format;
 
   public DataModelImpl() {
@@ -50,38 +48,34 @@ public class DataModelImpl implements DataModel {
   }
 
   @Override
-  public DataModel add(String attributeName, AttributeType attributeType) {
-    this.typeMap.put(attributeName, attributeType);
+  public DataModel add(String name, AttributeSpec<?> spec) {
+    this.attributes.put(name, spec);
     return this;
   }
 
   @Override
-  public DataModel addMultivalued(String attributeName, AttributeType attributeType) {
-    multivaluedAttributes.add(attributeName);
-    return add(attributeName, attributeType);
+  public Optional<AttributeSpec<?>> attribute(String name) {
+    return Optional.ofNullable(attributes.get(name));
   }
 
   @Override
-  public Optional<AttributeType> typeOf(String name) {
-    return Optional.ofNullable(this.typeMap.get(name));
+  public Map<String, AttributeSpec<?>> attributes() {
+    return new HashMap<>(attributes);
   }
 
-  @Override
-  public Set<String> attributeNames() {
-    return new HashSet<>(typeMap.keySet());
+  public void addFrom(DataModel base) {
+    base.attributes().forEach((name, spec) -> {
+      if (!attributes.containsKey(name)) {
+        add(name, spec);
+      }
+    });
   }
 
   @Override
   public Supplier<DataEntry> dataSupplier() {
     return () -> {
       DataEntry dataEntry = new DataEntryImpl();
-      typeMap.forEach((name, type) -> {
-        if (multivaluedAttributes.contains(name)) {
-          dataEntry.addAttribute(name).multivalued().ofType(type);
-        } else {
-          dataEntry.addAttribute(name).ofType(type);
-        }
-      });
+      attributes.forEach(dataEntry::addAttribute);
       if (format != null) {
         dataEntry.displayFormat(format);
       }

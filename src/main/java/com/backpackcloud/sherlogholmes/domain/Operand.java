@@ -139,7 +139,7 @@ public enum Operand {
     @Override
     public boolean execute(Attribute attribute, Object reference) {
       return attribute.values()
-        .anyMatch(value -> attribute.type().compare(value, reference) < 0);
+        .anyMatch(value -> attribute.spec().type().compare(value, reference) < 0);
     }
 
     @Override
@@ -152,7 +152,7 @@ public enum Operand {
     @Override
     public boolean execute(Attribute attribute, Object reference) {
       return attribute.values()
-        .anyMatch(value -> attribute.type().compare(value, reference) <= 0);
+        .anyMatch(value -> attribute.spec().type().compare(value, reference) <= 0);
     }
 
     @Override
@@ -165,7 +165,7 @@ public enum Operand {
     @Override
     public boolean execute(Attribute attribute, Object reference) {
       return attribute.values()
-        .anyMatch(value -> attribute.type().compare(value, reference) > 0);
+        .anyMatch(value -> attribute.spec().type().compare(value, reference) > 0);
     }
 
     @Override
@@ -178,7 +178,7 @@ public enum Operand {
     @Override
     public boolean execute(Attribute attribute, Object reference) {
       return attribute.values()
-        .anyMatch(value -> attribute.type().compare(value, reference) >= 0);
+        .anyMatch(value -> attribute.spec().type().compare(value, reference) >= 0);
     }
 
     @Override

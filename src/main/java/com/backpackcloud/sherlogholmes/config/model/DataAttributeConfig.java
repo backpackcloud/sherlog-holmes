@@ -25,7 +25,7 @@
 package com.backpackcloud.sherlogholmes.config.model;
 
 import com.backpackcloud.sherlogholmes.config.ConfigObject;
-import com.backpackcloud.sherlogholmes.domain.AttributeType;
+import com.backpackcloud.sherlogholmes.domain.AttributeSpec;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import io.quarkus.runtime.annotations.RegisterForReflection;
@@ -44,10 +44,8 @@ import io.quarkus.runtime.annotations.RegisterForReflection;
   @JsonSubTypes.Type(name = "flag", value = FlagAttributeTypeConfig.class),
 })
 @RegisterForReflection
-public interface DataAttributeConfig extends ConfigObject<AttributeType> {
+public interface DataAttributeConfig extends ConfigObject<AttributeSpec> {
 
   boolean indexable();
-
-  boolean multivalued();
 
 }

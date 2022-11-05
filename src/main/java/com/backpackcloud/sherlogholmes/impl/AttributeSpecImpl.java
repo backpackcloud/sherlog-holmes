@@ -22,38 +22,12 @@
  * SOFTWARE.
  */
 
-package com.backpackcloud.sherlogholmes.config.model;
+package com.backpackcloud.sherlogholmes.impl;
 
-import com.backpackcloud.configuration.Configuration;
-import com.backpackcloud.sherlogholmes.config.Config;
 import com.backpackcloud.sherlogholmes.domain.AttributeSpec;
 import com.backpackcloud.sherlogholmes.domain.AttributeType;
-import com.backpackcloud.sherlogholmes.impl.AttributeSpecImpl;
-import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonProperty;
-import io.quarkus.runtime.annotations.RegisterForReflection;
 
-@RegisterForReflection
-public class TextAttributeTypeConfig implements DataAttributeConfig {
-
-  private final Configuration indexable;
-  private final boolean multivalued;
-
-  @JsonCreator
-  public TextAttributeTypeConfig(@JsonProperty("indexable") Configuration indexable,
-                                 @JsonProperty("multivalued") Boolean multivalued) {
-    this.indexable = indexable;
-    this.multivalued = multivalued != null ? multivalued : false;
-  }
-
-  @Override
-  public AttributeSpec get(Config config) {
-    return new AttributeSpecImpl(AttributeType.text(), multivalued);
-  }
-
-  @Override
-  public boolean indexable() {
-    return indexable.asBoolean();
-  }
-
+public record AttributeSpecImpl<E>(AttributeType<E> type,
+                                   boolean multivalued)
+  implements AttributeSpec<E> {
 }

@@ -27,6 +27,7 @@ package com.backpackcloud.sherlogholmes.impl;
 import com.backpackcloud.cli.Writer;
 import com.backpackcloud.sherlogholmes.domain.Attribute;
 import com.backpackcloud.sherlogholmes.domain.AttributeBuilder;
+import com.backpackcloud.sherlogholmes.domain.AttributeSpec;
 import com.backpackcloud.sherlogholmes.domain.DataEntry;
 import com.backpackcloud.sherlogholmes.domain.DataModel;
 import com.backpackcloud.text.StringWalker;
@@ -48,13 +49,6 @@ public class DataEntryImpl implements DataEntry {
   }
 
   @Override
-  public DataModel dataModel() {
-    DataModel dataModel = new DataModelImpl();
-    attributes.forEach((name, attribute) -> dataModel.add(name, attribute.type()));
-    return dataModel;
-  }
-
-  @Override
   public boolean hasAttribute(String name) {
     return this.attributes.containsKey(name);
   }
@@ -62,6 +56,11 @@ public class DataEntryImpl implements DataEntry {
   @Override
   public void addAttribute(Attribute attribute) {
     this.attributes.put(attribute.name(), attribute);
+  }
+
+  @Override
+  public void addAttribute(String name, AttributeSpec spec) {
+    addAttribute(new AttributeImpl(name, spec));
   }
 
   @Override
@@ -181,7 +180,7 @@ public class DataEntryImpl implements DataEntry {
 
   @Override
   public int hashCode() {
-    return Objects.hash(attributes.values().toArray());
+    return Objects.hash(attributes);
   }
 
 }

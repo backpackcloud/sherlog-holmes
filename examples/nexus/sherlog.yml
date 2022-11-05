@@ -2,18 +2,12 @@ preferences:
   default-fallback-mode: append
 
 models:
-  log:
-    format: '{@exception}{#timestamp} {#level|-5} {#thread} {#initiator} {#class} {#message}'
+  base:
     attributes:
       timestamp:
         type:      zoned-datetime
         indexable: false
         format:    yyyy-MM-dd HH:mm:ss,SSSZ
-
-      level:
-        type:      enum
-        indexable: true
-        values:    TRACE,DEBUG,INFO,WARN,ERROR,FATAL
 
       thread:
         type:      text
@@ -22,6 +16,19 @@ models:
       initiator:
         type:      text
         indexable: true
+
+      message:
+        type:      text
+        indexable: false
+
+  log:
+    extends: base
+    format:  '{@exception}{#timestamp} {#level|-5} {#thread} {#initiator} {#class} {#message}'
+    attributes:
+      level:
+        type:      enum
+        indexable: true
+        values:    TRACE,DEBUG,INFO,WARN,ERROR,FATAL
 
       class:
         type:      text
@@ -32,27 +39,14 @@ models:
         indexable:   true
         multivalued: true
 
-      message:
-        type:      text
-        identity:  true
-        indexable: false
-
   audit:
-    format: |
-            {#timestamp} {#initiator} {#thread} {#message}
-            domain: {domain}
-            type: {type}
-            context: {context}
+    extends: base
+    format:  |
+             {#timestamp} {#initiator} {#thread} {#message}
+             domain: {domain}
+             type: {type}
+             context: {context}
     attributes:
-      timestamp:
-        type:      zoned-datetime
-        indexable: false
-        format:    yyyy-MM-dd HH:mm:ss,SSSZ
-
-      thread:
-        type:      text
-        indexable: true
-
       domain:
         type:      text
         indexable: true
@@ -64,14 +58,6 @@ models:
       context:
         type:      text
         indexable: true
-
-      initiator:
-        type:      text
-        indexable: true
-
-      message:
-        type:      text
-        indexable: false
 
 readers:
   file:
