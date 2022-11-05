@@ -31,25 +31,29 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.quarkus.runtime.annotations.RegisterForReflection;
 
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
+
 @RegisterForReflection
 public class PipelineConfig implements ConfigObject<Pipeline> {
 
   private final String modelId;
   private final String parserId;
   private final String mapperId;
-  private final String stepsId;
+  private final String[] stepsIds;
   private final String fallbackMode;
 
   @JsonCreator
   public PipelineConfig(@JsonProperty("model") String modelId,
                         @JsonProperty("parser") String parserId,
                         @JsonProperty("mapper") String mapperId,
-                        @JsonProperty("steps") String stepsId,
+                        @JsonProperty("steps") String stepsIds,
                         @JsonProperty("fallback") String fallbackMode) {
     this.modelId = modelId;
     this.parserId = parserId;
     this.mapperId = mapperId;
-    this.stepsId = stepsId;
+    this.stepsIds = stepsIds.split("\\s*,\\s*");
     this.fallbackMode = fallbackMode;
   }
 
@@ -65,10 +69,6 @@ public class PipelineConfig implements ConfigObject<Pipeline> {
     return mapperId;
   }
 
-  public String stepsId() {
-    return stepsId;
-  }
-
   public String fallbackMode() {
     return fallbackMode;
   }
@@ -79,7 +79,10 @@ public class PipelineConfig implements ConfigObject<Pipeline> {
       config.dataModelFor(modelId),
       config.dataParserFor(parserId),
       config.dataMapperFor(mapperId),
-      config.stepsFor(stepsId),
+      Arrays.stream(stepsIds)
+        .map(config::stepsFor)
+        .flatMap(List::stream)
+        .collect(Collectors.toList()),
       FallbackMode.valueOf(
         (fallbackMode != null ? fallbackMode : config.preferences().text(Preferences.DEFAULT_FALLBACK_MODE).get())
           .toUpperCase()
