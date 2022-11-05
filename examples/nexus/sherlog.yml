@@ -22,7 +22,7 @@ models:
         indexable: false
 
   log:
-    extends: base
+    include: base
     format:  '{@exception}{#timestamp} {#level|-5} {#thread} {#initiator} {#class} {#message}'
     attributes:
       level:
@@ -40,7 +40,7 @@ models:
         multivalued: true
 
   audit:
-    extends: base
+    include: base
     format:  |
              {#timestamp} {#initiator} {#thread} {#message}
              domain: {domain}

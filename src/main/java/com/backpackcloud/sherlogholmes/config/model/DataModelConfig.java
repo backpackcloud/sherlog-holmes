@@ -35,6 +35,7 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.quarkus.runtime.annotations.RegisterForReflection;
 
+import java.util.Arrays;
 import java.util.Map;
 
 @RegisterForReflection
@@ -42,17 +43,17 @@ public class DataModelConfig implements ConfigObject<DataModel> {
 
   private final DataRegistry registry;
   private final Configuration format;
-  private final String baseModel;
+  private final String modelsToInclude;
   private final Map<String, DataAttributeConfig> attributes;
 
   @JsonCreator
   public DataModelConfig(@JacksonInject DataRegistry registry,
                          @JsonProperty("format") Configuration format,
-                         @JsonProperty("extends") String baseModel,
+                         @JsonProperty("include") String modelsToInclude,
                          @JsonProperty("attributes") Map<String, DataAttributeConfig> attributes) {
     this.registry = registry;
     this.format = format;
-    this.baseModel = baseModel;
+    this.modelsToInclude = modelsToInclude;
     this.attributes = attributes;
   }
 
@@ -64,8 +65,9 @@ public class DataModelConfig implements ConfigObject<DataModel> {
         registry.addIndex(name);
       }
     });
-    if (baseModel != null) {
-      model.addFrom(config.dataModelFor(baseModel));
+    if (modelsToInclude != null) {
+      Arrays.stream(modelsToInclude.split("\\s*,\\s*"))
+        .forEach(additionalModel -> model.addFrom(config.dataModelFor(additionalModel)));
     }
     return model;
   }
