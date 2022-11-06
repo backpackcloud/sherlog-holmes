@@ -28,6 +28,7 @@ import com.backpackcloud.cli.Action;
 import com.backpackcloud.cli.AnnotatedCommand;
 import com.backpackcloud.cli.CommandContext;
 import com.backpackcloud.cli.CommandDefinition;
+import com.backpackcloud.cli.ParameterCount;
 import com.backpackcloud.cli.Suggestions;
 import com.backpackcloud.cli.ui.Paginator;
 import com.backpackcloud.cli.ui.Suggestion;
@@ -38,6 +39,7 @@ import com.backpackcloud.sherlogholmes.ui.suggestions.AttributeSuggester;
 import io.quarkus.runtime.annotations.RegisterForReflection;
 
 import javax.enterprise.context.ApplicationScoped;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
@@ -126,8 +128,11 @@ public class CountCommand implements AnnotatedCommand {
   }
 
   @Suggestions
-  public List<Suggestion> suggest() {
-    return attributeSuggester.suggestAttributeNames();
+  public List<Suggestion> suggest(@ParameterCount int paramCount) {
+    if (paramCount == 1) {
+      return attributeSuggester.suggestIndexedAttributes();
+    }
+    return Collections.emptyList();
   }
 
 }

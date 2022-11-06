@@ -47,6 +47,12 @@ public class AttributeSuggester {
       .collect(Collectors.toList());
   }
 
+  public List<Suggestion> suggestIndexedAttributes() {
+    return registry.indexedAttributes().stream()
+      .map(PromptSuggestion::suggest)
+      .collect(Collectors.toList());
+  }
+
   public List<? extends Suggestion> suggestOperands() {
     List<Suggestion> result = new ArrayList<>();
 

@@ -28,6 +28,7 @@ import com.backpackcloud.UnbelievableException;
 import com.backpackcloud.cli.Action;
 import com.backpackcloud.cli.AnnotatedCommand;
 import com.backpackcloud.cli.CommandDefinition;
+import com.backpackcloud.cli.ParameterCount;
 import com.backpackcloud.cli.Suggestions;
 import com.backpackcloud.cli.Writer;
 import com.backpackcloud.cli.ui.Suggestion;
@@ -41,6 +42,7 @@ import com.backpackcloud.sherlogholmes.ui.suggestions.ChronoUnitSuggestions;
 import io.quarkus.runtime.annotations.RegisterForReflection;
 
 import javax.enterprise.context.ApplicationScoped;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -83,12 +85,15 @@ public class ChartCommand implements AnnotatedCommand {
   }
 
   @Suggestions
-  public List<Suggestion> suggestForGroup(String timeUnit, String... fields) {
-    if (fields.length == 0) {
+  public List<Suggestion> suggestForGroup(@ParameterCount int paramCount) {
+    if (paramCount == 1) {
       return ChronoUnitSuggestions.suggestUnits();
-    } else {
+    } else if(paramCount == 2) {
+      return attributeSuggester.suggestIndexedAttributes();
+    } else if (paramCount == 3) {
       return attributeSuggester.suggestAttributeNames();
     }
+    return Collections.emptyList();
   }
 
 }
