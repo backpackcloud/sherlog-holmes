@@ -29,7 +29,6 @@ import com.backpackcloud.sherlogholmes.domain.Attribute;
 import com.backpackcloud.sherlogholmes.domain.AttributeBuilder;
 import com.backpackcloud.sherlogholmes.domain.AttributeSpec;
 import com.backpackcloud.sherlogholmes.domain.DataEntry;
-import com.backpackcloud.sherlogholmes.domain.DataModel;
 import com.backpackcloud.text.StringWalker;
 
 import java.util.ArrayList;
@@ -92,11 +91,17 @@ public class DataEntryImpl implements DataEntry {
 
   @Override
   public <E> Optional<Attribute<E>> attribute(String name) {
+    if (name == null) {
+      return Optional.empty();
+    }
     return Optional.ofNullable(this.attributes.get(name));
   }
 
   @Override
   public <E> Optional<Attribute<E>> attribute(String name, Class<E> type) {
+    if (name == null) {
+      return Optional.empty();
+    }
     return Optional.ofNullable(this.attributes.get(name));
   }
 

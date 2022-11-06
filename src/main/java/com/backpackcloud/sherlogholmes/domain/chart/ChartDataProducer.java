@@ -30,4 +30,6 @@ public interface ChartDataProducer {
 
   Chart produceData(TimeUnit bucketUnit, String seriesAttribute);
 
+  Chart produceData(TimeUnit bucketUnit, String seriesAttribute, String countAttribute);
+
 }

@@ -64,12 +64,12 @@ public class ChartCommand implements AnnotatedCommand {
   }
 
   @Action
-  public void printData(Writer writer, TimeUnit unit, String attribute) {
+  public void printData(Writer writer, TimeUnit unit, String attribute, String counter) {
     if (attribute == null || attribute.isBlank()) {
       throw new UnbelievableException("No attribute given");
     }
 
-    Chart chart = chartDataProducer.produceData(unit, attribute);
+    Chart chart = chartDataProducer.produceData(unit, attribute, counter);
 
     writer.write("series,").writeln(String.join(",", chart.bucketNames()));
 

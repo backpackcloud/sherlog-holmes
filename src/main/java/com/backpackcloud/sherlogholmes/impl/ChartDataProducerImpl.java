@@ -66,7 +66,12 @@ public class ChartDataProducerImpl implements ChartDataProducer {
   }
 
   @Override
-  public Chart produceData(TimeUnit unit, String attribute) {
+  public Chart produceData(TimeUnit bucketUnit, String seriesAttribute) {
+    return produceData(bucketUnit, seriesAttribute, null);
+  }
+
+  @Override
+  public Chart produceData(TimeUnit unit, String attribute, String countAttribute) {
     if (registry.isEmpty()) {
       return new ChartImpl(
         Collections.emptyList(),
@@ -122,7 +127,10 @@ public class ChartDataProducerImpl implements ChartDataProducer {
         .flatMap(Attribute::value)
         .map(type::format)
         .ifPresent(value ->
-          ((BucketImpl) seriesMap.get(value).buckets().get(columnIndex.get())).incrementCount());
+          ((BucketImpl) seriesMap.get(value).buckets().get(columnIndex.get()))
+            .incrementCount(entry.attribute(countAttribute, Integer.class)
+              .flatMap(Attribute::value)
+              .orElse(1)));
     }
 
     Series totals = new SeriesImpl("total", new ArrayList<>());
@@ -250,8 +258,8 @@ public class ChartDataProducerImpl implements ChartDataProducer {
       return id;
     }
 
-    public void incrementCount() {
-      this.count++;
+    public void incrementCount(int amount) {
+      this.count += amount;
     }
 
     @Override

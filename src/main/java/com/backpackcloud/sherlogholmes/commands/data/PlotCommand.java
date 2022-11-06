@@ -69,6 +69,7 @@ public class PlotCommand implements AnnotatedCommand {
 
   private TimeUnit lastTimeUnit;
   private String lastField;
+  private String lastCounter;
   private String lastChart;
 
   public PlotCommand(ChartDataProducer chartDataProducer,
@@ -95,12 +96,13 @@ public class PlotCommand implements AnnotatedCommand {
   }
 
   @Action
-  public void drawChart(TimeUnit unit, String field) {
+  public void drawChart(TimeUnit unit, String field, String counter) {
     if (unit == null && field == null) {
       redrawChart();
     } else {
       this.lastTimeUnit = unit;
       this.lastField = field;
+      this.lastCounter = counter;
 
       redrawChart();
     }
@@ -120,7 +122,7 @@ public class PlotCommand implements AnnotatedCommand {
       lastChart = serializer.serialize(
         new WebChart(
           lastField + " count",
-          chartDataProducer.produceData(lastTimeUnit, lastField),
+          chartDataProducer.produceData(lastTimeUnit, lastField, lastCounter),
           preferences.number(Preferences.MAX_SERIES_COUNT).get()
         )
       );
