@@ -32,6 +32,7 @@ import com.backpackcloud.cli.Paginate;
 import com.backpackcloud.cli.PreferenceValue;
 import com.backpackcloud.cli.Suggestions;
 import com.backpackcloud.cli.ui.Suggestion;
+import com.backpackcloud.sherlogholmes.domain.Attribute;
 import com.backpackcloud.sherlogholmes.domain.DataRegistry;
 import com.backpackcloud.sherlogholmes.ui.suggestions.AttributeSuggester;
 import io.quarkus.runtime.annotations.RegisterForReflection;
@@ -78,8 +79,8 @@ public class CSVCommand implements AnnotatedCommand {
 
       selectedFields.stream().map(name ->
           entry.attribute(name)
-            .map(attribute -> attribute.spec().type().format(attribute.value()))
-            .orElseThrow())
+            .flatMap(Attribute::formattedValue)
+            .orElse(null))
         .forEach(row::add);
 
       return String.join(",", row);
