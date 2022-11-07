@@ -36,6 +36,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import io.quarkus.runtime.annotations.RegisterForReflection;
 
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.Map;
 
 @RegisterForReflection
@@ -54,7 +55,7 @@ public class DataModelConfig implements ConfigObject<DataModel> {
     this.registry = registry;
     this.format = format;
     this.modelsToInclude = modelsToInclude;
-    this.attributes = attributes;
+    this.attributes = attributes != null ? attributes : new HashMap<>();
   }
 
   public DataModel get(Config config) {
