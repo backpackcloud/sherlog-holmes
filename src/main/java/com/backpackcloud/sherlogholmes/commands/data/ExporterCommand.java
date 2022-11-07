@@ -24,74 +24,54 @@
 
 package com.backpackcloud.sherlogholmes.commands.data;
 
-import com.backpackcloud.UnbelievableException;
 import com.backpackcloud.cli.Action;
 import com.backpackcloud.cli.AnnotatedCommand;
 import com.backpackcloud.cli.CommandDefinition;
-import com.backpackcloud.cli.Paginate;
-import com.backpackcloud.cli.PreferenceValue;
+import com.backpackcloud.cli.ParameterCount;
 import com.backpackcloud.cli.Suggestions;
+import com.backpackcloud.cli.Writer;
 import com.backpackcloud.cli.ui.Suggestion;
-import com.backpackcloud.sherlogholmes.domain.Attribute;
+import com.backpackcloud.cli.ui.impl.PromptSuggestion;
+import com.backpackcloud.sherlogholmes.config.Config;
 import com.backpackcloud.sherlogholmes.domain.DataRegistry;
-import com.backpackcloud.sherlogholmes.ui.suggestions.AttributeSuggester;
 import io.quarkus.runtime.annotations.RegisterForReflection;
 
 import javax.enterprise.context.ApplicationScoped;
-import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
-@ApplicationScoped
 @CommandDefinition(
-  name = "csv",
-  description = "Creates a csv content with the desired log attributes and/or tags",
+  name = "export",
+  description = "Exports the entries",
   type = "Data Visualization",
   allowOutputRedirect = true
 )
 @RegisterForReflection
-public class CSVCommand implements AnnotatedCommand {
+@ApplicationScoped
+public class ExporterCommand implements AnnotatedCommand {
 
   private final DataRegistry registry;
+  private final Config config;
 
-  private final AttributeSuggester attributeSuggester;
-
-  public CSVCommand(DataRegistry registry) {
+  public ExporterCommand(DataRegistry registry, Config config) {
     this.registry = registry;
-    this.attributeSuggester = new AttributeSuggester(registry);
+    this.config = config;
   }
 
   @Action
-  @Paginate
-  public List<String> execute(@PreferenceValue("csv-header") boolean showHeader, String... fields) {
-    if (fields.length == 0) {
-      throw new UnbelievableException("No field given");
-    }
-
-    List<String> data = new ArrayList<>();
-    List<String> selectedFields = List.of(fields);
-
-    if (showHeader) {
-      data.add(String.join(",", selectedFields));
-    }
-
-    registry.entries().stream().map(entry -> {
-      List<String> row = new ArrayList<>();
-
-      selectedFields.stream().map(name ->
-          entry.attribute(name)
-            .flatMap(Attribute::formattedValue)
-            .orElse(null))
-        .forEach(row::add);
-
-      return String.join(",", row);
-    }).forEach(data::add);
-
-    return data;
+  public void execute(Writer writer, String id) {
+    config.dataExporterFor(id).export(writer, registry.stream());
   }
 
   @Suggestions
-  public List<Suggestion> suggestAttributes() {
-    return attributeSuggester.suggestAttributeNames();
+  public List<Suggestion> suggestions(@ParameterCount int parameterCount) {
+    if (parameterCount == 1) {
+      return config.exporters().keySet()
+        .stream().map(PromptSuggestion::suggest)
+        .collect(Collectors.toList());
+    }
+    return Collections.emptyList();
   }
 
 }

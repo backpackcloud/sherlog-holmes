@@ -24,38 +24,17 @@
 
 package com.backpackcloud.sherlogholmes.domain;
 
-import com.backpackcloud.cli.Displayable;
 import com.backpackcloud.cli.Writer;
 
 import java.util.List;
-import java.util.Optional;
+import java.util.stream.Stream;
 
-public interface DataEntry extends Comparable<DataEntry>, Displayable {
+public interface DataExporter {
 
-  void addAttribute(Attribute attribute);
+  void export(Writer writer, Stream<DataEntry> stream);
 
-  void addAttribute(String name, AttributeSpec spec);
-
-  AttributeBuilder addAttribute(String name);
-
-  <E> AttributeBuilder<E> addAttribute(String name, Class<E> valueType);
-
-  <E> AttributeBuilder<E> addAttribute(String name, E value);
-
-  boolean hasAttribute(String name);
-
-  void remove(Attribute attribute);
-
-  void remove(String name);
-
-  <E> Optional<Attribute<E>> attribute(String name);
-
-  <E> Optional<Attribute<E>> attribute(String name, Class<E> type);
-
-  List<Attribute> attributes();
-
-  void displayFormat(String format);
-
-  void toDisplay(Writer writer, String format);
+  default void export(Writer writer, List<DataEntry> list) {
+    export(writer, list.stream());
+  }
 
 }

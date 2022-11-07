@@ -30,6 +30,7 @@ import java.time.temporal.ChronoUnit;
 import java.time.temporal.Temporal;
 
 public enum TimeUnit {
+
   MILLISECONDS(ChronoField.MILLI_OF_SECOND, ChronoUnit.MILLIS, "yyyy-MM-dd'T'HH:mm:ss.SSS", "HH:mm:ss.SSS"),
   SECONDS(ChronoField.SECOND_OF_MINUTE, ChronoUnit.SECONDS, "yyyy-MM-dd'T'HH:mm:ss", "HH:mm:ss.SSS"),
   MINUTES(ChronoField.MINUTE_OF_HOUR, ChronoUnit.MINUTES, "yyyy-MM-dd'T'HH:mm", "HH:mm:ss.SSS"),

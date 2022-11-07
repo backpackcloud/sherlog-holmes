@@ -22,40 +22,27 @@
  * SOFTWARE.
  */
 
-package com.backpackcloud.sherlogholmes.domain;
+package com.backpackcloud.sherlogholmes.config.exporter;
 
-import com.backpackcloud.cli.Displayable;
-import com.backpackcloud.cli.Writer;
+import com.backpackcloud.configuration.Configuration;
+import com.backpackcloud.sherlogholmes.config.Config;
+import com.backpackcloud.sherlogholmes.domain.DataExporter;
+import com.backpackcloud.sherlogholmes.domain.exporters.JsonDataExporter;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import io.quarkus.runtime.annotations.RegisterForReflection;
 
-import java.util.List;
-import java.util.Optional;
+@RegisterForReflection
+public class JsonDataExporterConfig implements DataExporterConfig {
 
-public interface DataEntry extends Comparable<DataEntry>, Displayable {
+  private final String[] attributes;
 
-  void addAttribute(Attribute attribute);
+  public JsonDataExporterConfig(@JsonProperty("attributes") Configuration attributes) {
+    this.attributes = attributes.asArray();
+  }
 
-  void addAttribute(String name, AttributeSpec spec);
-
-  AttributeBuilder addAttribute(String name);
-
-  <E> AttributeBuilder<E> addAttribute(String name, Class<E> valueType);
-
-  <E> AttributeBuilder<E> addAttribute(String name, E value);
-
-  boolean hasAttribute(String name);
-
-  void remove(Attribute attribute);
-
-  void remove(String name);
-
-  <E> Optional<Attribute<E>> attribute(String name);
-
-  <E> Optional<Attribute<E>> attribute(String name, Class<E> type);
-
-  List<Attribute> attributes();
-
-  void displayFormat(String format);
-
-  void toDisplay(Writer writer, String format);
+  @Override
+  public DataExporter get(Config config) {
+    return new JsonDataExporter(attributes);
+  }
 
 }

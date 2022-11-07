@@ -22,40 +22,25 @@
  * SOFTWARE.
  */
 
-package com.backpackcloud.sherlogholmes.domain;
+package com.backpackcloud.sherlogholmes.domain.exporters;
 
-import com.backpackcloud.cli.Displayable;
 import com.backpackcloud.cli.Writer;
+import com.backpackcloud.sherlogholmes.domain.DataEntry;
+import com.backpackcloud.sherlogholmes.domain.DataExporter;
 
-import java.util.List;
-import java.util.Optional;
+import java.util.stream.Stream;
 
-public interface DataEntry extends Comparable<DataEntry>, Displayable {
+public class FormatterDataExporter implements DataExporter {
 
-  void addAttribute(Attribute attribute);
+  private final String format;
 
-  void addAttribute(String name, AttributeSpec spec);
+  public FormatterDataExporter(String format) {
+    this.format = format;
+  }
 
-  AttributeBuilder addAttribute(String name);
-
-  <E> AttributeBuilder<E> addAttribute(String name, Class<E> valueType);
-
-  <E> AttributeBuilder<E> addAttribute(String name, E value);
-
-  boolean hasAttribute(String name);
-
-  void remove(Attribute attribute);
-
-  void remove(String name);
-
-  <E> Optional<Attribute<E>> attribute(String name);
-
-  <E> Optional<Attribute<E>> attribute(String name, Class<E> type);
-
-  List<Attribute> attributes();
-
-  void displayFormat(String format);
-
-  void toDisplay(Writer writer, String format);
+  @Override
+  public void export(Writer writer, Stream<DataEntry> stream) {
+    stream.forEach(entry -> entry.toDisplay(writer, format));
+  }
 
 }

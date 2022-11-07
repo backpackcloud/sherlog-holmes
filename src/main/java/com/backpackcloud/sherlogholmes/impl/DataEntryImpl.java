@@ -117,6 +117,11 @@ public class DataEntryImpl implements DataEntry {
 
   @Override
   public void toDisplay(Writer writer) {
+    toDisplay(writer, displayFormat);
+  }
+
+  @Override
+  public void toDisplay(Writer writer, String outputFormat) {
     StringWalker walker = new StringWalker(writer::write, token -> {
       String name;
       String format;
@@ -149,7 +154,7 @@ public class DataEntryImpl implements DataEntry {
 
     });
 
-    walker.walk(displayFormat);
+    walker.walk(outputFormat);
   }
 
   @Override

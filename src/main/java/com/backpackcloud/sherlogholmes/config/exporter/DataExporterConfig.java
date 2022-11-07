@@ -22,40 +22,19 @@
  * SOFTWARE.
  */
 
-package com.backpackcloud.sherlogholmes.domain;
+package com.backpackcloud.sherlogholmes.config.exporter;
 
-import com.backpackcloud.cli.Displayable;
-import com.backpackcloud.cli.Writer;
+import com.backpackcloud.sherlogholmes.config.ConfigObject;
+import com.backpackcloud.sherlogholmes.domain.DataExporter;
+import com.fasterxml.jackson.annotation.JsonSubTypes;
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
 
-import java.util.List;
-import java.util.Optional;
-
-public interface DataEntry extends Comparable<DataEntry>, Displayable {
-
-  void addAttribute(Attribute attribute);
-
-  void addAttribute(String name, AttributeSpec spec);
-
-  AttributeBuilder addAttribute(String name);
-
-  <E> AttributeBuilder<E> addAttribute(String name, Class<E> valueType);
-
-  <E> AttributeBuilder<E> addAttribute(String name, E value);
-
-  boolean hasAttribute(String name);
-
-  void remove(Attribute attribute);
-
-  void remove(String name);
-
-  <E> Optional<Attribute<E>> attribute(String name);
-
-  <E> Optional<Attribute<E>> attribute(String name, Class<E> type);
-
-  List<Attribute> attributes();
-
-  void displayFormat(String format);
-
-  void toDisplay(Writer writer, String format);
+@JsonTypeInfo(use = JsonTypeInfo.Id.NAME, property = "type")
+@JsonSubTypes({
+  @JsonSubTypes.Type(name = "csv", value = CsvDataExporterConfig.class),
+  @JsonSubTypes.Type(name = "formatter", value = CsvDataExporterConfig.class),
+  @JsonSubTypes.Type(name = "json", value = JsonDataExporterConfig.class),
+})
+public interface DataExporterConfig extends ConfigObject<DataExporter> {
 
 }

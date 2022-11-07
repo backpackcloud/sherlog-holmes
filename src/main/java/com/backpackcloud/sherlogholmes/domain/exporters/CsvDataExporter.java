@@ -22,40 +22,44 @@
  * SOFTWARE.
  */
 
-package com.backpackcloud.sherlogholmes.domain;
+package com.backpackcloud.sherlogholmes.domain.exporters;
 
-import com.backpackcloud.cli.Displayable;
 import com.backpackcloud.cli.Writer;
+import com.backpackcloud.sherlogholmes.domain.Attribute;
+import com.backpackcloud.sherlogholmes.domain.DataEntry;
+import com.backpackcloud.sherlogholmes.domain.DataExporter;
 
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
+import java.util.stream.Stream;
 
-public interface DataEntry extends Comparable<DataEntry>, Displayable {
+public class CsvDataExporter implements DataExporter {
 
-  void addAttribute(Attribute attribute);
+  private final boolean includeHeader;
+  private final String[] attributes;
 
-  void addAttribute(String name, AttributeSpec spec);
+  public CsvDataExporter(boolean includeHeader, String... attributes) {
+    this.includeHeader = includeHeader;
+    this.attributes = attributes;
+  }
 
-  AttributeBuilder addAttribute(String name);
+  @Override
+  public void export(Writer writer, Stream<DataEntry> stream) {
+    if (includeHeader) {
+      writer.write(String.join(",", attributes));
+    }
 
-  <E> AttributeBuilder<E> addAttribute(String name, Class<E> valueType);
+    stream.map(entry -> {
+      List<String> row = new ArrayList<>();
 
-  <E> AttributeBuilder<E> addAttribute(String name, E value);
+      Stream.of(attributes).map(name ->
+          entry.attribute(name)
+            .flatMap(Attribute::formattedValue)
+            .orElse(null))
+        .forEach(row::add);
 
-  boolean hasAttribute(String name);
-
-  void remove(Attribute attribute);
-
-  void remove(String name);
-
-  <E> Optional<Attribute<E>> attribute(String name);
-
-  <E> Optional<Attribute<E>> attribute(String name, Class<E> type);
-
-  List<Attribute> attributes();
-
-  void displayFormat(String format);
-
-  void toDisplay(Writer writer, String format);
+      return String.join(",", row);
+    }).forEach(writer::writeln);
+  }
 
 }

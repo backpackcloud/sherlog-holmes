@@ -32,10 +32,12 @@ import com.backpackcloud.cli.ui.StyleMap;
 import com.backpackcloud.cli.ui.Theme;
 import com.backpackcloud.configuration.Configuration;
 import com.backpackcloud.sherlogholmes.Preferences;
+import com.backpackcloud.sherlogholmes.config.exporter.DataExporterConfig;
 import com.backpackcloud.sherlogholmes.config.mapper.DataMapperConfig;
 import com.backpackcloud.sherlogholmes.config.model.DataModelConfig;
 import com.backpackcloud.sherlogholmes.config.parser.DataParserConfig;
 import com.backpackcloud.sherlogholmes.config.reader.DataReaderConfig;
+import com.backpackcloud.sherlogholmes.domain.DataExporter;
 import com.backpackcloud.sherlogholmes.domain.DataMapper;
 import com.backpackcloud.sherlogholmes.domain.DataModel;
 import com.backpackcloud.sherlogholmes.domain.DataParser;
@@ -64,6 +66,7 @@ public class Config {
   private final Map<String, DataMapperConfig> mappers;
   private final Map<String, List<PipelineStep>> steps;
   private final Map<String, PipelineConfig> pipelines;
+  private final Map<String, DataExporterConfig> exporters;
 
   @JsonCreator
   public Config(@JacksonInject UserPreferences userPreferences,
@@ -80,7 +83,8 @@ public class Config {
                 @JsonProperty("parsers") Map<String, DataParserConfig> parsers,
                 @JsonProperty("mappers") Map<String, DataMapperConfig> mappers,
                 @JsonProperty("steps") Map<String, List<PipelineStep>> steps,
-                @JsonProperty("pipelines") Map<String, PipelineConfig> pipelines) {
+                @JsonProperty("pipelines") Map<String, PipelineConfig> pipelines,
+                @JsonProperty("exporters") Map<String, DataExporterConfig> exporters) {
     this.preferences = userPreferences;
     this.commands = commands != null ? commands : Collections.emptyList();
     this.macros = macros != null ? macros : Collections.emptyMap();
@@ -90,6 +94,7 @@ public class Config {
     this.mappers = mappers;
     this.steps = steps != null ? steps : Collections.emptyMap();
     this.pipelines = pipelines != null ? pipelines : new HashMap<>();
+    this.exporters = exporters;
 
     this.preferences.register(Preferences.values());
     this.patterns = patterns != null ? patterns : Collections.emptyMap();
@@ -163,12 +168,20 @@ public class Config {
     return getObject(pipelines, id);
   }
 
+  public DataExporter dataExporterFor(String id) {
+    return getObject(exporters, id);
+  }
+
   public Map<String, DataReaderConfig> readers() {
     return readers;
   }
 
   public Map<String, PipelineConfig> pipelines() {
     return pipelines;
+  }
+
+  public Map<String, DataExporterConfig> exporters() {
+    return exporters;
   }
 
   public UserPreferences preferences() {

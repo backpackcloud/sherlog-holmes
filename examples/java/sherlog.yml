@@ -88,6 +88,11 @@ pipelines:
     mapper: java
     steps:  java
 
+exporters:
+  json:
+    type: json
+    attributes: timestamp,level,category,thread,code,message
+
 icons:
   attribute-timestamp: nf-fa-calendar
   attribute-level:     nf-fa-signal

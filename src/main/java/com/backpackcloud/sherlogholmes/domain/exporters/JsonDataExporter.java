@@ -22,40 +22,38 @@
  * SOFTWARE.
  */
 
-package com.backpackcloud.sherlogholmes.domain;
+package com.backpackcloud.sherlogholmes.domain.exporters;
 
-import com.backpackcloud.cli.Displayable;
 import com.backpackcloud.cli.Writer;
+import com.backpackcloud.serializer.Serializer;
+import com.backpackcloud.sherlogholmes.domain.Attribute;
+import com.backpackcloud.sherlogholmes.domain.DataEntry;
+import com.backpackcloud.sherlogholmes.domain.DataExporter;
 
-import java.util.List;
-import java.util.Optional;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.stream.Stream;
 
-public interface DataEntry extends Comparable<DataEntry>, Displayable {
+public class JsonDataExporter implements DataExporter {
 
-  void addAttribute(Attribute attribute);
+  private final String[] attributes;
 
-  void addAttribute(String name, AttributeSpec spec);
+  public JsonDataExporter(String... attributes) {
+    this.attributes = attributes;
+  }
 
-  AttributeBuilder addAttribute(String name);
-
-  <E> AttributeBuilder<E> addAttribute(String name, Class<E> valueType);
-
-  <E> AttributeBuilder<E> addAttribute(String name, E value);
-
-  boolean hasAttribute(String name);
-
-  void remove(Attribute attribute);
-
-  void remove(String name);
-
-  <E> Optional<Attribute<E>> attribute(String name);
-
-  <E> Optional<Attribute<E>> attribute(String name, Class<E> type);
-
-  List<Attribute> attributes();
-
-  void displayFormat(String format);
-
-  void toDisplay(Writer writer, String format);
+  @Override
+  public void export(Writer writer, Stream<DataEntry> stream) {
+    Serializer serializer = Serializer.json();
+    stream.forEach(entry -> {
+      Map<String, String> map = new HashMap<>();
+      for (String name : attributes) {
+        map.put(name, entry.attribute(name)
+          .flatMap(Attribute::formattedValue)
+          .orElse(null));
+      }
+      writer.writeln(serializer.serialize(map));
+    });
+  }
 
 }
