@@ -52,7 +52,7 @@ public class AttributeImpl<E> implements Attribute<E> {
   }
 
   private void setValue(E value) {
-    if (spec.multivalued()) {
+    if (spec.multivalued() && value != null) {
       this.values.add(value);
     } else {
       this.value = value;
@@ -81,6 +81,9 @@ public class AttributeImpl<E> implements Attribute<E> {
 
   @Override
   public Attribute<E> assignFromInput(String input) {
+    if (input == null || input.isEmpty()) {
+      return this;
+    }
     return assign(spec.type().convert(input));
   }
 
