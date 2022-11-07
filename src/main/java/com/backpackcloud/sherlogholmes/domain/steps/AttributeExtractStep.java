@@ -31,7 +31,6 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import io.quarkus.runtime.annotations.RegisterForReflection;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @RegisterForReflection
 public class AttributeExtractStep implements PipelineStep {
@@ -47,10 +46,7 @@ public class AttributeExtractStep implements PipelineStep {
 
     this.sourceAttribute = sourceAttribute;
     this.targetAttribute = targetAttribute;
-    this.texts = texts.stream()
-      // finds the most lengthy text that is present in the entry
-      .sorted((o1, o2) -> o2.length() - o1.length())
-      .collect(Collectors.toList());
+    this.texts = texts;
   }
 
   @Override
