@@ -100,7 +100,7 @@ public class TailCommand implements AnnotatedCommand {
   }
 
   @Suggestions
-  public List<Suggestion> suggest(String amount, String unit) {
+  public List<Suggestion> execute(String amount, String unit) {
     if (unit != null) {
       return ChronoUnitSuggestions.suggestUnits();
     }

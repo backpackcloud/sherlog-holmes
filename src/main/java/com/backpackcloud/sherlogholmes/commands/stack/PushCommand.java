@@ -72,7 +72,7 @@ public class PushCommand implements AnnotatedCommand {
   }
 
   @Suggestions
-  public List<? extends Suggestion> suggest(@ParameterCount int paramCount, String attribute) {
+  public List<? extends Suggestion> execute(@ParameterCount int paramCount, String attribute) {
     if (paramCount == 1) {
       return attributeSuggester.suggestAttributeNames();
     } else if (paramCount == 2) {

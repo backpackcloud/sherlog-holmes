@@ -95,7 +95,7 @@ public class InspectCommand implements AnnotatedCommand {
   }
 
   @Suggestions
-  public List<Suggestion> suggest(String readerId, String investigationId, String location) {
+  public List<Suggestion> execute(String readerId, String investigationId, String location) {
     if (investigationId == null) {
       return config.readers().keySet()
         .stream().map(PromptSuggestion::suggest)

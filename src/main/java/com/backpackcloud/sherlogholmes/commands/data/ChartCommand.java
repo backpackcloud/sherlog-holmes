@@ -66,7 +66,7 @@ public class ChartCommand implements AnnotatedCommand {
   }
 
   @Action
-  public void printData(Writer writer, TimeUnit unit, String attribute, String counter) {
+  public void execute(Writer writer, TimeUnit unit, String attribute, String counter) {
     if (attribute == null || attribute.isBlank()) {
       throw new UnbelievableException("No attribute given");
     }
@@ -85,7 +85,7 @@ public class ChartCommand implements AnnotatedCommand {
   }
 
   @Suggestions
-  public List<Suggestion> suggestForGroup(@ParameterCount int paramCount) {
+  public List<Suggestion> execute(@ParameterCount int paramCount) {
     if (paramCount == 1) {
       return ChronoUnitSuggestions.suggestUnits();
     } else if(paramCount == 2) {

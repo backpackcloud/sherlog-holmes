@@ -65,7 +65,7 @@ public class ExporterCommand implements AnnotatedCommand {
   }
 
   @Suggestions
-  public List<Suggestion> suggestions(@ParameterCount int parameterCount) {
+  public List<Suggestion> execute(@ParameterCount int parameterCount) {
     if (parameterCount == 1) {
       return config.exporters().keySet()
         .stream().map(PromptSuggestion::suggest)

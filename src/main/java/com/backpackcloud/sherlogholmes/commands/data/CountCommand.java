@@ -128,7 +128,7 @@ public class CountCommand implements AnnotatedCommand {
   }
 
   @Suggestions
-  public List<Suggestion> suggest(@ParameterCount int paramCount) {
+  public List<Suggestion> execute(@ParameterCount int paramCount) {
     if (paramCount == 1) {
       return attributeSuggester.suggestIndexedAttributes();
     }

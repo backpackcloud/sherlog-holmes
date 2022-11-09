@@ -98,7 +98,7 @@ public class PlotCommand implements AnnotatedCommand {
   }
 
   @Action
-  public void drawChart(TimeUnit unit, String field, String counter) {
+  public void execute(TimeUnit unit, String field, String counter) {
     if (unit == null && field == null) {
       redrawChart();
     } else {
@@ -111,7 +111,7 @@ public class PlotCommand implements AnnotatedCommand {
   }
 
   @Suggestions
-  public List<Suggestion> suggestForGroup(@ParameterCount int paramCount) {
+  public List<Suggestion> execute(@ParameterCount int paramCount) {
     if (paramCount == 1) {
       return ChronoUnitSuggestions.suggestUnits();
     } else if(paramCount == 2) {
