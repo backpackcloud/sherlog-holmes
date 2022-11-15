@@ -53,7 +53,8 @@ import java.util.concurrent.ConcurrentHashMap;
 
 @CommandDefinition(
   name = "plot",
-  description = "Plots a chart in the web interface"
+  description = "Plots a chart in the web interface",
+  allowOutputRedirect = true
 )
 @RegisterForReflection
 @ApplicationScoped
