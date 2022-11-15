@@ -37,6 +37,7 @@ import com.backpackcloud.sherlogholmes.domain.TimeUnit;
 import com.backpackcloud.sherlogholmes.domain.chart.Bucket;
 import com.backpackcloud.sherlogholmes.domain.chart.Chart;
 import com.backpackcloud.sherlogholmes.domain.chart.ChartDataProducer;
+import com.backpackcloud.sherlogholmes.domain.chart.Series;
 import com.backpackcloud.sherlogholmes.ui.suggestions.AttributeSuggester;
 import com.backpackcloud.sherlogholmes.ui.suggestions.ChronoUnitSuggestions;
 import io.quarkus.runtime.annotations.RegisterForReflection;
@@ -44,7 +45,9 @@ import io.quarkus.runtime.annotations.RegisterForReflection;
 import javax.enterprise.context.ApplicationScoped;
 import java.util.Collections;
 import java.util.List;
+import java.util.function.Consumer;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @ApplicationScoped
 @CommandDefinition(
@@ -75,13 +78,15 @@ public class ChartCommand implements AnnotatedCommand {
 
     writer.write("series,").writeln(String.join(",", chart.bucketNames()));
 
-    chart.series().forEach(series -> {
+    Consumer<Series> printSeries = series -> {
       writer.write(series.name()).write(",");
       writer.writeln(series.buckets().stream()
         .map(Bucket::value)
         .map(String::valueOf)
         .collect(Collectors.joining(",")));
-    });
+    };
+    chart.series().forEach(printSeries);
+    Stream.of(chart.average(), chart.total()).forEach(printSeries);
   }
 
   @Suggestions
