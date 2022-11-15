@@ -98,7 +98,7 @@ public class PlotCommand implements AnnotatedCommand {
   }
 
   @Action
-  public void execute(TimeUnit unit, String field, String counter) {
+  public String execute(TimeUnit unit, String field, String counter) {
     if (unit == null && field == null) {
       redrawChart();
     } else {
@@ -108,6 +108,7 @@ public class PlotCommand implements AnnotatedCommand {
 
       redrawChart();
     }
+    return lastChart;
   }
 
   @Suggestions
