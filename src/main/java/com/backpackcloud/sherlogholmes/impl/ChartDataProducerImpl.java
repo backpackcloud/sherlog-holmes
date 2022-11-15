@@ -191,7 +191,7 @@ public class ChartDataProducerImpl implements ChartDataProducer {
 
     @Override
     public List<Series> series(int maxSize) {
-      if (series.size() < maxSize) {
+      if (series.size() <= maxSize) {
         return series;
       }
       List<Series> result = new ArrayList<>(series.subList(0, maxSize));
