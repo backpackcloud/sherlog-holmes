@@ -22,20 +22,35 @@
  * SOFTWARE.
  */
 
-package com.backpackcloud.sherlogholmes.domain.chart;
+package com.backpackcloud.sherlogholmes.impl;
 
+import com.backpackcloud.sherlogholmes.domain.chart.Bucket;
 import io.quarkus.runtime.annotations.RegisterForReflection;
 
-import java.util.List;
-
 @RegisterForReflection
-public interface Series {
-  String name();
+public class BucketImpl implements Bucket {
 
-  List<Bucket> buckets();
+  private final String id;
+  private long count;
 
-  long total();
+  public BucketImpl(String id, long count) {
+    this.id = id;
+    this.count = count;
+  }
 
-  Series add(String name, Series other);
-  
+  @Override
+  public String id() {
+    return id;
+  }
+
+  public void incrementCount(int amount) {
+    this.count += amount;
+  }
+
+
+  @Override
+  public long value() {
+    return count;
+  }
+
 }

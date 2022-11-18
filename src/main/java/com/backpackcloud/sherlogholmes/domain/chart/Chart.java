@@ -24,8 +24,11 @@
 
 package com.backpackcloud.sherlogholmes.domain.chart;
 
+import io.quarkus.runtime.annotations.RegisterForReflection;
+
 import java.util.List;
 
+@RegisterForReflection
 public interface Chart {
 
   List<String> bucketNames();

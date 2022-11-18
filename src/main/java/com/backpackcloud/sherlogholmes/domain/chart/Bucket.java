@@ -24,6 +24,9 @@
 
 package com.backpackcloud.sherlogholmes.domain.chart;
 
+import io.quarkus.runtime.annotations.RegisterForReflection;
+
+@RegisterForReflection
 public interface Bucket {
 
   String id();

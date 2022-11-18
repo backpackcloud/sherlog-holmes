@@ -35,7 +35,6 @@ import com.backpackcloud.sherlogholmes.domain.chart.Bucket;
 import com.backpackcloud.sherlogholmes.domain.chart.Chart;
 import com.backpackcloud.sherlogholmes.domain.chart.ChartDataProducer;
 import com.backpackcloud.sherlogholmes.domain.chart.Series;
-import com.fasterxml.jackson.annotation.JsonProperty;
 import io.quarkus.runtime.annotations.RegisterForReflection;
 
 import javax.enterprise.context.ApplicationScoped;
@@ -45,7 +44,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -54,6 +52,7 @@ import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 @ApplicationScoped
+@RegisterForReflection
 public class ChartDataProducerImpl implements ChartDataProducer {
 
   private final DataRegistry registry;
@@ -180,100 +179,6 @@ public class ChartDataProducerImpl implements ChartDataProducer {
         .orElseThrow();
       return Duration.between(start, end).toMillis() < threshold;
     }
-
-  }
-
-  @RegisterForReflection
-  private record ChartImpl(List<String> bucketNames, List<Series> series, Series total,
-                           Series average) implements Chart {
-
-    @JsonProperty
-    @Override
-    public List<Series> series() {
-      return series;
-    }
-
-    @Override
-    public List<Series> series(int maxSize) {
-      if (series.size() <= maxSize) {
-        return series;
-      }
-      List<Series> result = new ArrayList<>(series.subList(0, maxSize));
-      Iterator<Series> iterator = series.listIterator(maxSize);
-      Series others = iterator.next();
-      String seriesName = "others (" + (series.size() - maxSize) + ")";
-      while (iterator.hasNext()) {
-        others = others.add(seriesName, iterator.next());
-      }
-      result.add(others);
-      return result;
-    }
-  }
-
-  @RegisterForReflection
-  private record SeriesImpl(String name, List<Bucket> buckets) implements Series {
-
-    @JsonProperty
-    @Override
-    public String name() {
-      return name;
-    }
-
-    @JsonProperty("data")
-    @Override
-    public List<Bucket> buckets() {
-      return buckets;
-    }
-
-    @Override
-    public Series add(String newName, Series other) {
-      List<Bucket> bucketSum = new ArrayList<>(buckets.size());
-      Iterator<Bucket> iteratorA = buckets.iterator();
-      Iterator<Bucket> iteratorB = other.buckets().iterator();
-
-      // assuming both series have the same buckets
-      while (iteratorA.hasNext()) {
-        Bucket a = iteratorA.next();
-        Bucket b = iteratorB.next();
-        bucketSum.add(new BucketImpl(a.id(), a.value() + b.value()));
-      }
-
-      return new SeriesImpl(newName, bucketSum);
-    }
-
-    @Override
-    public long total() {
-      return buckets.stream().map(Bucket::value).reduce(0L, Long::sum);
-    }
-
-  }
-
-  @RegisterForReflection
-  private static class BucketImpl implements Bucket {
-
-    private final String id;
-    private long count;
-
-    private BucketImpl(String id, long count) {
-      this.id = id;
-      this.count = count;
-    }
-
-    @Override
-    public String id() {
-      return id;
-    }
-
-    public void incrementCount(int amount) {
-      this.count += amount;
-    }
-
-
-    @Override
-    public long value() {
-      return count;
-    }
-
   }
 
 }

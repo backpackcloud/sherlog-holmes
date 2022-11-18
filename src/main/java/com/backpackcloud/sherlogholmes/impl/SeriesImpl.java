@@ -22,20 +22,51 @@
  * SOFTWARE.
  */
 
-package com.backpackcloud.sherlogholmes.domain.chart;
+package com.backpackcloud.sherlogholmes.impl;
 
+import com.backpackcloud.sherlogholmes.domain.chart.Bucket;
+import com.backpackcloud.sherlogholmes.domain.chart.Series;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import io.quarkus.runtime.annotations.RegisterForReflection;
 
+import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 @RegisterForReflection
-public interface Series {
-  String name();
+public record SeriesImpl(String name, List<Bucket> buckets) implements Series {
 
-  List<Bucket> buckets();
+  @JsonProperty
+  @Override
+  public String name() {
+    return name;
+  }
 
-  long total();
+  @JsonProperty("data")
+  @Override
+  public List<Bucket> buckets() {
+    return buckets;
+  }
 
-  Series add(String name, Series other);
-  
+  @Override
+  public Series add(String newName, Series other) {
+    List<Bucket> bucketSum = new ArrayList<>(buckets.size());
+    Iterator<Bucket> iteratorA = buckets.iterator();
+    Iterator<Bucket> iteratorB = other.buckets().iterator();
+
+    // assuming both series have the same buckets
+    while (iteratorA.hasNext()) {
+      Bucket a = iteratorA.next();
+      Bucket b = iteratorB.next();
+      bucketSum.add(new BucketImpl(a.id(), a.value() + b.value()));
+    }
+
+    return new SeriesImpl(newName, bucketSum);
+  }
+
+  @Override
+  public long total() {
+    return buckets.stream().map(Bucket::value).reduce(0L, Long::sum);
+  }
+
 }
