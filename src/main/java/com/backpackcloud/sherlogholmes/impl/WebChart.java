@@ -37,22 +37,15 @@ import java.util.stream.Collectors;
 @RegisterForReflection
 public class WebChart {
 
-  private final String title;
   private final List<WebChartSeries> series;
 
-  public WebChart(String title, Chart chart, int maxSeriesSize) {
-    this.title = title;
+  public WebChart(Chart chart, int maxSeriesSize) {
     this.series = chart.series(maxSeriesSize)
       .stream()
       .map(WebChartSeries::new)
       .collect(Collectors.toCollection(ArrayList::new));
     this.series.add(new WebChartSeries(chart.total()));
     this.series.add(new WebChartSeries(chart.average()));
-  }
-
-  @JsonProperty
-  public String title() {
-    return title;
   }
 
   @JsonProperty

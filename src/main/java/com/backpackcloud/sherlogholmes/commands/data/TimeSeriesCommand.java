@@ -24,121 +24,114 @@
 
 package com.backpackcloud.sherlogholmes.commands.data;
 
+import com.backpackcloud.UnbelievableException;
 import com.backpackcloud.cli.Action;
 import com.backpackcloud.cli.AnnotatedCommand;
 import com.backpackcloud.cli.CommandDefinition;
 import com.backpackcloud.cli.ParameterCount;
+import com.backpackcloud.cli.PreferenceValue;
 import com.backpackcloud.cli.Suggestions;
-import com.backpackcloud.cli.preferences.UserPreferences;
 import com.backpackcloud.cli.ui.Suggestion;
+import com.backpackcloud.cli.ui.impl.PromptSuggestion;
+import com.backpackcloud.serializer.JSON;
 import com.backpackcloud.serializer.Serializer;
-import com.backpackcloud.sherlogholmes.Preferences;
 import com.backpackcloud.sherlogholmes.domain.DataRegistry;
 import com.backpackcloud.sherlogholmes.domain.TimeUnit;
+import com.backpackcloud.sherlogholmes.domain.chart.Bucket;
+import com.backpackcloud.sherlogholmes.domain.chart.Chart;
 import com.backpackcloud.sherlogholmes.domain.chart.ChartDataProducer;
+import com.backpackcloud.sherlogholmes.domain.chart.Series;
 import com.backpackcloud.sherlogholmes.impl.WebChart;
 import com.backpackcloud.sherlogholmes.ui.suggestions.AttributeSuggester;
 import com.backpackcloud.sherlogholmes.ui.suggestions.ChronoUnitSuggestions;
 import io.quarkus.runtime.annotations.RegisterForReflection;
 
 import javax.enterprise.context.ApplicationScoped;
-import javax.websocket.OnClose;
-import javax.websocket.OnOpen;
-import javax.websocket.Session;
-import javax.websocket.server.ServerEndpoint;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.Consumer;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
+@ApplicationScoped
 @CommandDefinition(
-  name = "plot",
-  description = "Plots a chart in the web interface",
+  name = "timeseries",
+  description = "Creates a content for plotting charts",
+  type = "Data Visualization",
   allowOutputRedirect = true
 )
 @RegisterForReflection
-@ApplicationScoped
-@ServerEndpoint("/data")
-public class PlotCommand implements AnnotatedCommand {
+public class TimeSeriesCommand implements AnnotatedCommand {
 
-  private final Map<String, Session> sessions = new ConcurrentHashMap<>();
+  private final AttributeSuggester attributeSuggester;
 
   private final ChartDataProducer chartDataProducer;
 
-  private final AttributeSuggester attributeSuggester;
-  private final UserPreferences preferences;
-
   private final Serializer serializer;
 
-  private TimeUnit lastTimeUnit;
-  private String lastField;
-  private String lastCounter;
-  private String lastChart;
-
-  public PlotCommand(ChartDataProducer chartDataProducer,
-                     DataRegistry registry,
-                     UserPreferences preferences) {
+  public TimeSeriesCommand(DataRegistry dataRegistry,
+                           ChartDataProducer chartDataProducer,
+                           @JSON Serializer serializer) {
+    this.attributeSuggester = new AttributeSuggester(dataRegistry);
     this.chartDataProducer = chartDataProducer;
-    this.attributeSuggester = new AttributeSuggester(registry);
-    this.preferences = preferences;
-    this.serializer = Serializer.json();
-    this.preferences.get(Preferences.MAX_SERIES_COUNT).listen(o -> redrawChart());
-  }
-
-  @OnOpen
-  public void register(Session session) {
-    sessions.put(session.getId(), session);
-    if (lastChart != null) {
-      session.getAsyncRemote().sendObject(lastChart);
-    }
-  }
-
-  @OnClose
-  public void deregister(Session session) {
-    sessions.remove(session.getId());
+    this.serializer = serializer;
   }
 
   @Action
-  public String execute(TimeUnit unit, String field, String counter) {
-    if (unit == null && field == null) {
-      redrawChart();
-    } else {
-      this.lastTimeUnit = unit;
-      this.lastField = field;
-      this.lastCounter = counter;
-
-      redrawChart();
+  public String execute(Format format, TimeUnit unit,
+                        @PreferenceValue("max-series-count") int maxSeries,
+                        String attribute, String counter) {
+    if (attribute == null || attribute.isBlank()) {
+      throw new UnbelievableException("No attribute given");
     }
-    return lastChart;
+
+    Chart chart = chartDataProducer.produceData(unit, attribute, counter);
+
+    switch (format) {
+      case CSV -> {
+        StringBuilder builder = new StringBuilder();
+        builder.append("series,").append(String.join(",", chart.bucketNames())).append("\n");
+
+        Consumer<Series> printSeries = series -> {
+          builder.append(series.name()).append(",")
+            .append(series.buckets().stream()
+              .map(Bucket::value)
+              .map(String::valueOf)
+              .collect(Collectors.joining(",")))
+            .append("\n");
+        };
+        chart.series().forEach(printSeries);
+        Stream.of(chart.average(), chart.total()).forEach(printSeries);
+        return builder.toString();
+      }
+      case JSON -> {
+        return serializer.serialize(new WebChart(chart, maxSeries));
+      }
+      default -> throw new UnbelievableException("invalid format");
+    }
   }
 
   @Suggestions
   public List<Suggestion> execute(@ParameterCount int paramCount) {
     if (paramCount == 1) {
+      return Arrays.stream(Format.values())
+        .map(Enum::name)
+        .map(String::toLowerCase)
+        .map(PromptSuggestion::suggest)
+        .collect(Collectors.toList());
+    } else if (paramCount == 2) {
       return ChronoUnitSuggestions.suggestUnits();
-    } else if(paramCount == 2) {
-      return attributeSuggester.suggestIndexedAttributes();
     } else if (paramCount == 3) {
+      return attributeSuggester.suggestIndexedAttributes();
+    } else if (paramCount == 4) {
       return attributeSuggester.suggestAttributeNames();
     }
     return Collections.emptyList();
   }
 
-  public void redrawChart() {
-    if (lastTimeUnit != null && lastField != null) {
-      lastChart = serializer.serialize(
-        new WebChart(
-          lastField + " count",
-          chartDataProducer.produceData(lastTimeUnit, lastField, lastCounter),
-          preferences.number(Preferences.MAX_SERIES_COUNT).get()
-        )
-      );
-      updateSessions();
-    }
-  }
-
-  public void updateSessions() {
-    sessions.forEach((id, session) -> session.getAsyncRemote().sendObject(lastChart));
+  public enum Format {
+    CSV, JSON
   }
 
 }

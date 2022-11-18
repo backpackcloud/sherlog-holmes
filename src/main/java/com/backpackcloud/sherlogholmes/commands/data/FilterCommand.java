@@ -44,12 +44,10 @@ public class FilterCommand implements AnnotatedCommand {
 
   private final DataRegistry registry;
   private final FilterStack filterStack;
-  private final PlotCommand plotCommand;
 
-  public FilterCommand(DataRegistry registry, FilterStack filterStack, PlotCommand plotCommand) {
+  public FilterCommand(DataRegistry registry, FilterStack filterStack) {
     this.registry = registry;
     this.filterStack = filterStack;
-    this.plotCommand = plotCommand;
   }
 
   @Action
@@ -59,7 +57,6 @@ public class FilterCommand implements AnnotatedCommand {
     } else {
       registry.apply(filterStack.filter());
     }
-    plotCommand.redrawChart();
   }
 
 }
