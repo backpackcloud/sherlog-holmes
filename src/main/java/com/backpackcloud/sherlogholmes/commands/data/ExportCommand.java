@@ -49,12 +49,12 @@ import java.util.stream.Collectors;
 )
 @RegisterForReflection
 @ApplicationScoped
-public class ExporterCommand implements AnnotatedCommand {
+public class ExportCommand implements AnnotatedCommand {
 
   private final DataRegistry registry;
   private final Config config;
 
-  public ExporterCommand(DataRegistry registry, Config config) {
+  public ExportCommand(DataRegistry registry, Config config) {
     this.registry = registry;
     this.config = config;
   }
