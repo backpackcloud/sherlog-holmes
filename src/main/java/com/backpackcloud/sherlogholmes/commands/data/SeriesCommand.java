@@ -61,7 +61,7 @@ import java.util.stream.Stream;
   allowOutputRedirect = true
 )
 @RegisterForReflection
-public class TimeSeriesCommand implements AnnotatedCommand {
+public class SeriesCommand implements AnnotatedCommand {
 
   private final AttributeSuggester attributeSuggester;
 
@@ -69,9 +69,9 @@ public class TimeSeriesCommand implements AnnotatedCommand {
 
   private final Serializer serializer;
 
-  public TimeSeriesCommand(DataRegistry dataRegistry,
-                           ChartDataProducer chartDataProducer,
-                           @JSON Serializer serializer) {
+  public SeriesCommand(DataRegistry dataRegistry,
+                       ChartDataProducer chartDataProducer,
+                       @JSON Serializer serializer) {
     this.attributeSuggester = new AttributeSuggester(dataRegistry);
     this.chartDataProducer = chartDataProducer;
     this.serializer = serializer;

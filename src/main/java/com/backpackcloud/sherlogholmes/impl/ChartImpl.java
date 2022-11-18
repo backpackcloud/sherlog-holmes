@@ -58,4 +58,17 @@ public record ChartImpl(List<String> bucketNames, List<Series> series, Series to
     result.add(others);
     return result;
   }
+
+  @JsonProperty
+  @Override
+  public Series total() {
+    return total;
+  }
+
+  @JsonProperty
+  @Override
+  public Series average() {
+    return average;
+  }
+
 }
