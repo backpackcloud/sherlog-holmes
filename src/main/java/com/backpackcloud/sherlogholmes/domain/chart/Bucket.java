@@ -24,18 +24,10 @@
 
 package com.backpackcloud.sherlogholmes.domain.chart;
 
-import java.time.temporal.Temporal;
-
 public interface Bucket {
 
   String id();
 
-  long startMillis();
-
-  Temporal start();
-
-  Temporal end();
-
-  int value();
+  long value();
   
 }

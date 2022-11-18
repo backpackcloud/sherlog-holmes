@@ -31,7 +31,7 @@ public interface Series {
 
   List<Bucket> buckets();
 
-  int total();
+  long total();
 
   Series add(String name, Series other);
   

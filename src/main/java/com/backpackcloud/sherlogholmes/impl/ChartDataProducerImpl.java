@@ -35,12 +35,11 @@ import com.backpackcloud.sherlogholmes.domain.chart.Bucket;
 import com.backpackcloud.sherlogholmes.domain.chart.Chart;
 import com.backpackcloud.sherlogholmes.domain.chart.ChartDataProducer;
 import com.backpackcloud.sherlogholmes.domain.chart.Series;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import io.quarkus.runtime.annotations.RegisterForReflection;
 
 import javax.enterprise.context.ApplicationScoped;
 import java.time.Duration;
-import java.time.LocalDateTime;
-import java.time.ZoneOffset;
-import java.time.ZonedDateTime;
 import java.time.temporal.Temporal;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -104,7 +103,7 @@ public class ChartDataProducerImpl implements ChartDataProducer {
 
     Supplier<List<Bucket>> bucketsSupplier = () -> {
       List<Bucket> result = new ArrayList<>();
-      columns.forEach(column -> result.add(new BucketImpl(column.id, column.start, column.end, 0)));
+      columns.forEach(column -> result.add(new BucketImpl(column.id, 0)));
       return result;
     };
 
@@ -143,14 +142,14 @@ public class ChartDataProducerImpl implements ChartDataProducer {
         Bucket bucket = series.buckets().get(i);
         count += bucket.value();
       }
-      totals.buckets().add(new BucketImpl(column.id, column.start, column.end, count));
-      averages.buckets().add(new BucketImpl(column.id, column.start, column.end, Math.round((float) count / seriesMap.size())));
+      totals.buckets().add(new BucketImpl(column.id, count));
+      averages.buckets().add(new BucketImpl(column.id, Math.round((float) count / seriesMap.size())));
     }
 
     return new ChartImpl(
       columns.stream().map(Column::id).collect(Collectors.toList()),
       seriesMap.values().stream()
-        .sorted(Comparator.comparingInt(Series::total).reversed())
+        .sorted(Comparator.comparingLong(Series::total).reversed())
         .toList(),
       totals,
       averages
@@ -162,14 +161,12 @@ public class ChartDataProducerImpl implements ChartDataProducer {
     private final String id;
     private final String temporalAttribute;
     private final Temporal start;
-    private final Temporal end;
     private final long threshold;
 
     private Column(String id, String temporalAttribute, Temporal start, Temporal end) {
       this.id = id;
       this.temporalAttribute = temporalAttribute;
       this.start = start;
-      this.end = end;
       this.threshold = Duration.between(start, end).toMillis();
     }
 
@@ -186,8 +183,15 @@ public class ChartDataProducerImpl implements ChartDataProducer {
 
   }
 
+  @RegisterForReflection
   private record ChartImpl(List<String> bucketNames, List<Series> series, Series total,
                            Series average) implements Chart {
+
+    @JsonProperty
+    @Override
+    public List<Series> series() {
+      return series;
+    }
 
     @Override
     public List<Series> series(int maxSize) {
@@ -206,7 +210,20 @@ public class ChartDataProducerImpl implements ChartDataProducer {
     }
   }
 
+  @RegisterForReflection
   private record SeriesImpl(String name, List<Bucket> buckets) implements Series {
+
+    @JsonProperty
+    @Override
+    public String name() {
+      return name;
+    }
+
+    @JsonProperty("data")
+    @Override
+    public List<Bucket> buckets() {
+      return buckets;
+    }
 
     @Override
     public Series add(String newName, Series other) {
@@ -218,39 +235,28 @@ public class ChartDataProducerImpl implements ChartDataProducer {
       while (iteratorA.hasNext()) {
         Bucket a = iteratorA.next();
         Bucket b = iteratorB.next();
-        bucketSum.add(new BucketImpl(a.id(), a.start(), a.end(), a.value() + b.value()));
+        bucketSum.add(new BucketImpl(a.id(), a.value() + b.value()));
       }
 
       return new SeriesImpl(newName, bucketSum);
     }
 
     @Override
-    public int total() {
-      return buckets.stream().map(Bucket::value).reduce(0, Integer::sum);
+    public long total() {
+      return buckets.stream().map(Bucket::value).reduce(0L, Long::sum);
     }
 
   }
 
+  @RegisterForReflection
   private static class BucketImpl implements Bucket {
 
     private final String id;
-    private final long startMillis;
-    private final Temporal start;
-    private final Temporal end;
-    private int count;
+    private long count;
 
-    private BucketImpl(String id, Temporal start, Temporal end, int count) {
+    private BucketImpl(String id, long count) {
       this.id = id;
-      this.start = start;
-      this.end = end;
       this.count = count;
-      if (start instanceof ZonedDateTime) {
-        this.startMillis = ((ZonedDateTime) start).toInstant().toEpochMilli();
-      } else if (start instanceof LocalDateTime) {
-        this.startMillis = ((LocalDateTime) start).toInstant(ZoneOffset.UTC).toEpochMilli();
-      } else {
-        this.startMillis = 0L;
-      }
     }
 
     @Override
@@ -262,25 +268,12 @@ public class ChartDataProducerImpl implements ChartDataProducer {
       this.count += amount;
     }
 
-    @Override
-    public long startMillis() {
-      return startMillis;
-    }
 
     @Override
-    public Temporal start() {
-      return start;
-    }
-
-    @Override
-    public Temporal end() {
-      return end;
-    }
-
-    @Override
-    public int value() {
+    public long value() {
       return count;
     }
+
   }
 
 }

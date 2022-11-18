@@ -29,8 +29,8 @@ import com.backpackcloud.cli.Action;
 import com.backpackcloud.cli.AnnotatedCommand;
 import com.backpackcloud.cli.CommandDefinition;
 import com.backpackcloud.cli.ParameterCount;
-import com.backpackcloud.cli.PreferenceValue;
 import com.backpackcloud.cli.Suggestions;
+import com.backpackcloud.cli.Writer;
 import com.backpackcloud.cli.ui.Suggestion;
 import com.backpackcloud.cli.ui.impl.PromptSuggestion;
 import com.backpackcloud.serializer.JSON;
@@ -41,7 +41,6 @@ import com.backpackcloud.sherlogholmes.domain.chart.Bucket;
 import com.backpackcloud.sherlogholmes.domain.chart.Chart;
 import com.backpackcloud.sherlogholmes.domain.chart.ChartDataProducer;
 import com.backpackcloud.sherlogholmes.domain.chart.Series;
-import com.backpackcloud.sherlogholmes.impl.WebChart;
 import com.backpackcloud.sherlogholmes.ui.suggestions.AttributeSuggester;
 import com.backpackcloud.sherlogholmes.ui.suggestions.ChronoUnitSuggestions;
 import io.quarkus.runtime.annotations.RegisterForReflection;
@@ -56,7 +55,7 @@ import java.util.stream.Stream;
 
 @ApplicationScoped
 @CommandDefinition(
-  name = "timeseries",
+  name = "series",
   description = "Creates a content for plotting charts",
   type = "Data Visualization",
   allowOutputRedirect = true
@@ -79,9 +78,8 @@ public class TimeSeriesCommand implements AnnotatedCommand {
   }
 
   @Action
-  public String execute(Format format, TimeUnit unit,
-                        @PreferenceValue("max-series-count") int maxSeries,
-                        String attribute, String counter) {
+  public void execute(Writer writer, Format format, TimeUnit unit,
+                      String attribute, String counter) {
     if (attribute == null || attribute.isBlank()) {
       throw new UnbelievableException("No attribute given");
     }
@@ -90,24 +88,18 @@ public class TimeSeriesCommand implements AnnotatedCommand {
 
     switch (format) {
       case CSV -> {
-        StringBuilder builder = new StringBuilder();
-        builder.append("series,").append(String.join(",", chart.bucketNames())).append("\n");
+        writer.write("series,").writeln(String.join(",", chart.bucketNames()));
 
-        Consumer<Series> printSeries = series -> {
-          builder.append(series.name()).append(",")
-            .append(series.buckets().stream()
+        Consumer<Series> printSeries = series ->
+          writer.write(series.name()).write(",")
+            .writeln(series.buckets().stream()
               .map(Bucket::value)
               .map(String::valueOf)
-              .collect(Collectors.joining(",")))
-            .append("\n");
-        };
+              .collect(Collectors.joining(",")));
         chart.series().forEach(printSeries);
         Stream.of(chart.average(), chart.total()).forEach(printSeries);
-        return builder.toString();
       }
-      case JSON -> {
-        return serializer.serialize(new WebChart(chart, maxSeries));
-      }
+      case JSON -> writer.writeln(serializer.serialize(chart));
       default -> throw new UnbelievableException("invalid format");
     }
   }
