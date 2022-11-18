@@ -25,6 +25,7 @@
 package com.backpackcloud.sherlogholmes.impl;
 
 import com.backpackcloud.sherlogholmes.domain.chart.Bucket;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import io.quarkus.runtime.annotations.RegisterForReflection;
 
 @RegisterForReflection
@@ -38,6 +39,7 @@ public class BucketImpl implements Bucket {
     this.count = count;
   }
 
+  @JsonProperty("x")
   @Override
   public String id() {
     return id;
@@ -48,6 +50,7 @@ public class BucketImpl implements Bucket {
   }
 
 
+  @JsonProperty("y")
   @Override
   public long value() {
     return count;
