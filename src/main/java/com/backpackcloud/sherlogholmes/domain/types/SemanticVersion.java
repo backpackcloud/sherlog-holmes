@@ -38,6 +38,18 @@ public class SemanticVersion implements Comparable<SemanticVersion> {
     this.micro = micro;
   }
 
+  public int major() {
+    return major;
+  }
+
+  public int minor() {
+    return minor;
+  }
+
+  public int micro() {
+    return micro;
+  }
+
   @Override
   public String toString() {
     return String.format("%d.%d.%d", major, minor, micro);
@@ -79,7 +91,7 @@ public class SemanticVersion implements Comparable<SemanticVersion> {
       return -1;
     }
 
-    if (this.micro > that.minor) {
+    if (this.micro > that.micro) {
       return 1;
     } else if (this.micro < that.micro) {
       return -1;
