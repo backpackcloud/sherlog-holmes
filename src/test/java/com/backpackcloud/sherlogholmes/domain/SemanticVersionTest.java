@@ -51,9 +51,27 @@ public class SemanticVersionTest {
   }
 
   @Test
-  public void testComparison() {
+  public void testMicroComparison() {
     SemanticVersion a = new SemanticVersion(3, 1, 0);
     SemanticVersion b = new SemanticVersion(3, 1, 1);
+
+    Assertions.assertTrue(a.compareTo(b) < 0);
+    Assertions.assertTrue(b.compareTo(a) > 0);
+  }
+
+  @Test
+  public void testMinorComparison() {
+    SemanticVersion a = new SemanticVersion(3, 1, 2);
+    SemanticVersion b = new SemanticVersion(3, 2, 0);
+
+    Assertions.assertTrue(a.compareTo(b) < 0);
+    Assertions.assertTrue(b.compareTo(a) > 0);
+  }
+
+  @Test
+  public void testMajorComparison() {
+    SemanticVersion a = new SemanticVersion(2, 9, 5);
+    SemanticVersion b = new SemanticVersion(3, 1, 0);
 
     Assertions.assertTrue(a.compareTo(b) < 0);
     Assertions.assertTrue(b.compareTo(a) > 0);
