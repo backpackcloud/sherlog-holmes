@@ -22,22 +22,26 @@
  * SOFTWARE.
  */
 
-package com.backpackcloud.sherlogholmes.config.parser;
+package com.backpackcloud.sherlogholmes.domain.parsers;
 
-import com.backpackcloud.sherlogholmes.config.ConfigObject;
 import com.backpackcloud.sherlogholmes.domain.DataParser;
-import com.fasterxml.jackson.annotation.JsonSubTypes;
-import com.fasterxml.jackson.annotation.JsonTypeInfo;
-import io.quarkus.runtime.annotations.RegisterForReflection;
 
-@JsonTypeInfo(use = JsonTypeInfo.Id.NAME, property = "type")
-@JsonSubTypes({
-  @JsonSubTypes.Type(name = "regex", value = RegexDataParserConfig.class),
-  @JsonSubTypes.Type(name = "csv", value = CsvDataParserConfig.class),
-  @JsonSubTypes.Type(name = "json", value = JsonDataParserConfig.class),
-  @JsonSubTypes.Type(name = "split", value = SplitDataParserConfig.class),
-})
-@RegisterForReflection
-public interface DataParserConfig extends ConfigObject<DataParser<?>> {
+import java.util.Optional;
+import java.util.regex.Pattern;
+
+public class SplitDataParser implements DataParser<String[]> {
+
+  private final Pattern pattern;
+  private final int limit;
+
+  public SplitDataParser(Pattern pattern, int limit) {
+    this.pattern = pattern;
+    this.limit = limit;
+  }
+
+  @Override
+  public Optional<String[]> parse(String content) {
+    return Optional.ofNullable(pattern.split(content, limit));
+  }
 
 }

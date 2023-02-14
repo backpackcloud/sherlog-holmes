@@ -24,20 +24,41 @@
 
 package com.backpackcloud.sherlogholmes.config.parser;
 
-import com.backpackcloud.sherlogholmes.config.ConfigObject;
+import com.backpackcloud.configuration.Configuration;
+import com.backpackcloud.sherlogholmes.config.Config;
 import com.backpackcloud.sherlogholmes.domain.DataParser;
-import com.fasterxml.jackson.annotation.JsonSubTypes;
-import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import com.backpackcloud.sherlogholmes.domain.parsers.SplitDataParser;
+import com.backpackcloud.text.Interpolator;
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import io.quarkus.runtime.annotations.RegisterForReflection;
 
-@JsonTypeInfo(use = JsonTypeInfo.Id.NAME, property = "type")
-@JsonSubTypes({
-  @JsonSubTypes.Type(name = "regex", value = RegexDataParserConfig.class),
-  @JsonSubTypes.Type(name = "csv", value = CsvDataParserConfig.class),
-  @JsonSubTypes.Type(name = "json", value = JsonDataParserConfig.class),
-  @JsonSubTypes.Type(name = "split", value = SplitDataParserConfig.class),
-})
+import java.util.Map;
+import java.util.regex.Pattern;
+
 @RegisterForReflection
-public interface DataParserConfig extends ConfigObject<DataParser<?>> {
+public class SplitDataParserConfig implements DataParserConfig {
+
+  private final Configuration patternString;
+  private final Configuration limit;
+
+  @JsonCreator
+  public SplitDataParserConfig(@JsonProperty("pattern") Configuration patternString,
+                               @JsonProperty("limit") Configuration limit) {
+    this.patternString = patternString;
+    this.limit = limit;
+  }
+
+  @Override
+  public DataParser<String[]> get(Config config) {
+    Map<String, String> patterns = config.patterns();
+
+    String result = new Interpolator(
+      Interpolator.DOUBLE_BRACKET_INTERPOLATION_PATTERN,
+      patterns::get
+    ).eval(patternString.get()).orElseThrow();
+
+    return new SplitDataParser(Pattern.compile(result, Pattern.DOTALL), limit.orElse(0));
+  }
 
 }
