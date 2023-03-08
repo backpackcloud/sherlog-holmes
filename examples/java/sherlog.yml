@@ -65,8 +65,8 @@ mappers:
 patterns:
   timestamp: '(?<timestamp>\d{2,4}-\d{2}-\d{2,4} \d{2}:\d{2}:\d{2},\d{3})'
   level:     '(?<level>\w+)'
-  category:  '\[(?<thread>[^]]+)]'
-  thread:    '\((?<category>[^)]+)\)'
+  category:  '\[(?<category>[^]]+)]'
+  thread:    '\((?<thread>[^)]+)\)'
   message:   '(?<message>((?<code>\w{4,}): )?.+)'
 
 steps:
