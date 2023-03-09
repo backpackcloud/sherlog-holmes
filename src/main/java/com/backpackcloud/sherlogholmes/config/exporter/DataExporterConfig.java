@@ -32,7 +32,7 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
 @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, property = "type")
 @JsonSubTypes({
   @JsonSubTypes.Type(name = "csv", value = CsvDataExporterConfig.class),
-  @JsonSubTypes.Type(name = "formatter", value = CsvDataExporterConfig.class),
+  @JsonSubTypes.Type(name = "formatter", value = FormatterDataExporterConfig.class),
   @JsonSubTypes.Type(name = "json", value = JsonDataExporterConfig.class),
 })
 public interface DataExporterConfig extends ConfigObject<DataExporter> {
