@@ -39,7 +39,7 @@ import com.backpackcloud.sherlogholmes.domain.DataRegistry;
 import com.backpackcloud.sherlogholmes.domain.TimeUnit;
 import com.backpackcloud.sherlogholmes.domain.chart.Bucket;
 import com.backpackcloud.sherlogholmes.domain.chart.Chart;
-import com.backpackcloud.sherlogholmes.domain.chart.ChartDataProducer;
+import com.backpackcloud.sherlogholmes.domain.chart.ChartProducer;
 import com.backpackcloud.sherlogholmes.domain.chart.Series;
 import com.backpackcloud.sherlogholmes.ui.suggestions.AttributeSuggester;
 import com.backpackcloud.sherlogholmes.ui.suggestions.ChronoUnitSuggestions;
@@ -65,15 +65,15 @@ public class SeriesCommand implements AnnotatedCommand {
 
   private final AttributeSuggester attributeSuggester;
 
-  private final ChartDataProducer chartDataProducer;
+  private final ChartProducer chartProducer;
 
   private final Serializer serializer;
 
   public SeriesCommand(DataRegistry dataRegistry,
-                       ChartDataProducer chartDataProducer,
+                       ChartProducer chartProducer,
                        @JSON Serializer serializer) {
     this.attributeSuggester = new AttributeSuggester(dataRegistry);
-    this.chartDataProducer = chartDataProducer;
+    this.chartProducer = chartProducer;
     this.serializer = serializer;
   }
 
@@ -84,7 +84,7 @@ public class SeriesCommand implements AnnotatedCommand {
       throw new UnbelievableException("No attribute given");
     }
 
-    Chart chart = chartDataProducer.produceData(unit, attribute, counter);
+    Chart chart = chartProducer.produce(unit, attribute, counter);
 
     switch (format) {
       case CSV -> {

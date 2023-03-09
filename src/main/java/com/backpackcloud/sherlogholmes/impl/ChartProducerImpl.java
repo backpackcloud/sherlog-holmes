@@ -33,7 +33,7 @@ import com.backpackcloud.sherlogholmes.domain.DataRegistry;
 import com.backpackcloud.sherlogholmes.domain.TimeUnit;
 import com.backpackcloud.sherlogholmes.domain.chart.Bucket;
 import com.backpackcloud.sherlogholmes.domain.chart.Chart;
-import com.backpackcloud.sherlogholmes.domain.chart.ChartDataProducer;
+import com.backpackcloud.sherlogholmes.domain.chart.ChartProducer;
 import com.backpackcloud.sherlogholmes.domain.chart.Series;
 import io.quarkus.runtime.annotations.RegisterForReflection;
 
@@ -53,23 +53,18 @@ import java.util.stream.Collectors;
 
 @ApplicationScoped
 @RegisterForReflection
-public class ChartDataProducerImpl implements ChartDataProducer {
+public class ChartProducerImpl implements ChartProducer {
 
   private final DataRegistry registry;
   private final UserPreferences preferences;
 
-  public ChartDataProducerImpl(DataRegistry registry, UserPreferences preferences) {
+  public ChartProducerImpl(DataRegistry registry, UserPreferences preferences) {
     this.registry = registry;
     this.preferences = preferences;
   }
 
   @Override
-  public Chart produceData(TimeUnit bucketUnit, String seriesAttribute) {
-    return produceData(bucketUnit, seriesAttribute, null);
-  }
-
-  @Override
-  public Chart produceData(TimeUnit unit, String attribute, String countAttribute) {
+  public Chart produce(TimeUnit unit, String attribute, String countAttribute) {
     if (registry.isEmpty()) {
       return new ChartImpl(
         Collections.emptyList(),

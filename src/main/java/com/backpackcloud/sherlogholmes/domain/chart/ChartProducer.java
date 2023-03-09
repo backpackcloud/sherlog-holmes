@@ -26,10 +26,8 @@ package com.backpackcloud.sherlogholmes.domain.chart;
 
 import com.backpackcloud.sherlogholmes.domain.TimeUnit;
 
-public interface ChartDataProducer {
+public interface ChartProducer {
 
-  Chart produceData(TimeUnit bucketUnit, String seriesAttribute);
-
-  Chart produceData(TimeUnit bucketUnit, String seriesAttribute, String countAttribute);
+  Chart produce(TimeUnit bucketUnit, String seriesAttribute, String countAttribute);
 
 }
