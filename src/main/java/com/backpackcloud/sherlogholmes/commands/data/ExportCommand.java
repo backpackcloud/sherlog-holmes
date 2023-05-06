@@ -36,7 +36,7 @@ import com.backpackcloud.sherlogholmes.config.Config;
 import com.backpackcloud.sherlogholmes.domain.DataRegistry;
 import io.quarkus.runtime.annotations.RegisterForReflection;
 
-import javax.enterprise.context.ApplicationScoped;
+import jakarta.enterprise.context.ApplicationScoped;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;

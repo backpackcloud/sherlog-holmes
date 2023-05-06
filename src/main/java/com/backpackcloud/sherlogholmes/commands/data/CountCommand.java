@@ -38,7 +38,7 @@ import com.backpackcloud.sherlogholmes.domain.DataRegistry;
 import com.backpackcloud.sherlogholmes.ui.suggestions.AttributeSuggester;
 import io.quarkus.runtime.annotations.RegisterForReflection;
 
-import javax.enterprise.context.ApplicationScoped;
+import jakarta.enterprise.context.ApplicationScoped;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;

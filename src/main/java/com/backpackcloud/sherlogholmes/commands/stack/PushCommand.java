@@ -38,7 +38,7 @@ import com.backpackcloud.sherlogholmes.domain.FilterStack;
 import com.backpackcloud.sherlogholmes.ui.suggestions.AttributeSuggester;
 import io.quarkus.runtime.annotations.RegisterForReflection;
 
-import javax.enterprise.context.ApplicationScoped;
+import jakarta.enterprise.context.ApplicationScoped;
 import java.util.List;
 @ApplicationScoped
 @CommandDefinition(

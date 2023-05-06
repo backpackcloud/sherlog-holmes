@@ -45,7 +45,7 @@ import com.backpackcloud.sherlogholmes.ui.suggestions.AttributeSuggester;
 import com.backpackcloud.sherlogholmes.ui.suggestions.ChronoUnitSuggestions;
 import io.quarkus.runtime.annotations.RegisterForReflection;
 
-import javax.enterprise.context.ApplicationScoped;
+import jakarta.enterprise.context.ApplicationScoped;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;

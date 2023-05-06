@@ -32,7 +32,7 @@ import com.backpackcloud.sherlogholmes.domain.DataFilter;
 import com.backpackcloud.sherlogholmes.domain.FilterStack;
 import io.quarkus.runtime.annotations.RegisterForReflection;
 
-import javax.enterprise.context.ApplicationScoped;
+import jakarta.enterprise.context.ApplicationScoped;
 
 @ApplicationScoped
 @CommandDefinition(

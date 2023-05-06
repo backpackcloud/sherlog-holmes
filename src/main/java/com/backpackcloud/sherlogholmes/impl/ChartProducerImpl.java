@@ -37,7 +37,7 @@ import com.backpackcloud.sherlogholmes.domain.chart.ChartProducer;
 import com.backpackcloud.sherlogholmes.domain.chart.Series;
 import io.quarkus.runtime.annotations.RegisterForReflection;
 
-import javax.enterprise.context.ApplicationScoped;
+import jakarta.enterprise.context.ApplicationScoped;
 import java.time.Duration;
 import java.time.temporal.Temporal;
 import java.util.ArrayList;

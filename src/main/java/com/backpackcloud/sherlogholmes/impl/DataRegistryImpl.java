@@ -31,7 +31,7 @@ import com.backpackcloud.sherlogholmes.domain.DataEntry;
 import com.backpackcloud.sherlogholmes.domain.DataFilter;
 import com.backpackcloud.sherlogholmes.domain.DataRegistry;
 
-import javax.enterprise.context.ApplicationScoped;
+import jakarta.enterprise.context.ApplicationScoped;
 import java.time.Duration;
 import java.time.temporal.Temporal;
 import java.util.Collections;

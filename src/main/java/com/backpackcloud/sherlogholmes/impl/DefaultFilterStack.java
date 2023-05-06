@@ -30,7 +30,7 @@ import com.backpackcloud.cli.Writer;
 import com.backpackcloud.sherlogholmes.domain.DataFilter;
 import com.backpackcloud.sherlogholmes.domain.FilterStack;
 
-import javax.enterprise.context.ApplicationScoped;
+import jakarta.enterprise.context.ApplicationScoped;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Deque;

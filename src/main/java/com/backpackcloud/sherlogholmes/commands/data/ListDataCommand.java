@@ -32,7 +32,7 @@ import com.backpackcloud.sherlogholmes.domain.DataEntry;
 import com.backpackcloud.sherlogholmes.domain.DataRegistry;
 import io.quarkus.runtime.annotations.RegisterForReflection;
 
-import javax.enterprise.context.ApplicationScoped;
+import jakarta.enterprise.context.ApplicationScoped;
 import java.util.stream.Stream;
 
 @ApplicationScoped

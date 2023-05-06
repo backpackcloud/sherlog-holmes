@@ -29,7 +29,7 @@ import com.backpackcloud.cli.ui.PromptWriter;
 import com.backpackcloud.cli.ui.Theme;
 import com.backpackcloud.sherlogholmes.domain.DataRegistry;
 
-import javax.enterprise.context.ApplicationScoped;
+import jakarta.enterprise.context.ApplicationScoped;
 import java.util.Set;
 
 @ApplicationScoped

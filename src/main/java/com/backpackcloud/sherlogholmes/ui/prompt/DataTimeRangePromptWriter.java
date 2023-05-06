@@ -28,7 +28,7 @@ import com.backpackcloud.cli.ui.Prompt;
 import com.backpackcloud.cli.ui.PromptWriter;
 import com.backpackcloud.sherlogholmes.domain.DataRegistry;
 
-import javax.enterprise.context.ApplicationScoped;
+import jakarta.enterprise.context.ApplicationScoped;
 import java.time.Duration;
 
 @ApplicationScoped

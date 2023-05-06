@@ -29,8 +29,8 @@ import com.backpackcloud.cli.Segments;
 import com.backpackcloud.sherlogholmes.config.Config;
 import io.quarkus.runtime.QuarkusApplication;
 
-import javax.enterprise.context.ApplicationScoped;
-import javax.inject.Inject;
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Inject;
 import java.util.ArrayList;
 import java.util.List;
 

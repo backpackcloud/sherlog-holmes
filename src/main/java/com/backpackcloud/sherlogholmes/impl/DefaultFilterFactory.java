@@ -29,7 +29,7 @@ import com.backpackcloud.sherlogholmes.domain.DataFilter;
 import com.backpackcloud.sherlogholmes.domain.FilterFactory;
 import com.backpackcloud.sherlogholmes.domain.Operand;
 
-import javax.enterprise.context.ApplicationScoped;
+import jakarta.enterprise.context.ApplicationScoped;
 import java.util.StringTokenizer;
 
 @ApplicationScoped

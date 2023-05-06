@@ -39,7 +39,7 @@
   <packaging>jar</packaging>
 
   <properties>
-    <quarkus.version>2.13.2.Final</quarkus.version>
+    <quarkus.version>3.0.1.Final</quarkus.version>
     <quarkus.package.type>native</quarkus.package.type>
 
     <zipper.version>1.0.0-SNAPSHOT</zipper.version>
