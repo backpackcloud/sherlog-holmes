@@ -30,7 +30,6 @@ import com.backpackcloud.cli.CommandDefinition;
 import com.backpackcloud.sherlogholmes.domain.DataRegistry;
 import com.backpackcloud.sherlogholmes.domain.FilterStack;
 import io.quarkus.runtime.annotations.RegisterForReflection;
-
 import jakarta.enterprise.context.ApplicationScoped;
 
 @ApplicationScoped

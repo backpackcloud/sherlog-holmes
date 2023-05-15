@@ -22,6 +22,7 @@
  * SOFTWARE.
  */
 package com.backpackcloud.sherlogholmes.commands.data;
+
 import com.backpackcloud.cli.Action;
 import com.backpackcloud.cli.AnnotatedCommand;
 import com.backpackcloud.cli.CommandDefinition;
@@ -32,18 +33,20 @@ import com.backpackcloud.cli.ui.Suggestion;
 import com.backpackcloud.serializer.Serializer;
 import com.backpackcloud.sherlogholmes.Preferences;
 import com.backpackcloud.sherlogholmes.domain.DataRegistry;
-import com.backpackcloud.sherlogholmes.domain.FilterStack;
 import com.backpackcloud.sherlogholmes.domain.TimeUnit;
 import com.backpackcloud.sherlogholmes.domain.chart.ChartProducer;
 import com.backpackcloud.sherlogholmes.impl.WebChart;
 import com.backpackcloud.sherlogholmes.ui.suggestions.AttributeSuggester;
 import com.backpackcloud.sherlogholmes.ui.suggestions.ChronoUnitSuggestions;
 import io.quarkus.runtime.annotations.RegisterForReflection;
+import io.quarkus.vertx.ConsumeEvent;
+import io.vertx.mutiny.core.eventbus.Message;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.websocket.OnClose;
 import jakarta.websocket.OnOpen;
 import jakarta.websocket.Session;
 import jakarta.websocket.server.ServerEndpoint;
+
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -70,14 +73,12 @@ public class PlotCommand implements AnnotatedCommand {
 
   public PlotCommand(ChartProducer chartDataProducer,
                      DataRegistry registry,
-                     UserPreferences preferences,
-                     FilterStack filterStack) {
+                     UserPreferences preferences) {
     this.chartDataProducer = chartDataProducer;
     this.attributeSuggester = new AttributeSuggester(registry);
     this.preferences = preferences;
     this.serializer = Serializer.json();
     this.preferences.get(Preferences.MAX_SERIES_COUNT).listen(o -> redrawChart());
-    filterStack.onFilter(this::redrawChart);
   }
 
   @OnOpen
@@ -118,7 +119,12 @@ public class PlotCommand implements AnnotatedCommand {
     return Collections.emptyList();
   }
 
-  public void redrawChart() {
+  @ConsumeEvent("command.filter")
+  public void onFilter(Message message) {
+    redrawChart();
+  }
+
+  private void redrawChart() {
     if (lastTimeUnit != null && lastField != null) {
       lastChart = serializer.serialize(
         new WebChart(
