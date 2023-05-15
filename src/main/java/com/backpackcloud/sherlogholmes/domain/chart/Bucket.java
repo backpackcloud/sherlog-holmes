@@ -26,11 +26,17 @@ package com.backpackcloud.sherlogholmes.domain.chart;
 
 import io.quarkus.runtime.annotations.RegisterForReflection;
 
+import java.time.temporal.Temporal;
+
 @RegisterForReflection
 public interface Bucket {
 
   String id();
 
   long value();
+
+  long startMillis();
+
+  Temporal start();
   
 }

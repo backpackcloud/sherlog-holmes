@@ -21,52 +21,65 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-
 package com.backpackcloud.sherlogholmes.impl;
-
 import com.backpackcloud.sherlogholmes.domain.chart.Bucket;
+import com.backpackcloud.sherlogholmes.domain.chart.Chart;
 import com.backpackcloud.sherlogholmes.domain.chart.Series;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.quarkus.runtime.annotations.RegisterForReflection;
-
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RegisterForReflection
-public record SeriesImpl(String name, List<Bucket> buckets) implements Series {
+public class WebChart {
+
+  private final String title;
+  private final List<WebChartSeries> series;
+
+  public WebChart(String title, Chart chart, int maxSeriesSize) {
+    this.title = title;
+    this.series = chart.series(maxSeriesSize)
+      .stream()
+      .map(WebChartSeries::new)
+      .collect(Collectors.toCollection(ArrayList::new));
+    this.series.add(new WebChartSeries(chart.total()));
+    this.series.add(new WebChartSeries(chart.average()));
+  }
 
   @JsonProperty
-  @Override
-  public String name() {
-    return name;
+  public String title() {
+    return title;
   }
 
-  @JsonProperty("data")
-  @Override
-  public List<Bucket> buckets() {
-    return buckets;
+  @JsonProperty
+  public List<WebChartSeries> series() {
+    return series;
   }
 
-  @Override
-  public Series add(String newName, Series other) {
-    List<Bucket> bucketSum = new ArrayList<>(buckets.size());
-    Iterator<Bucket> iteratorA = buckets.iterator();
-    Iterator<Bucket> iteratorB = other.buckets().iterator();
+  @RegisterForReflection
+  public static class WebChartSeries {
 
-    // assuming both series have the same buckets
-    while (iteratorA.hasNext()) {
-      Bucket a = iteratorA.next();
-      Bucket b = iteratorB.next();
-      bucketSum.add(new BucketImpl(a.id(), a.value() + b.value(), a.start()));
+    private final String name;
+    private final long[][] data;
+    public WebChartSeries(Series series) {
+      this.name = series.name();
+      this.data = new long[series.buckets().size()][2];
+      int i = 0;
+      for (Bucket bucket : series.buckets()) {
+        this.data[i++] = new long[]{bucket.startMillis(), bucket.value()};
+      }
     }
 
-    return new SeriesImpl(newName, bucketSum);
-  }
+    @JsonProperty
+    public String name() {
+      return name;
+    }
 
-  @Override
-  public long total() {
-    return buckets.stream().map(Bucket::value).reduce(0L, Long::sum);
-  }
+    @JsonProperty
+    public long[][] data() {
+      return data;
+    }
 
+  }
 }

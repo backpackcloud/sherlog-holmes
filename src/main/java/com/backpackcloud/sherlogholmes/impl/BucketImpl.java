@@ -28,15 +28,32 @@ import com.backpackcloud.sherlogholmes.domain.chart.Bucket;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.quarkus.runtime.annotations.RegisterForReflection;
 
+import java.time.LocalDateTime;
+import java.time.ZoneOffset;
+import java.time.ZonedDateTime;
+import java.time.temporal.Temporal;
+
 @RegisterForReflection
 public class BucketImpl implements Bucket {
 
   private final String id;
   private long count;
 
-  public BucketImpl(String id, long count) {
+  private final long startMillis;
+
+  private final Temporal start;
+
+  public BucketImpl(String id, long count, Temporal start) {
     this.id = id;
     this.count = count;
+    this.start = start;
+    if (start instanceof ZonedDateTime) {
+      this.startMillis = ((ZonedDateTime) start).toInstant().toEpochMilli();
+    } else if (start instanceof LocalDateTime) {
+      this.startMillis = ((LocalDateTime) start).toInstant(ZoneOffset.UTC).toEpochMilli();
+    } else {
+      this.startMillis = 0L;
+    }
   }
 
   @JsonProperty("x")
@@ -54,6 +71,16 @@ public class BucketImpl implements Bucket {
   @Override
   public long value() {
     return count;
+  }
+
+  @Override
+  public Temporal start() {
+    return start;
+  }
+
+  @Override
+  public long startMillis() {
+    return startMillis;
   }
 
 }

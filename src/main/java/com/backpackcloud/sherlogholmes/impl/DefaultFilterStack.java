@@ -43,20 +43,32 @@ public class DefaultFilterStack implements FilterStack {
 
   private final Deque<DataFilter> stack;
 
-  private final List<Runnable> listeners;
+  private final List<Runnable> stackListeners;
+
+  private final List<Runnable> filterListeners;
 
   public DefaultFilterStack() {
     this.stack = new ArrayDeque<>();
-    this.listeners = new ArrayList<>();
+    this.stackListeners = new ArrayList<>();
+    this.filterListeners = new ArrayList<>();
   }
 
   private void notifyStackChange() {
-    this.listeners.forEach(Runnable::run);
+    this.stackListeners.forEach(Runnable::run);
+  }
+
+  private void notifyFilter() {
+    this.filterListeners.forEach(Runnable::run);
   }
 
   @Override
   public void onStackChange(Runnable action) {
-    this.listeners.add(action);
+    this.stackListeners.add(action);
+  }
+
+  @Override
+  public void onFilter(Runnable action) {
+    this.filterListeners.add(action);
   }
 
   @Override
@@ -66,13 +78,17 @@ public class DefaultFilterStack implements FilterStack {
 
   @Override
   public DataFilter filter() {
-    return stack.stream().reduce(DataFilter.ALLOW_ALL, DataFilter::and);
+    try {
+      return stack.stream().reduce(DataFilter.ALLOW_ALL, DataFilter::and);
+    } finally {
+      notifyFilter();
+    }
   }
 
   @Override
   public FilterStack push(DataFilter filter) {
     stack.push(filter);
-    notifyStackChange();
+
     return this;
   }
 

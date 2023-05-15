@@ -38,6 +38,7 @@ import com.backpackcloud.sherlogholmes.domain.chart.Series;
 import io.quarkus.runtime.annotations.RegisterForReflection;
 
 import jakarta.enterprise.context.ApplicationScoped;
+
 import java.time.Duration;
 import java.time.temporal.Temporal;
 import java.util.ArrayList;
@@ -97,7 +98,7 @@ public class ChartProducerImpl implements ChartProducer {
 
     Supplier<List<Bucket>> bucketsSupplier = () -> {
       List<Bucket> result = new ArrayList<>();
-      columns.forEach(column -> result.add(new BucketImpl(column.id, 0)));
+      columns.forEach(column -> result.add(new BucketImpl(column.id, 0, column.start)));
       return result;
     };
 
@@ -136,8 +137,8 @@ public class ChartProducerImpl implements ChartProducer {
         Bucket bucket = series.buckets().get(i);
         count += bucket.value();
       }
-      totals.buckets().add(new BucketImpl(column.id, count));
-      averages.buckets().add(new BucketImpl(column.id, Math.round((float) count / seriesMap.size())));
+      totals.buckets().add(new BucketImpl(column.id, count, column.start));
+      averages.buckets().add(new BucketImpl(column.id, Math.round((float) count / seriesMap.size()), column.start));
     }
 
     return new ChartImpl(
