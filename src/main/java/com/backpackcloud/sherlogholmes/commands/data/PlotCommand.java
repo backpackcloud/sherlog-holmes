@@ -25,6 +25,7 @@ package com.backpackcloud.sherlogholmes.commands.data;
 
 import com.backpackcloud.cli.Action;
 import com.backpackcloud.cli.AnnotatedCommand;
+import com.backpackcloud.cli.CommandContext;
 import com.backpackcloud.cli.CommandDefinition;
 import com.backpackcloud.cli.ParameterCount;
 import com.backpackcloud.cli.Suggestions;
@@ -40,7 +41,6 @@ import com.backpackcloud.sherlogholmes.ui.suggestions.AttributeSuggester;
 import com.backpackcloud.sherlogholmes.ui.suggestions.ChronoUnitSuggestions;
 import io.quarkus.runtime.annotations.RegisterForReflection;
 import io.quarkus.vertx.ConsumeEvent;
-import io.vertx.mutiny.core.eventbus.Message;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.websocket.OnClose;
 import jakarta.websocket.OnOpen;
@@ -120,7 +120,7 @@ public class PlotCommand implements AnnotatedCommand {
   }
 
   @ConsumeEvent("command.filter")
-  public void onFilter(Message message) {
+  public void onFilter(CommandContext context) {
     redrawChart();
   }
 

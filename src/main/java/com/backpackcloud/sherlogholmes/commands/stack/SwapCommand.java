@@ -37,6 +37,7 @@ import jakarta.enterprise.context.ApplicationScoped;
 @ApplicationScoped
 @CommandDefinition(
   name = "swap",
+  event = "stack",
   type = "Stack Manipulation",
   description ="Swaps the current and second filters at the top of the stack"
 )
@@ -50,18 +51,15 @@ public class SwapCommand implements AnnotatedCommand {
   }
 
   @Action
-  public FilterStack execute() {
+  public void execute() {
     if (stack.size() < 2) {
       throw new UnbelievableException("Stack size < 2");
     }
-
     DataFilter x = stack.pop();
     DataFilter y = stack.pop();
 
     stack.push(x);
     stack.push(y);
-
-    return stack;
   }
 
 }

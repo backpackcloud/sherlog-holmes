@@ -35,6 +35,7 @@ import jakarta.enterprise.context.ApplicationScoped;
 @ApplicationScoped
 @CommandDefinition(
   name = "not",
+  event = "stack",
   type = "Stack Manipulation",
   description = "Applies the boolean NOT operation to the current filter"
 )
@@ -48,9 +49,8 @@ public class NotOperationCommand implements AnnotatedCommand {
   }
 
   @Action
-  public FilterStack execute() {
+  public void execute() {
     stack.apply(FilterStack.Operation.NOT);
-    return stack;
   }
 
 }

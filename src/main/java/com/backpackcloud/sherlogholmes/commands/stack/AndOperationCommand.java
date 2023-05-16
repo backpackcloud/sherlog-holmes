@@ -35,6 +35,7 @@ import jakarta.enterprise.context.ApplicationScoped;
 @ApplicationScoped
 @CommandDefinition(
   name = "and",
+  event = "stack",
   type = "Stack Manipulation",
   description = "Applies the boolean AND operation with the first filters at the top of the stack"
 )
@@ -48,9 +49,8 @@ public class AndOperationCommand implements AnnotatedCommand {
   }
 
   @Action
-  public FilterStack execute() {
+  public void execute() {
     stack.apply(FilterStack.Operation.AND);
-    return stack;
   }
 
 }

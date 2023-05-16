@@ -48,8 +48,6 @@ public interface FilterStack extends Registry, Displayable {
 
   void apply(Operation operation);
 
-  void onStackChange(Runnable action);
-
   enum Operation {
     AND, OR, NOT, DUP
   }

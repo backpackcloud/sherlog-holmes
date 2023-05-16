@@ -35,6 +35,7 @@ import jakarta.enterprise.context.ApplicationScoped;
 @ApplicationScoped
 @CommandDefinition(
   name = "dup",
+  event = "stack",
   type = "Stack Manipulation",
   description = "Duplicates the current filter"
 )
@@ -48,9 +49,8 @@ public class DupCommand implements AnnotatedCommand {
   }
 
   @Action
-  public FilterStack execute() {
+  public void execute() {
     stack.apply(FilterStack.Operation.DUP);
-    return stack;
   }
 
 }

@@ -35,6 +35,7 @@ import jakarta.enterprise.context.ApplicationScoped;
 @ApplicationScoped
 @CommandDefinition(
   name = "pop",
+  event = "stack",
   type = "Stack Manipulation",
   description ="Removes the current filter from the top of the stack"
 )

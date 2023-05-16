@@ -43,6 +43,7 @@ import java.util.List;
 @ApplicationScoped
 @CommandDefinition(
   name = "push",
+  event = "stack",
   type = "Stack Manipulation",
   description = "Adds the given filter to the stack."
 )
@@ -61,14 +62,11 @@ public class PushCommand implements AnnotatedCommand {
   }
 
   @Action
-  public FilterStack execute(@RawInput String expression) {
+  public void execute(@RawInput String expression) {
     if (expression == null) {
       throw new UnbelievableException("No filter expression given");
     }
-
     stack.push(filterFactory.create(expression));
-
-    return stack;
   }
 
   @Suggestions

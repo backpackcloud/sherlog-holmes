@@ -35,6 +35,7 @@ import jakarta.enterprise.context.ApplicationScoped;
 @ApplicationScoped
 @CommandDefinition(
   name = "stack",
+  event = "print-stack",
   type = "Stack Manipulation",
   description = "Shows the stacked filters"
 )

@@ -35,6 +35,7 @@ import jakarta.enterprise.context.ApplicationScoped;
 @ApplicationScoped
 @CommandDefinition(
   name = "or",
+  event = "stack",
   type = "Stack Manipulation",
   description = "Applies the boolean OR operation with the first filters at the top of the stack"
 )
@@ -48,10 +49,8 @@ public class OrOperationCommand implements AnnotatedCommand {
   }
 
   @Action
-  public FilterStack execute() {
+  public void execute() {
     stack.apply(FilterStack.Operation.OR);
-
-    return stack;
   }
 
 }

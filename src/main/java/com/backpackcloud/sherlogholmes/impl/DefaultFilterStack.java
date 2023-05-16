@@ -43,20 +43,8 @@ public class DefaultFilterStack implements FilterStack {
 
   private final Deque<DataFilter> stack;
 
-  private final List<Runnable> listeners;
-
   public DefaultFilterStack() {
     this.stack = new ArrayDeque<>();
-    this.listeners = new ArrayList<>();
-  }
-
-  private void notifyStackChange() {
-    this.listeners.forEach(Runnable::run);
-  }
-
-  @Override
-  public void onStackChange(Runnable action) {
-    this.listeners.add(action);
   }
 
   @Override
@@ -72,7 +60,6 @@ public class DefaultFilterStack implements FilterStack {
   @Override
   public FilterStack push(DataFilter filter) {
     stack.push(filter);
-    notifyStackChange();
     return this;
   }
 
@@ -81,11 +68,7 @@ public class DefaultFilterStack implements FilterStack {
     if (stack.isEmpty()) {
       throw new UnbelievableException("Stack is empty");
     }
-    try {
-      return stack.pop();
-    } finally {
-      notifyStackChange();
-    }
+    return stack.pop();
   }
 
   @Override
@@ -130,7 +113,6 @@ public class DefaultFilterStack implements FilterStack {
   @Override
   public void clear() {
     stack.clear();
-    notifyStackChange();
   }
 
   @Override
