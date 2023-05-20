@@ -22,62 +22,57 @@
  * SOFTWARE.
  */
 
-let socket;
-let chart;
+let charts = [];
 
 $(document).ready(function () {
-    chart = Highcharts.chart('chart', {
-        chart: {
-            zoomType: 'x',
-            height: (9 / 16 * 100) + '%' // 16:9 ratio
-        },
-        title: {
-            text: 'Chartlog Holmes'
-        },
-        xAxis: {
-            type: 'datetime',
-        },
-        yAxis: {
-            title: {
-                text: 'Count'
-            }
-        },
-        tooltip: {
-            crosshairs: true,
-            shared: true,
-        },
-        credits: {
-            enabled: false
-        },
-    });
-
-    socket = new WebSocket("ws://" + location.host + "/data");
-    socket.onopen = function () {
-        console.log("Connected to the web socket");
-    };
-    socket.onmessage = function (m) {
+    let configSocket = new WebSocket("ws://" + location.host + "/config");
+    configSocket.onopen = function () {
+        console.log("Connected to the config web socket");
+    }
+    configSocket.onmessage = function (m) {
         let data = JSON.parse(m.data);
-
-        while (chart.series.length > 0) {
-            chart.series[0].remove(false)
+        console.log("Received configuration")
+        console.log(data)
+        for (let i = 0; i < data.length; i++) {
+            charts[i] = data[i];
+            $("#charts").append("<div id='chart-" + i + "'/>")
+            charts[i].reference = Highcharts.chart("chart-" + i, data[i].properties)
         }
 
-        data.series.forEach(function (series) {
-            if (series.name === "average") {
-                series.dashStyle = 'dash'
-                series.type = "spline"
-            } else if (series.name === "total") {
-                series.type = "spline"
-                series.dataLabels = {
-                    enabled: true
-                }
-            } else {
-                series.type = "column"
-            }
-            console.log(series)
-            chart.addSeries(series, false)
-        })
-
-        chart.redraw()
-    };
+        configureDataSocket()
+    }
 })
+
+configureDataSocket = function () {
+    let dataSocket = new WebSocket("ws://" + location.host + "/data");
+    dataSocket.onopen = function () {
+        console.log("Connected to the data web socket");
+    };
+    dataSocket.onmessage = function (m) {
+        let data = JSON.parse(m.data);
+
+        for (let i = 0; i < charts.length ; i++) {
+            let chart = charts[i];
+
+            while (chart.reference.series.length > 0) {
+                chart.reference.series[0].remove(false)
+            }
+
+            data.series.forEach(function (series) {
+                let seriesProperties = chart.series[series.name]
+                if(typeof seriesProperties == "undefined") {
+                    seriesProperties = chart.series["default"]
+                }
+                if (typeof seriesProperties != "undefined") {
+                    for (const prop in seriesProperties) {
+                        series[prop] = seriesProperties[prop]
+                    }
+                }
+                console.log(series)
+                chart.reference.addSeries(series, false)
+            })
+
+            chart.reference.redraw()
+        }
+    };
+}

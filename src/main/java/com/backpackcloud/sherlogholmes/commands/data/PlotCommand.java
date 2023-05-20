@@ -31,6 +31,7 @@ import com.backpackcloud.cli.ParameterCount;
 import com.backpackcloud.cli.Suggestions;
 import com.backpackcloud.cli.preferences.UserPreferences;
 import com.backpackcloud.cli.ui.Suggestion;
+import com.backpackcloud.serializer.JSON;
 import com.backpackcloud.serializer.Serializer;
 import com.backpackcloud.sherlogholmes.Preferences;
 import com.backpackcloud.sherlogholmes.domain.DataRegistry;
@@ -51,6 +52,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+
 @CommandDefinition(
   name = "plot",
   description = "Plots a chart in the web interface",
@@ -73,11 +75,12 @@ public class PlotCommand implements AnnotatedCommand {
 
   public PlotCommand(ChartProducer chartDataProducer,
                      DataRegistry registry,
-                     UserPreferences preferences) {
+                     UserPreferences preferences,
+                     @JSON Serializer serializer) {
     this.chartDataProducer = chartDataProducer;
     this.attributeSuggester = new AttributeSuggester(registry);
     this.preferences = preferences;
-    this.serializer = Serializer.json();
+    this.serializer = serializer;
     this.preferences.get(Preferences.MAX_SERIES_COUNT).listen(o -> redrawChart());
   }
 
