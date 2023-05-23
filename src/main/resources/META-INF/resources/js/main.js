@@ -38,6 +38,7 @@ $(document).ready(function () {
             templates[id] = data[id];
         }
         configureDataSocket()
+        configSocket.close()
     }
 })
 
