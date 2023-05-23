@@ -327,8 +327,10 @@ styles:
   attribute-message:     white
   attribute-exception:   red
 
+# Chart templates to be used on plot commands
 charts:
-  - properties:
+  main:
+    properties:
       title: Sherlog Holmes
 
       chart:

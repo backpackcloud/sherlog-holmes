@@ -34,11 +34,13 @@ import java.util.stream.Collectors;
 @RegisterForReflection
 public class WebChart {
 
-  private final String title;
+  private final String id;
+  private final String config;
   private final List<WebChartSeries> series;
 
-  public WebChart(String title, Chart chart, int maxSeriesSize) {
-    this.title = title;
+  public WebChart(String id, String config, Chart chart, int maxSeriesSize) {
+    this.id = id;
+    this.config = config;
     this.series = chart.series(maxSeriesSize)
       .stream()
       .map(WebChartSeries::new)
@@ -48,8 +50,13 @@ public class WebChart {
   }
 
   @JsonProperty
-  public String title() {
-    return title;
+  public String id() {
+    return id;
+  }
+
+  @JsonProperty
+  public String config() {
+    return config;
   }
 
   @JsonProperty

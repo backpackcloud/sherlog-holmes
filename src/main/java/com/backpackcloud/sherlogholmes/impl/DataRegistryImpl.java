@@ -42,6 +42,7 @@ import java.util.NavigableSet;
 import java.util.Optional;
 import java.util.Set;
 import java.util.TreeSet;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 @ApplicationScoped
@@ -115,6 +116,11 @@ public class DataRegistryImpl implements DataRegistry {
   @Override
   public NavigableSet<DataEntry> entries() {
     return registry().entries();
+  }
+
+  @Override
+  public NavigableSet<DataEntry> entries(DataFilter filter) {
+    return registry().entries(filter);
   }
 
   @Override
@@ -222,6 +228,16 @@ public class DataRegistryImpl implements DataRegistry {
     @Override
     public NavigableSet<DataEntry> entries() {
       return entries;
+    }
+
+    @Override
+    public NavigableSet<DataEntry> entries(DataFilter filter) {
+      if (filter == null) {
+        return entries;
+      }
+      NavigableSet<DataEntry> filtered = new TreeSet<>();
+      entries.stream().filter(filter).forEach(filtered::add);
+      return filtered;
     }
 
     @Override

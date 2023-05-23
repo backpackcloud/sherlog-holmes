@@ -68,7 +68,7 @@ public class Config {
   private final Map<String, PipelineConfig> pipelines;
   private final Map<String, DataExporterConfig> exporters;
 
-  private final List<Map> charts;
+  private final Map<String, Map> charts;
 
   @JsonCreator
   public Config(@JacksonInject UserPreferences userPreferences,
@@ -87,7 +87,7 @@ public class Config {
                 @JsonProperty("steps") Map<String, List<PipelineStep>> steps,
                 @JsonProperty("pipelines") Map<String, PipelineConfig> pipelines,
                 @JsonProperty("exporters") Map<String, DataExporterConfig> exporters,
-                @JsonProperty("charts") List<Map> charts) {
+                @JsonProperty("charts") Map<String, Map> charts) {
     this.preferences = userPreferences;
     this.commands = commands != null ? commands : Collections.emptyList();
     this.macros = macros != null ? macros : Collections.emptyMap();
@@ -98,7 +98,7 @@ public class Config {
     this.steps = steps != null ? steps : Collections.emptyMap();
     this.pipelines = pipelines != null ? pipelines : new HashMap<>();
     this.exporters = exporters;
-    this.charts = charts != null ? charts : Collections.emptyList();
+    this.charts = charts != null ? charts : Collections.emptyMap();
 
     this.preferences.register(Preferences.values());
     this.patterns = patterns != null ? patterns : Collections.emptyMap();
@@ -192,7 +192,7 @@ public class Config {
     return preferences;
   }
 
-  public List<Map> charts() {
+  public Map<String, Map> charts() {
     return charts;
   }
 

@@ -24,10 +24,15 @@
 
 package com.backpackcloud.sherlogholmes.domain.chart;
 
+import com.backpackcloud.sherlogholmes.domain.DataFilter;
 import com.backpackcloud.sherlogholmes.domain.TimeUnit;
 
 public interface ChartProducer {
 
-  Chart produce(TimeUnit bucketUnit, String seriesAttribute, String countAttribute);
+  default Chart produce(TimeUnit bucketUnit, String seriesAttribute, String countAttribute) {
+    return produce(bucketUnit, null, seriesAttribute, countAttribute);
+  }
+
+  Chart produce(TimeUnit bucketUnit, DataFilter filter, String seriesAttribute, String countAttribute);
 
 }

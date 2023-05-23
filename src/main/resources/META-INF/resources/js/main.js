@@ -22,6 +22,7 @@
  * SOFTWARE.
  */
 
+let templates = [];
 let charts = [];
 
 $(document).ready(function () {
@@ -33,12 +34,9 @@ $(document).ready(function () {
         let data = JSON.parse(m.data);
         console.log("Received configuration")
         console.log(data)
-        for (let i = 0; i < data.length; i++) {
-            charts[i] = data[i];
-            $("#charts").append("<div id='chart-" + i + "'/>")
-            charts[i].reference = Highcharts.chart("chart-" + i, data[i].properties)
+        for (let id in data) {
+            templates[id] = data[id];
         }
-
         configureDataSocket()
     }
 })
@@ -49,30 +47,41 @@ configureDataSocket = function () {
         console.log("Connected to the data web socket");
     };
     dataSocket.onmessage = function (m) {
-        let data = JSON.parse(m.data);
-
-        for (let i = 0; i < charts.length ; i++) {
-            let chart = charts[i];
-
-            while (chart.reference.series.length > 0) {
-                chart.reference.series[0].remove(false)
-            }
-
-            data.series.forEach(function (series) {
-                let seriesProperties = chart.series[series.name]
-                if(typeof seriesProperties == "undefined") {
-                    seriesProperties = chart.series["default"]
-                }
-                if (typeof seriesProperties != "undefined") {
-                    for (const prop in seriesProperties) {
-                        series[prop] = seriesProperties[prop]
-                    }
-                }
-                console.log(series)
-                chart.reference.addSeries(series, false)
-            })
-
-            chart.reference.redraw()
+        if (m.data === "clear") {
+            charts = [];
+            $(".chart").remove()
+            return;
         }
+        let data = JSON.parse(m.data);
+        let id = data.id;
+        let config = data.config;
+        let template = templates[config];
+
+        if ($("#chart-" + id).length === 0) {
+            $("#charts").append("<div class='chart' id='chart-" + id + "'/>")
+            charts[id] = Highcharts.chart("chart-" + id, templates[config].properties)
+        }
+
+        let chart = charts[id];
+
+        while (chart.series.length > 0) {
+            chart.series[0].remove(false)
+        }
+
+        data.series.forEach(function (series) {
+            let seriesProperties = template.series[series.name]
+            if(typeof seriesProperties == "undefined") {
+                seriesProperties = template.series["default"]
+            }
+            if (typeof seriesProperties != "undefined") {
+                for (const prop in seriesProperties) {
+                    series[prop] = seriesProperties[prop]
+                }
+            }
+            console.log(series)
+            chart.addSeries(series, false)
+        })
+
+        chart.redraw()
     };
 }

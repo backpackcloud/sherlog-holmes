@@ -58,6 +58,8 @@ public interface DataRegistry extends Registry {
 
   NavigableSet<DataEntry> entries();
 
+  NavigableSet<DataEntry> entries(DataFilter filter);
+
   Stream<DataEntry> stream();
 
   <E> Map<E, NavigableSet<DataEntry>> index(String attributeName);

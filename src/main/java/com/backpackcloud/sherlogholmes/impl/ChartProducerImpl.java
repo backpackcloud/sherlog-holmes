@@ -29,6 +29,7 @@ import com.backpackcloud.sherlogholmes.Preferences;
 import com.backpackcloud.sherlogholmes.domain.Attribute;
 import com.backpackcloud.sherlogholmes.domain.AttributeType;
 import com.backpackcloud.sherlogholmes.domain.DataEntry;
+import com.backpackcloud.sherlogholmes.domain.DataFilter;
 import com.backpackcloud.sherlogholmes.domain.DataRegistry;
 import com.backpackcloud.sherlogholmes.domain.TimeUnit;
 import com.backpackcloud.sherlogholmes.domain.chart.Bucket;
@@ -47,6 +48,7 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.NavigableSet;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Function;
 import java.util.function.Supplier;
@@ -65,8 +67,10 @@ public class ChartProducerImpl implements ChartProducer {
   }
 
   @Override
-  public Chart produce(TimeUnit unit, String attribute, String countAttribute) {
-    if (registry.isEmpty()) {
+  public Chart produce(TimeUnit unit, DataFilter filter, String attribute, String countAttribute) {
+    NavigableSet<DataEntry> entries = registry.entries(filter);
+
+    if (entries.isEmpty()) {
       return new ChartImpl(
         Collections.emptyList(),
         Collections.emptyList(),
@@ -80,13 +84,13 @@ public class ChartProducerImpl implements ChartProducer {
     Map<String, Series> seriesMap = new HashMap<>();
     List<Column> columns = new ArrayList<>();
 
-    Temporal start = unit.truncate(registry.entries()
+    Temporal start = unit.truncate(entries
       .first()
       .attribute(temporalAttribute, Temporal.class)
       .flatMap(Attribute::value)
       .orElseThrow());
     Temporal end = start.plus(1, unit.chronoUnit());
-    DataEntry last = registry.entries().last();
+    DataEntry last = entries.last();
     Column col;
 
     do {
@@ -113,7 +117,7 @@ public class ChartProducerImpl implements ChartProducer {
     AtomicInteger columnIndex = new AtomicInteger(0);
     Column currentColumn = columns.get(columnIndex.get());
 
-    for (DataEntry entry : registry.entries()) {
+    for (DataEntry entry : entries) {
       while (!currentColumn.includes(entry)) {
         currentColumn = columns.get(columnIndex.incrementAndGet());
       }
