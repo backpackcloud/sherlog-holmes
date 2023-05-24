@@ -21,9 +21,11 @@ public class ChartCountPromptWriter implements PromptWriter {
 
   @Override
   public void addTo(Prompt prompt, PromptSide side) {
-    prompt.newSegment("data_count")
-      .addIcon("nf-fa-bar_chart")
-      .add(registry.size());
+    if (!registry.isEmpty()) {
+      prompt.newSegment("data_count")
+        .addIcon("nf-fa-bar_chart")
+        .add(registry.size());
+    }
   }
 
 }
