@@ -27,15 +27,16 @@ package com.backpackcloud.sherlogholmes.impl;
 
 import com.backpackcloud.UnbelievableException;
 import com.backpackcloud.cli.Writer;
+import com.backpackcloud.cli.preferences.UserPreferences;
+import com.backpackcloud.sherlogholmes.Preferences;
 import com.backpackcloud.sherlogholmes.domain.DataFilter;
 import com.backpackcloud.sherlogholmes.domain.FilterStack;
 
 import jakarta.enterprise.context.ApplicationScoped;
 import java.util.ArrayDeque;
-import java.util.ArrayList;
 import java.util.Deque;
 import java.util.Iterator;
-import java.util.List;
+import java.util.function.BinaryOperator;
 import java.util.stream.Stream;
 
 @ApplicationScoped
@@ -43,8 +44,15 @@ public class DefaultFilterStack implements FilterStack {
 
   private final Deque<DataFilter> stack;
 
-  public DefaultFilterStack() {
+  private BinaryOperator<DataFilter> stackOperation;
+
+  public DefaultFilterStack(UserPreferences preferences) {
     this.stack = new ArrayDeque<>();
+    preferences.watchText(Preferences.STACK_OPERATION, s -> stackOperation = switch (s) {
+      case "and" -> DataFilter::and;
+      case "or" -> DataFilter::or;
+      default -> throw new UnbelievableException("Invalid preference");
+    });
   }
 
   @Override
@@ -54,7 +62,7 @@ public class DefaultFilterStack implements FilterStack {
 
   @Override
   public DataFilter filter() {
-    return stack.stream().reduce(DataFilter.ALLOW_ALL, DataFilter::and);
+    return stack.stream().reduce(DataFilter.ALLOW_ALL, stackOperation);
   }
 
   @Override

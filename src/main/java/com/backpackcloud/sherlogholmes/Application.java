@@ -28,9 +28,9 @@ import com.backpackcloud.cli.CLI;
 import com.backpackcloud.cli.Segments;
 import com.backpackcloud.sherlogholmes.config.Config;
 import io.quarkus.runtime.QuarkusApplication;
-
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -42,6 +42,7 @@ public class Application implements QuarkusApplication {
     "data-count",
     "data-range",
     "filter-stack",
+    "chart-count",
     "close",
     "new-line",
     "prompt"

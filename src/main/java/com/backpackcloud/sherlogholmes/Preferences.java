@@ -64,6 +64,12 @@ public enum Preferences implements PreferenceSpec {
     "true"
   ),
 
+  STACK_OPERATION(
+    "sets the stack operation for creating the filter (and/or)",
+    Type.TEXT,
+    "and"
+  ),
+
   REMOVE_ANSI_COLORS(
     "removes the ansi colors from the readed content",
     Type.FLAG,
