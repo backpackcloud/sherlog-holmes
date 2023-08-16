@@ -58,10 +58,13 @@ public class IndexCommand implements AnnotatedCommand {
   @Action
   public void execute(Writer writer, String attribute) {
     if (attribute == null) {
-      registry.indexedAttributes().forEach(writer::writeln);
+      registry.indexedAttributes().stream()
+        .map(registry::index);
     } else {
       registry.index(attribute).forEach((value, entries) ->
-        writer.writeln(registry.typeOf(attribute).orElse(AttributeType.TEXT).format(value)));
+        writer.write(registry.typeOf(attribute).orElse(AttributeType.TEXT).format(value))
+          .writeln(String.format(" -> %d", entries.size()))
+      );
     }
   }
 

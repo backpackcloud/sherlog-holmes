@@ -32,13 +32,14 @@ import com.backpackcloud.cli.ParameterCount;
 import com.backpackcloud.cli.Suggestions;
 import com.backpackcloud.cli.ui.Paginator;
 import com.backpackcloud.cli.ui.Suggestion;
+import com.backpackcloud.sherlogholmes.domain.Attribute;
 import com.backpackcloud.sherlogholmes.domain.Count;
 import com.backpackcloud.sherlogholmes.domain.DataEntry;
 import com.backpackcloud.sherlogholmes.domain.DataRegistry;
 import com.backpackcloud.sherlogholmes.ui.suggestions.AttributeSuggester;
 import io.quarkus.runtime.annotations.RegisterForReflection;
-
 import jakarta.enterprise.context.ApplicationScoped;
+
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -65,8 +66,24 @@ public class CountCommand implements AnnotatedCommand {
     this.attributeSuggester = new AttributeSuggester(registry);
   }
 
+  private int count(NavigableSet<DataEntry> set, String weightAttribute) {
+    if (weightAttribute == null || weightAttribute.isEmpty()) {
+      return set.size();
+    }
+    AtomicInteger count = new AtomicInteger();
+
+    for (DataEntry entry : set) {
+      entry.attribute(weightAttribute)
+        .map(Attribute::value)
+        .map(Integer.class::cast)
+        .ifPresent(count::addAndGet);
+    }
+
+    return count.get();
+  }
+
   @Action
-  public void execute(CommandContext context, Paginator paginator, String attribute) {
+  public void execute(CommandContext context, Paginator paginator, String attribute, String weightAttribute) {
     Map<?, NavigableSet<DataEntry>> valuesMap = registry.index(attribute);
 
     Map<String, Count<?>> countMap = new HashMap<>();
@@ -74,8 +91,8 @@ public class CountCommand implements AnnotatedCommand {
     AtomicInteger nameLength = new AtomicInteger();
 
     valuesMap.entrySet().stream()
-      .peek(entry -> total.addAndGet(entry.getValue().size()))
-      .map(entry -> new Count<>(entry.getKey(), entry.getValue().size()))
+      .peek(entry -> total.addAndGet(count(entry.getValue(), weightAttribute)))
+      .map(entry -> new Count<>(entry.getKey(), count(entry.getValue(), weightAttribute)))
       .peek(count -> nameLength.set((Math.max(nameLength.get(), count.object().toString().length()))))
       .forEach(count -> countMap.put(count.object().toString(), count));
 
@@ -129,7 +146,7 @@ public class CountCommand implements AnnotatedCommand {
 
   @Suggestions
   public List<Suggestion> execute(@ParameterCount int paramCount) {
-    if (paramCount == 1) {
+    if (paramCount == 1 || paramCount == 2) {
       return attributeSuggester.suggestIndexedAttributes();
     }
     return Collections.emptyList();

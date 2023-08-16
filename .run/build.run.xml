@@ -1,5 +1,6 @@
 <component name="ProjectRunConfigurationManager">
   <configuration default="false" name="build" type="MavenRunConfiguration" factoryName="Maven">
+    <target name="WSL" />
     <MavenSettings>
       <option name="myGeneralSettings" />
       <option name="myRunnerSettings" />
