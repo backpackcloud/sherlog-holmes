@@ -48,7 +48,10 @@ public class SocketDataReaderConfig implements DataReaderConfig {
   @Override
   public DataReader get(Config config) {
     return new SocketDataReader(
-      charset.map(Charset::forName).orElse(StandardCharsets.UTF_8)
+      charset
+        .map(Configuration::get)
+        .map(Charset::forName)
+        .orElse(StandardCharsets.UTF_8)
     );
   }
 
