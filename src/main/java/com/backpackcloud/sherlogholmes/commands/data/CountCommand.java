@@ -67,17 +67,22 @@ public class CountCommand implements AnnotatedCommand {
   }
 
   private int count(NavigableSet<DataEntry> set, String weightAttribute) {
-    if (weightAttribute == null || weightAttribute.isEmpty()) {
+    if (weightAttribute == null) {
       return set.size();
     }
     AtomicInteger count = new AtomicInteger();
 
-    for (DataEntry entry : set) {
+    set.forEach(entry -> {
       entry.attribute(weightAttribute)
-        .map(Attribute::value)
-        .map(Integer.class::cast)
+        .flatMap(Attribute::value)
+        .map(value -> {
+          if (value instanceof Integer i) {
+            return i;
+          }
+          return Integer.parseInt(value.toString());
+        })
         .ifPresent(count::addAndGet);
-    }
+    });
 
     return count.get();
   }
@@ -98,7 +103,7 @@ public class CountCommand implements AnnotatedCommand {
 
     int valueLength = Integer.toString(total.get()).length();
 
-    boolean subset = total.get() != registry.size();
+    boolean subset = weightAttribute == null && total.get() < registry.size();
 
     paginator.from(
       countMap.values().stream()
