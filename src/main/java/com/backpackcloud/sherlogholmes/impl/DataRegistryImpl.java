@@ -30,8 +30,8 @@ import com.backpackcloud.sherlogholmes.domain.AttributeType;
 import com.backpackcloud.sherlogholmes.domain.DataEntry;
 import com.backpackcloud.sherlogholmes.domain.DataFilter;
 import com.backpackcloud.sherlogholmes.domain.DataRegistry;
-
 import jakarta.enterprise.context.ApplicationScoped;
+
 import java.time.Duration;
 import java.time.temporal.Temporal;
 import java.util.Collections;
@@ -42,7 +42,6 @@ import java.util.NavigableSet;
 import java.util.Optional;
 import java.util.Set;
 import java.util.TreeSet;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 @ApplicationScoped

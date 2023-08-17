@@ -33,6 +33,7 @@ import com.backpackcloud.cli.Suggestions;
 import com.backpackcloud.cli.ui.Paginator;
 import com.backpackcloud.cli.ui.Suggestion;
 import com.backpackcloud.sherlogholmes.domain.Attribute;
+import com.backpackcloud.sherlogholmes.domain.AttributeType;
 import com.backpackcloud.sherlogholmes.domain.Count;
 import com.backpackcloud.sherlogholmes.domain.DataEntry;
 import com.backpackcloud.sherlogholmes.domain.DataRegistry;
@@ -151,8 +152,10 @@ public class CountCommand implements AnnotatedCommand {
 
   @Suggestions
   public List<Suggestion> execute(@ParameterCount int paramCount) {
-    if (paramCount == 1 || paramCount == 2) {
+    if (paramCount == 1) {
       return attributeSuggester.suggestIndexedAttributes();
+    } else if (paramCount == 2) {
+      return attributeSuggester.suggestAttributeNames(attributeType -> attributeType == AttributeType.NUMBER);
     }
     return Collections.emptyList();
   }

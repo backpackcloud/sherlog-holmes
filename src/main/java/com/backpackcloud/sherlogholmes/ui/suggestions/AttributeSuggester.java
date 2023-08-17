@@ -49,6 +49,13 @@ public class AttributeSuggester {
       .collect(Collectors.toList());
   }
 
+  public List<Suggestion> suggestAttributeNames(Predicate<AttributeType> predicate) {
+    return registry.attributeNames().stream()
+      .filter(name -> predicate.test(registry.typeOf(name).orElse(AttributeType.TEXT)))
+      .map(PromptSuggestion::suggest)
+      .collect(Collectors.toList());
+  }
+
   public List<Suggestion> suggestIndexedAttributes() {
     return registry.indexedAttributes().stream()
       .map(PromptSuggestion::suggest)
