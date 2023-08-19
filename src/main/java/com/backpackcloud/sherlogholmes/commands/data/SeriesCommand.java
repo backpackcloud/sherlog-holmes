@@ -29,6 +29,7 @@ import com.backpackcloud.cli.Action;
 import com.backpackcloud.cli.AnnotatedCommand;
 import com.backpackcloud.cli.CommandDefinition;
 import com.backpackcloud.cli.ParameterCount;
+import com.backpackcloud.cli.PreferenceValue;
 import com.backpackcloud.cli.Suggestions;
 import com.backpackcloud.cli.Writer;
 import com.backpackcloud.cli.ui.Suggestion;
@@ -79,12 +80,12 @@ public class SeriesCommand implements AnnotatedCommand {
 
   @Action
   public void execute(Writer writer, Format format, TimeUnit unit,
-                      String attribute, String counter) {
+                      String attribute, @PreferenceValue("count-attribute") String countAttribute) {
     if (attribute == null || attribute.isBlank()) {
       throw new UnbelievableException("No attribute given");
     }
 
-    Chart chart = chartProducer.produce(unit, attribute, counter);
+    Chart chart = chartProducer.produce(unit, attribute, countAttribute);
 
     switch (format) {
       case CSV -> {
@@ -116,8 +117,6 @@ public class SeriesCommand implements AnnotatedCommand {
       return ChronoUnitSuggestions.suggestUnits();
     } else if (paramCount == 3) {
       return attributeSuggester.suggestIndexedAttributes();
-    } else if (paramCount == 4) {
-      return attributeSuggester.suggestAttributeNames();
     }
     return Collections.emptyList();
   }
