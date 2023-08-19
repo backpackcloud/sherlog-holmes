@@ -37,10 +37,9 @@ import com.backpackcloud.sherlogholmes.domain.chart.Chart;
 import com.backpackcloud.sherlogholmes.domain.chart.ChartProducer;
 import com.backpackcloud.sherlogholmes.domain.chart.Series;
 import io.quarkus.runtime.annotations.RegisterForReflection;
-
 import jakarta.enterprise.context.ApplicationScoped;
 
-import java.time.Duration;
+import java.time.temporal.ChronoUnit;
 import java.time.temporal.Temporal;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -94,7 +93,7 @@ public class ChartProducerImpl implements ChartProducer {
     Column col;
 
     do {
-      col = new Column(unit.format(start), temporalAttribute, start, end);
+      col = new Column(unit.format(start), temporalAttribute, start, end, unit.chronoUnit());
       columns.add(col);
       start = end;
       end = start.plus(1, unit.chronoUnit());
@@ -160,13 +159,15 @@ public class ChartProducerImpl implements ChartProducer {
     private final String id;
     private final String temporalAttribute;
     private final Temporal start;
+    private final ChronoUnit unit;
     private final long threshold;
 
-    private Column(String id, String temporalAttribute, Temporal start, Temporal end) {
+    private Column(String id, String temporalAttribute, Temporal start, Temporal end, ChronoUnit unit) {
       this.id = id;
       this.temporalAttribute = temporalAttribute;
       this.start = start;
-      this.threshold = Duration.between(start, end).toMillis();
+      this.unit = unit;
+      this.threshold = start.until(end, unit);
     }
 
     public String id() {
@@ -177,7 +178,7 @@ public class ChartProducerImpl implements ChartProducer {
       Temporal end = entry.attribute(temporalAttribute, Temporal.class)
         .flatMap(Attribute::value)
         .orElseThrow();
-      return Duration.between(start, end).toMillis() < threshold;
+      return start.until(end, unit) < threshold;
     }
   }
 

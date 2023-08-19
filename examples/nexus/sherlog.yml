@@ -4,40 +4,18 @@ preferences:
 models:
   base:
     attributes:
-      timestamp:
-        type:      zoned-datetime
-        indexable: false
-        format:    yyyy-MM-dd HH:mm:ss,SSSZ
-
-      thread:
-        type:      text
-        indexable: true
-
-      initiator:
-        type:      text
-        indexable: true
-
-      message:
-        type:      text
-        indexable: false
+      timestamp: zoned-datetime | yyyy-MM-dd HH:mm:ss,SSSZ
+      thread: text
+      initiator: text
+      message: text
 
   log:
     include: base
     format:  '{@exception}{#timestamp} {#level|-5} {#thread} {#initiator} {#class} {#message}'
     attributes:
-      level:
-        type:      enum
-        indexable: true
-        values:    TRACE,DEBUG,INFO,WARN,ERROR,FATAL
-
-      class:
-        type:      text
-        indexable: true
-
-      exception:
-        type:        text
-        indexable:   true
-        multivalued: true
+      level: enum | TRACE,DEBUG,INFO,WARN,ERROR,FATAL
+      class: text
+      exception: text[]
 
   audit:
     include: base
@@ -47,17 +25,19 @@ models:
              type: {type}
              context: {context}
     attributes:
-      domain:
-        type:      text
-        indexable: true
+      domain: text
+      type: text
+      context: text
 
-      type:
-        type:      text
-        indexable: true
-
-      context:
-        type:      text
-        indexable: true
+index:
+  - thread
+  - initiator
+  - level
+  - class
+  - exception
+  - domain
+  - type
+  - context
 
 readers:
   file:

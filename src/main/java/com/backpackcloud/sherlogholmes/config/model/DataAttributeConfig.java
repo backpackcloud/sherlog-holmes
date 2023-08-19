@@ -48,7 +48,7 @@ public interface DataAttributeConfig extends ConfigObject<AttributeSpec> {
 
   @JsonCreator
   static DataAttributeConfig create(String spec) {
-    Matcher matcher = Pattern.compile("^(?<type>[0-9a-zA-Z\\-_]+)(?<multivalued>\\[\\])?:?(?<config>.+)?$")
+    Matcher matcher = Pattern.compile("^(?<type>[0-9a-zA-Z\\-_]+)(?<multivalued>\\[\\])?\\s*\\|?\\s*(?<config>.+)?$")
       .matcher(spec);
 
     if (matcher.find()) {

@@ -55,54 +55,45 @@ models:
     # The list of attributes for this data model
     #
     # Attributes can be of the following types:
-    # - time:            a java LocalTime
-    # - datetime:        a java LocalDateTime
-    # - zoned-datetime:  a java ZonedDateTime
-    # - offset-datetime: a java OffsetDateTime
+    # - time:            a java LocalTime (requires format configuration)
+    # - datetime:        a java LocalDateTime (requires format configuration)
+    # - zoned-datetime:  a java ZonedDateTime (requires format configuration)
+    # - offset-datetime: a java OffsetDateTime (requires format configuration)
     # - text:            a java String
     # - number:          a java Integer
     # - decimal:         a java Double
     # - flag:            a java Boolean
     # - enum:            a set of possible String values
     #
-    # Attributes can also be indexable, which means the registry will keep track of
-    # all assigned values and which entries hold the values. Indexed attributes that also
-    # have an icon will appear in the prompt together with a counter for how many values
-    # were indexed.
-    #
-    # Attributes might have multiple values, which can be useful in situations where you
-    # need a collection of values like exceptions that are shown in a stacktrace.
+    # Attributes might have multiple values (indicated with an '[]' after the type), which can be useful in situations
+    # where you need a collection of values like exceptions that are shown in a stacktrace.
     attributes:
 
-      timestamp:
-        type:      datetime
-        indexable: false
-        # this will also apply for printing out the value
-        format:    yyyy-MM-dd HH:mm:ss,SSS
+      # this will also apply for printing out the value
+      timestamp: datetime | yyyy-MM-dd HH:mm:ss,SSS
 
-      level:
-        type:      enum
-        indexable: true
-        # if you query for "level > WARN", you will get ERROR and FATAL entries
-        values:    TRACE,DEBUG,INFO,WARN,ERROR,FATAL
+      level: enum:TRACE,DEBUG,INFO,WARN,ERROR,FATAL
 
-      category:
-        type:      text
-        indexable: true
+      category: text
 
-      thread:
-        type:      text
-        indexable: true
+      thread: text
 
-      exception:
-        type:        text
-        indexable:   true
-        # this will make possible to add more than one exception to the attribute
-        multivalued: true
+      # this will make possible to add more than one exception to the attribute
+      exception: text[]
 
-      message:
-        type:      text
-        indexable: false
+      message: text
+
+# The registry will keep track of
+# all assigned values and which entries hold the values. Indexed attributes that also
+# have an icon will appear in the prompt together with a counter for how many values
+# were indexed.
+index:
+  - level
+  - category
+  - thread
+  - exception
+  - level:exception
+  - category:exception
 
 # Readers are the first component in the chain, responsible for getting the raw content and
 # forward them line by line.
