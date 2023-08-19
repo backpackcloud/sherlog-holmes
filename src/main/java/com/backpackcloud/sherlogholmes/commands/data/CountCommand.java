@@ -29,11 +29,11 @@ import com.backpackcloud.cli.AnnotatedCommand;
 import com.backpackcloud.cli.CommandContext;
 import com.backpackcloud.cli.CommandDefinition;
 import com.backpackcloud.cli.ParameterCount;
+import com.backpackcloud.cli.PreferenceValue;
 import com.backpackcloud.cli.Suggestions;
 import com.backpackcloud.cli.ui.Paginator;
 import com.backpackcloud.cli.ui.Suggestion;
 import com.backpackcloud.sherlogholmes.domain.Attribute;
-import com.backpackcloud.sherlogholmes.domain.AttributeType;
 import com.backpackcloud.sherlogholmes.domain.Count;
 import com.backpackcloud.sherlogholmes.domain.DataEntry;
 import com.backpackcloud.sherlogholmes.domain.DataRegistry;
@@ -67,14 +67,14 @@ public class CountCommand implements AnnotatedCommand {
     this.attributeSuggester = new AttributeSuggester(registry);
   }
 
-  private int count(NavigableSet<DataEntry> set, String weightAttribute) {
-    if (weightAttribute == null) {
+  private int count(NavigableSet<DataEntry> set, String countAttribute) {
+    if (countAttribute == null || countAttribute.isEmpty()) {
       return set.size();
     }
     AtomicInteger count = new AtomicInteger();
 
     set.forEach(entry -> {
-      entry.attribute(weightAttribute)
+      entry.attribute(countAttribute)
         .flatMap(Attribute::value)
         .map(value -> {
           if (value instanceof Integer i) {
@@ -89,7 +89,10 @@ public class CountCommand implements AnnotatedCommand {
   }
 
   @Action
-  public void execute(CommandContext context, Paginator paginator, String attribute, String weightAttribute) {
+  public void execute(CommandContext context,
+                      Paginator paginator,
+                      String attribute,
+                      @PreferenceValue("count-attribute") String countAttribute) {
     Map<?, NavigableSet<DataEntry>> valuesMap = registry.index(attribute);
 
     Map<String, Count<?>> countMap = new HashMap<>();
@@ -97,14 +100,14 @@ public class CountCommand implements AnnotatedCommand {
     AtomicInteger nameLength = new AtomicInteger();
 
     valuesMap.entrySet().stream()
-      .peek(entry -> total.addAndGet(count(entry.getValue(), weightAttribute)))
-      .map(entry -> new Count<>(entry.getKey(), count(entry.getValue(), weightAttribute)))
+      .peek(entry -> total.addAndGet(count(entry.getValue(), countAttribute)))
+      .map(entry -> new Count<>(entry.getKey(), count(entry.getValue(), countAttribute)))
       .peek(count -> nameLength.set((Math.max(nameLength.get(), count.object().toString().length()))))
       .forEach(count -> countMap.put(count.object().toString(), count));
 
     int valueLength = Integer.toString(total.get()).length();
 
-    boolean subset = weightAttribute == null && total.get() < registry.size();
+    boolean subset = countAttribute == null && total.get() < registry.size();
 
     paginator.from(
       countMap.values().stream()
@@ -132,6 +135,10 @@ public class CountCommand implements AnnotatedCommand {
       writer.newLine();
     }).paginate();
 
+    context.writer().write(String.format("%-" + Math.min(3, nameLength.get()) + "s ", "="))
+      .withStyle("count//b")
+      .write(total.get());
+
     if (subset && !countMap.isEmpty()) {
       Integer totalCount = countMap.values().stream()
         .map(Count::value)
@@ -145,17 +152,16 @@ public class CountCommand implements AnnotatedCommand {
         .write(" ".repeat(10))
 
         .withStyle("percentage//b")
-        .write(String.format("%7.3f%%", 100.0 * totalCount / registry.size()))
-        .newLine();
+        .write(String.format("%7.3f%%", 100.0 * totalCount / registry.size()));
     }
+
+    context.writer().newLine();
   }
 
   @Suggestions
   public List<Suggestion> execute(@ParameterCount int paramCount) {
     if (paramCount == 1) {
       return attributeSuggester.suggestIndexedAttributes();
-    } else if (paramCount == 2) {
-      return attributeSuggester.suggestAttributeNames(attributeType -> attributeType == AttributeType.NUMBER);
     }
     return Collections.emptyList();
   }

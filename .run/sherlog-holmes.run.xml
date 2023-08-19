@@ -2,7 +2,7 @@
   <configuration default="false" name="sherlog-holmes" type="QuarkusRunConfigurationType" factoryName="Quarkus">
     <module name="sherlog-holmes" />
     <target name="WSL" />
-    <QsMavenRunConfiguration>
+    <sherlog-holmes>
       <MavenSettings>
         <option name="myGeneralSettings">
           <MavenGeneralSettings>
@@ -28,7 +28,9 @@
           <MavenRunnerSettings>
             <option name="delegateBuildToMaven" value="false" />
             <option name="environmentProperties">
-              <map />
+              <map>
+                <entry key="SHERLOG_CONFIG_FILE" value="/home/ataxexe/Dropbox/redhat/data/superset/export/sherlog.yml" />
+              </map>
             </option>
             <option name="jreName" value="/home/ataxexe/graalvm" />
             <option name="mavenProperties">
@@ -61,7 +63,7 @@
       </MavenSettings>
       <targetMavenLocalRepo />
       <emulateTerminal>false</emulateTerminal>
-    </QsMavenRunConfiguration>
+    </sherlog-holmes>
     <method v="2">
       <option name="Make" enabled="true" />
     </method>

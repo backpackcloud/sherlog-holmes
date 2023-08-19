@@ -34,6 +34,12 @@ public enum Preferences implements PreferenceSpec {
     "timestamp"
   ),
 
+  COUNT_ATTRIBUTE(
+    "which attribute should be used for counting entries",
+    Type.TEXT,
+    ""
+  ),
+
   CSV_HEADER(
     "sets whether to show csv headers or not",
     Type.FLAG,
