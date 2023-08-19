@@ -42,6 +42,7 @@ import java.util.NavigableSet;
 import java.util.Optional;
 import java.util.Set;
 import java.util.TreeSet;
+import java.util.function.Consumer;
 import java.util.stream.Stream;
 
 @ApplicationScoped
@@ -177,14 +178,34 @@ public class DataRegistryImpl implements DataRegistry {
         .forEach(attribute ->
           attributeTypes.put(attribute.name(), attribute.spec().type()));
 
-      index.forEach((attributeName, valuesMap) ->
-        entry.attribute(attributeName)
-          .ifPresent(attr -> attr.values().forEach(value -> {
-            if (!valuesMap.containsKey(value)) {
-              valuesMap.put(value, new TreeSet<>());
+      index.forEach((indexName, valuesMap) -> {
+        Consumer<Object> addToIndex = value -> {
+          if (!valuesMap.containsKey(value)) {
+            valuesMap.put(value, new TreeSet<>());
+          }
+          valuesMap.get(value).add(entry);
+        };
+        if (indexName.contains(":")) {
+          String[] attributes = indexName.split(":");
+          String[] values = new String[attributes.length];
+          for (int i = 0; i < attributes.length; i++) {
+            String attr = attributes[i];
+            if (!entry.hasAttribute(attr)) {
+              return;
             }
-            valuesMap.get(value).add(entry);
-          })));
+            Optional<String> value = entry.attribute(attr)
+              .flatMap(Attribute::formattedValue);
+            if (value.isEmpty()) {
+              return;
+            }
+            values[i] = value.get();
+          }
+          addToIndex.accept(String.join(":", values));
+        } else {
+          entry.attribute(indexName)
+            .ifPresent(attr -> attr.values().forEach(addToIndex));
+        }
+      });
     }
 
     @Override

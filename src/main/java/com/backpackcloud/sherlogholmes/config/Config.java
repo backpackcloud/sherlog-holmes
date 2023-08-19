@@ -42,6 +42,7 @@ import com.backpackcloud.sherlogholmes.domain.DataMapper;
 import com.backpackcloud.sherlogholmes.domain.DataModel;
 import com.backpackcloud.sherlogholmes.domain.DataParser;
 import com.backpackcloud.sherlogholmes.domain.DataReader;
+import com.backpackcloud.sherlogholmes.domain.DataRegistry;
 import com.backpackcloud.sherlogholmes.domain.Pipeline;
 import com.backpackcloud.sherlogholmes.domain.PipelineStep;
 import com.fasterxml.jackson.annotation.JacksonInject;
@@ -73,6 +74,7 @@ public class Config {
   @JsonCreator
   public Config(@JacksonInject UserPreferences userPreferences,
                 @JacksonInject Theme theme,
+                @JacksonInject DataRegistry registry,
                 @JsonProperty("preferences") Map<String, Configuration> preferences,
                 @JsonProperty("patterns") Map<String, String> patterns,
                 @JsonProperty("icons") Map<String, String> icons,
@@ -87,7 +89,8 @@ public class Config {
                 @JsonProperty("steps") Map<String, List<PipelineStep>> steps,
                 @JsonProperty("pipelines") Map<String, PipelineConfig> pipelines,
                 @JsonProperty("exporters") Map<String, DataExporterConfig> exporters,
-                @JsonProperty("charts") Map<String, Map> charts) {
+                @JsonProperty("charts") Map<String, Map> charts,
+                @JsonProperty("index") List<String> index) {
     this.preferences = userPreferences;
     this.commands = commands != null ? commands : Collections.emptyList();
     this.macros = macros != null ? macros : Collections.emptyMap();
@@ -127,6 +130,10 @@ public class Config {
         this.pipelines.put(id, new PipelineConfig(id, id, id, id, null));
       }
     });
+
+    if(index != null) {
+      index.forEach(registry::addIndex);
+    }
   }
 
   public List<String> commands() {

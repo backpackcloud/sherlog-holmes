@@ -28,9 +28,7 @@ import com.backpackcloud.configuration.Configuration;
 import com.backpackcloud.sherlogholmes.config.Config;
 import com.backpackcloud.sherlogholmes.config.ConfigObject;
 import com.backpackcloud.sherlogholmes.domain.DataModel;
-import com.backpackcloud.sherlogholmes.domain.DataRegistry;
 import com.backpackcloud.sherlogholmes.impl.DataModelImpl;
-import com.fasterxml.jackson.annotation.JacksonInject;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.quarkus.runtime.annotations.RegisterForReflection;
@@ -42,17 +40,14 @@ import java.util.Map;
 @RegisterForReflection
 public class DataModelConfig implements ConfigObject<DataModel> {
 
-  private final DataRegistry registry;
   private final Configuration format;
   private final String modelsToInclude;
   private final Map<String, DataAttributeConfig> attributes;
 
   @JsonCreator
-  public DataModelConfig(@JacksonInject DataRegistry registry,
-                         @JsonProperty("format") Configuration format,
+  public DataModelConfig(@JsonProperty("format") Configuration format,
                          @JsonProperty("include") String modelsToInclude,
                          @JsonProperty("attributes") Map<String, DataAttributeConfig> attributes) {
-    this.registry = registry;
     this.format = format;
     this.modelsToInclude = modelsToInclude;
     this.attributes = attributes != null ? attributes : new HashMap<>();
@@ -62,9 +57,6 @@ public class DataModelConfig implements ConfigObject<DataModel> {
     DataModel model = new DataModelImpl(format.get());
     attributes.forEach((name, attrConfig) -> {
       model.add(name, attrConfig.get(config));
-      if (attrConfig.indexable()) {
-        registry.addIndex(name);
-      }
     });
     if (modelsToInclude != null) {
       Arrays.stream(modelsToInclude.split("\\s*,\\s*"))
