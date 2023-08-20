@@ -28,9 +28,13 @@ import com.backpackcloud.sherlogholmes.domain.chart.Bucket;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.quarkus.runtime.annotations.RegisterForReflection;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
+import java.time.temporal.ChronoField;
 import java.time.temporal.Temporal;
 
 @RegisterForReflection
@@ -47,10 +51,16 @@ public class BucketImpl implements Bucket {
     this.id = id;
     this.count = count;
     this.start = start;
-    if (start instanceof ZonedDateTime) {
-      this.startMillis = ((ZonedDateTime) start).toInstant().toEpochMilli();
-    } else if (start instanceof LocalDateTime) {
-      this.startMillis = ((LocalDateTime) start).toInstant(ZoneOffset.UTC).toEpochMilli();
+    if (start instanceof ZonedDateTime zonedDateTime) {
+      this.startMillis = zonedDateTime.toInstant().toEpochMilli();
+    } else if (start instanceof LocalDateTime localDateTime) {
+      this.startMillis = localDateTime.toInstant(ZoneOffset.UTC).toEpochMilli();
+    } else if (start instanceof LocalDate localDate){
+      this.startMillis = localDate.atStartOfDay().toInstant(ZoneOffset.UTC).toEpochMilli();
+    } else if (start instanceof OffsetDateTime offsetDateTime) {
+      this.startMillis = offsetDateTime.toInstant().toEpochMilli();
+    } else if (start instanceof LocalTime localTime) {
+      this.startMillis = localTime.getLong(ChronoField.MILLI_OF_SECOND);
     } else {
       this.startMillis = 0L;
     }
