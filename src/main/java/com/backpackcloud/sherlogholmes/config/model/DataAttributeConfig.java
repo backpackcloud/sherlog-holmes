@@ -24,64 +24,17 @@
 
 package com.backpackcloud.sherlogholmes.config.model;
 
-import com.backpackcloud.UnbelievableException;
 import com.backpackcloud.sherlogholmes.config.ConfigObject;
 import com.backpackcloud.sherlogholmes.domain.AttributeSpec;
-import com.backpackcloud.sherlogholmes.domain.AttributeType;
-import com.backpackcloud.sherlogholmes.domain.types.SemanticVersionType;
-import com.backpackcloud.sherlogholmes.domain.types.TemporalType;
-import com.backpackcloud.sherlogholmes.impl.AttributeSpecImpl;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import io.quarkus.runtime.annotations.RegisterForReflection;
-
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.LocalTime;
-import java.time.OffsetDateTime;
-import java.time.ZonedDateTime;
-import java.time.format.DateTimeFormatter;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 @RegisterForReflection
 public interface DataAttributeConfig extends ConfigObject<AttributeSpec> {
 
   @JsonCreator
   static DataAttributeConfig create(String spec) {
-    Matcher matcher = Pattern.compile("^(?<type>[0-9a-zA-Z\\-_]+)(?<multivalued>\\[\\])?\\s*\\|?\\s*(?<config>.+)?$")
-      .matcher(spec);
-
-    if (matcher.find()) {
-      String type = matcher.group("type");
-      String configuration = matcher.group("config");
-      boolean multivalued = matcher.group("multivalued") != null;
-
-      return (config) -> switch (type) {
-        case "text" -> new AttributeSpecImpl<>(AttributeType.text(), multivalued);
-        case "number" -> new AttributeSpecImpl<>(AttributeType.number(), multivalued);
-        case "decimal" -> new AttributeSpecImpl<>(AttributeType.decimal(), multivalued);
-        case "enum" -> new AttributeSpecImpl<>(AttributeType.enumOf(configuration.split(",")), multivalued);
-        case "time" -> new AttributeSpecImpl<>(
-          new TemporalType<>(DateTimeFormatter.ofPattern(configuration), LocalTime::from), multivalued
-        );
-        case "date" -> new AttributeSpecImpl<>(
-          new TemporalType<>(DateTimeFormatter.ofPattern(configuration), LocalDate::from), multivalued
-        );
-        case "datetime" -> new AttributeSpecImpl<>(
-          new TemporalType<>(DateTimeFormatter.ofPattern(configuration), LocalDateTime::from), multivalued
-        );
-        case "zoned-datetime" -> new AttributeSpecImpl<>(
-          new TemporalType<>(DateTimeFormatter.ofPattern(configuration), ZonedDateTime::from), multivalued
-        );
-        case "offset-datetime" -> new AttributeSpecImpl<>(
-          new TemporalType<>(DateTimeFormatter.ofPattern(configuration), OffsetDateTime::from), multivalued
-        );
-        case "flag" -> new AttributeSpecImpl<>(AttributeType.flag(), multivalued);
-        case "version" -> new AttributeSpecImpl<>(new SemanticVersionType(), false);
-        default -> throw new UnbelievableException("Invalid type: " + type);
-      };
-    }
-    throw new UnbelievableException("Illegal spec");
+    return config -> AttributeSpec.create(spec);
   }
 
 }
