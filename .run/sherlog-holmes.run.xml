@@ -2,7 +2,7 @@
   <configuration default="false" name="sherlog-holmes" type="QuarkusRunConfigurationType" factoryName="Quarkus">
     <module name="sherlog-holmes" />
     <target name="WSL" />
-    <QsMavenRunConfiguration>
+    <sherlog-holmes>
       <MavenSettings>
         <option name="myGeneralSettings">
           <MavenGeneralSettings>
@@ -63,7 +63,7 @@
       </MavenSettings>
       <targetMavenLocalRepo />
       <emulateTerminal>false</emulateTerminal>
-    </QsMavenRunConfiguration>
+    </sherlog-holmes>
     <method v="2">
       <option name="Make" enabled="true" />
     </method>

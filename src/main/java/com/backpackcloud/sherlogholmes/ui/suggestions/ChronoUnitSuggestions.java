@@ -45,6 +45,7 @@ public class ChronoUnitSuggestions {
       ChronoUnit.MINUTES,
       ChronoUnit.HOURS,
       ChronoUnit.DAYS,
+      ChronoUnit.WEEKS,
       ChronoUnit.MONTHS,
       ChronoUnit.YEARS
     };

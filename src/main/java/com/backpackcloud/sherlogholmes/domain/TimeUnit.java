@@ -35,6 +35,7 @@ public enum TimeUnit {
   SECONDS(ChronoField.SECOND_OF_MINUTE, ChronoUnit.SECONDS, "yyyy-MM-dd'T'HH:mm:ss", "HH:mm:ss.SSS"),
   MINUTES(ChronoField.MINUTE_OF_HOUR, ChronoUnit.MINUTES, "yyyy-MM-dd'T'HH:mm", "HH:mm:ss.SSS"),
   HOURS(ChronoField.HOUR_OF_DAY, ChronoUnit.HOURS, "yyyy-MM-dd'T'HH:00", "HH:mm:ss.SSS"),
+  WEEKS(ChronoField.ALIGNED_WEEK_OF_YEAR, ChronoUnit.WEEKS, "yyyy-MM 'W'W", ""),
   DAYS(ChronoField.DAY_OF_MONTH, ChronoUnit.DAYS, "yyyy-MM-dd", ""),
   MONTHS(ChronoField.MONTH_OF_YEAR, ChronoUnit.MONTHS, "yyyy-MM", ""),
   YEARS(ChronoField.YEAR, ChronoUnit.YEARS, "yyyy", "");
