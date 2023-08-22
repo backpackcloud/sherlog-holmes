@@ -26,8 +26,8 @@ package com.backpackcloud.sherlogholmes.ui.suggestions;
 
 import com.backpackcloud.cli.ui.Suggestion;
 import com.backpackcloud.cli.ui.impl.PromptSuggestion;
+import com.backpackcloud.sherlogholmes.domain.TimeUnit;
 
-import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -38,29 +38,13 @@ public class ChronoUnitSuggestions {
 
   }
 
-  public static ChronoUnit[] units() {
-    return new ChronoUnit[]{
-      ChronoUnit.MILLIS,
-      ChronoUnit.SECONDS,
-      ChronoUnit.MINUTES,
-      ChronoUnit.HOURS,
-      ChronoUnit.DAYS,
-      ChronoUnit.WEEKS,
-      ChronoUnit.MONTHS,
-      ChronoUnit.YEARS
-    };
-  }
-
   public static List<Suggestion> suggestUnits() {
-    return nameStream()
+    return Stream.of(TimeUnit.values())
+      .map(TimeUnit::chronoUnit)
+      .map(Enum::name)
+      .map(name -> name.toLowerCase().replaceAll("_", "-"))
       .map(PromptSuggestion::suggest)
       .collect(Collectors.toList());
-  }
-
-  private static Stream<String> nameStream() {
-    return Stream.of(units())
-      .map(Enum::name)
-      .map(name -> name.toLowerCase().replaceAll("_", "-"));
   }
 
 }

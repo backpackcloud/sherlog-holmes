@@ -36,18 +36,19 @@ import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.time.temporal.ChronoField;
 import java.time.temporal.Temporal;
+import java.util.function.Function;
 
 @RegisterForReflection
 public class BucketImpl implements Bucket {
 
   private final String id;
-  private long count;
+  private int count;
 
   private final long startMillis;
 
   private final Temporal start;
 
-  public BucketImpl(String id, long count, Temporal start) {
+  public BucketImpl(String id, int count, Temporal start) {
     this.id = id;
     this.count = count;
     this.start = start;
@@ -76,10 +77,14 @@ public class BucketImpl implements Bucket {
     this.count += amount;
   }
 
+  @Override
+  public void add(Function<Integer, Integer> function) {
+    this.count += function.apply(count);
+  }
 
   @JsonProperty("y")
   @Override
-  public long value() {
+  public int value() {
     return count;
   }
 

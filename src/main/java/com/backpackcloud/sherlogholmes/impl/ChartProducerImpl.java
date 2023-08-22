@@ -48,7 +48,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.NavigableSet;
+import java.util.Optional;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
@@ -107,7 +109,7 @@ public class ChartProducerImpl implements ChartProducer {
 
     Function<String, Series> seriesFunction = name -> new SeriesImpl(name, bucketsSupplier.get());
 
-    AttributeType<Object> type = registry.typeOf(attribute).orElseThrow();
+    AttributeType<Object> type = registry.typeOf(attribute).orElse(AttributeType.TEXT);
 
     registry.index(attribute).keySet()
       .stream().map(type::format)
@@ -117,17 +119,42 @@ public class ChartProducerImpl implements ChartProducer {
     Column currentColumn = columns.get(columnIndex.get());
 
     for (DataEntry entry : entries) {
+      Consumer<? super String> updateChartData = value -> {
+        if (seriesMap.containsKey(value)) {
+          Series series = seriesMap.get(value);
+          List<Bucket> buckets = series.buckets();
+          Bucket bucket = buckets.get(columnIndex.get());
+          bucket.incrementCount(entry.attribute(countAttribute, Integer.class)
+            .flatMap(Attribute::value)
+            .orElse(1));
+        }
+      };
+
       while (!currentColumn.includes(entry)) {
         currentColumn = columns.get(columnIndex.incrementAndGet());
       }
-      entry.attribute(attribute)
-        .flatMap(Attribute::value)
-        .map(type::format)
-        .ifPresent(value ->
-          ((BucketImpl) seriesMap.get(value).buckets().get(columnIndex.get()))
-            .incrementCount(entry.attribute(countAttribute, Integer.class)
-              .flatMap(Attribute::value)
-              .orElse(1)));
+      if (attribute.contains(":")) {
+        String[] attributes = attribute.split(":");
+        String[] values = new String[attributes.length];
+        for (int i = 0; i < attributes.length; i++) {
+          String attr = attributes[i];
+          if (!entry.hasAttribute(attr)) {
+            continue;
+          }
+          Optional<String> value = entry.attribute(attr)
+            .flatMap(Attribute::formattedValue);
+          if (value.isEmpty()) {
+            continue;
+          }
+          values[i] = value.get();
+        }
+        updateChartData.accept(String.join(":", values));
+      } else {
+        entry.attribute(attribute)
+          .flatMap(Attribute::value)
+          .map(type::format)
+          .ifPresent(updateChartData);
+      }
     }
 
     Series totals = new SeriesImpl("total", new ArrayList<>());

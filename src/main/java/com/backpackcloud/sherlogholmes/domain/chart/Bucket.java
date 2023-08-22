@@ -27,13 +27,18 @@ package com.backpackcloud.sherlogholmes.domain.chart;
 import io.quarkus.runtime.annotations.RegisterForReflection;
 
 import java.time.temporal.Temporal;
+import java.util.function.Function;
 
 @RegisterForReflection
 public interface Bucket {
 
   String id();
 
-  long value();
+  void incrementCount(int amount);
+
+  void add(Function<Integer, Integer> function);
+
+  int value();
 
   long startMillis();
 
