@@ -104,7 +104,7 @@ public class ChartProducerImpl implements ChartProducer {
 
     AttributeType<Object> type = registry.typeOf(attribute).orElse(AttributeType.TEXT);
     AttributeType countAttributeType = registry.typeOf(countAttribute).orElse(AttributeType.TEXT);
-    Set<Object> seen = new HashSet<>();
+    Map<String, Set<Object>> seen = new HashMap<>();
 
     registry.index(attribute).keySet()
       .stream().map(type::format)
@@ -119,13 +119,24 @@ public class ChartProducerImpl implements ChartProducer {
           Series series = seriesMap.get(value);
           List<Bucket> buckets = series.buckets();
           Bucket bucket = buckets.get(columnIndex.get());
+
+          if (!seen.containsKey(value)) {
+            seen.put(value, new HashSet<>());
+          }
+
           if (countAttributeType == AttributeType.NUMBER) {
             Integer amount = entry.attribute(countAttribute, Integer.class)
               .flatMap(Attribute::value)
               .orElse(1);
             bucket.incrementCount(amount);
           } else {
-
+            entry.attribute(countAttribute)
+              .flatMap(Attribute::value)
+              .filter(v -> !seen.get(value).contains(v))
+              .ifPresent(v -> {
+                seen.get(value).add(v);
+                bucket.incrementCount(1);
+              });
           }
         }
       };

@@ -110,8 +110,18 @@ public class PlotCommand implements AnnotatedCommand {
   }
 
   @Action
-  public void execute(String template, TimeUnit unit, String field, @PreferenceValue("count-attribute") String countAttribute) {
-    ChartDefinition def = new ChartDefinition(template, filterStack.filter(), unit, field, countAttribute);
+  public void execute(String template,
+                      TimeUnit unit,
+                      String field,
+                      String countAttribute,
+                      @PreferenceValue("count-attribute") String countAttributePref) {
+    ChartDefinition def = new ChartDefinition(
+      template,
+      filterStack.filter(),
+      unit,
+      field,
+      countAttribute != null ? countAttribute : countAttributePref
+    );
     UUID id = chartRegistry.add(def);
     drawChart(id, def);
   }
@@ -126,6 +136,8 @@ public class PlotCommand implements AnnotatedCommand {
       return ChronoUnitSuggestions.suggestUnits();
     } else if (paramCount == 3) {
       return attributeSuggester.suggestIndexedAttributes();
+    } else if (paramCount == 4) {
+      return attributeSuggester.suggestAttributeNames();
     }
     return Collections.emptyList();
   }

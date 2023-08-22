@@ -47,6 +47,7 @@ import com.backpackcloud.sherlogholmes.ui.suggestions.ChronoUnitSuggestions;
 import io.quarkus.runtime.annotations.RegisterForReflection;
 
 import jakarta.enterprise.context.ApplicationScoped;
+
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -79,13 +80,21 @@ public class SeriesCommand implements AnnotatedCommand {
   }
 
   @Action
-  public void execute(Writer writer, Format format, TimeUnit unit,
-                      String attribute, @PreferenceValue("count-attribute") String countAttribute) {
+  public void execute(Writer writer,
+                      Format format,
+                      TimeUnit unit,
+                      String attribute,
+                      String countAttribute,
+                      @PreferenceValue("count-attribute") String countAttributePref) {
     if (attribute == null || attribute.isBlank()) {
       throw new UnbelievableException("No attribute given");
     }
 
-    Chart chart = chartProducer.produce(unit, attribute, countAttribute);
+    Chart chart = chartProducer.produce(
+      unit,
+      attribute,
+      countAttribute != null ? countAttribute : countAttributePref
+    );
 
     switch (format) {
       case CSV -> {
@@ -117,6 +126,8 @@ public class SeriesCommand implements AnnotatedCommand {
       return ChronoUnitSuggestions.suggestUnits();
     } else if (paramCount == 3) {
       return attributeSuggester.suggestIndexedAttributes();
+    } else if (paramCount == 4) {
+      return attributeSuggester.suggestAttributeNames();
     }
     return Collections.emptyList();
   }
