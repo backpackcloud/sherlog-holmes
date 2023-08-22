@@ -41,14 +41,7 @@ import jakarta.enterprise.context.ApplicationScoped;
 
 import java.time.temporal.ChronoUnit;
 import java.time.temporal.Temporal;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.NavigableSet;
-import java.util.Optional;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Consumer;
 import java.util.function.Function;
@@ -110,6 +103,8 @@ public class ChartProducerImpl implements ChartProducer {
     Function<String, Series> seriesFunction = name -> new SeriesImpl(name, bucketsSupplier.get());
 
     AttributeType<Object> type = registry.typeOf(attribute).orElse(AttributeType.TEXT);
+    AttributeType countAttributeType = registry.typeOf(countAttribute).orElse(AttributeType.TEXT);
+    Set<Object> seen = new HashSet<>();
 
     registry.index(attribute).keySet()
       .stream().map(type::format)
@@ -124,9 +119,14 @@ public class ChartProducerImpl implements ChartProducer {
           Series series = seriesMap.get(value);
           List<Bucket> buckets = series.buckets();
           Bucket bucket = buckets.get(columnIndex.get());
-          bucket.incrementCount(entry.attribute(countAttribute, Integer.class)
-            .flatMap(Attribute::value)
-            .orElse(1));
+          if (countAttributeType == AttributeType.NUMBER) {
+            Integer amount = entry.attribute(countAttribute, Integer.class)
+              .flatMap(Attribute::value)
+              .orElse(1);
+            bucket.incrementCount(amount);
+          } else {
+
+          }
         }
       };
 
