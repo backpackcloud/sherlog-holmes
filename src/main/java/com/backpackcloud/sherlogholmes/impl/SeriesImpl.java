@@ -66,7 +66,7 @@ public record SeriesImpl(String name, List<Bucket> buckets) implements Series {
 
   @Override
   public long total() {
-    return buckets.stream().map(Bucket::value).reduce(0L, Long::sum);
+    return buckets.stream().map(Bucket::value).reduce(0, Integer::sum);
   }
 
 }
