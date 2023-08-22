@@ -77,11 +77,6 @@ public class BucketImpl implements Bucket {
     this.count += amount;
   }
 
-  @Override
-  public void add(Function<Integer, Integer> function) {
-    this.count += function.apply(count);
-  }
-
   @JsonProperty("y")
   @Override
   public int value() {

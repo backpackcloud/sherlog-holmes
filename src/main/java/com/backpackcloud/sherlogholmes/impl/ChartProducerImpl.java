@@ -43,7 +43,6 @@ import java.time.temporal.ChronoUnit;
 import java.time.temporal.Temporal;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
-import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
@@ -103,8 +102,6 @@ public class ChartProducerImpl implements ChartProducer {
     Function<String, Series> seriesFunction = name -> new SeriesImpl(name, bucketsSupplier.get());
 
     AttributeType<Object> type = registry.typeOf(attribute).orElse(AttributeType.TEXT);
-    AttributeType countAttributeType = registry.typeOf(countAttribute).orElse(AttributeType.TEXT);
-    Map<String, Set<Object>> seen = new HashMap<>();
 
     registry.index(attribute).keySet()
       .stream().map(type::format)
@@ -114,36 +111,10 @@ public class ChartProducerImpl implements ChartProducer {
     Column currentColumn = columns.get(columnIndex.get());
 
     for (DataEntry entry : entries) {
-      Consumer<? super String> updateChartData = value -> {
-        if (seriesMap.containsKey(value)) {
-          Series series = seriesMap.get(value);
-          List<Bucket> buckets = series.buckets();
-          Bucket bucket = buckets.get(columnIndex.get());
-
-          if (!seen.containsKey(value)) {
-            seen.put(value, new HashSet<>());
-          }
-
-          if (countAttributeType == AttributeType.NUMBER) {
-            Integer amount = entry.attribute(countAttribute, Integer.class)
-              .flatMap(Attribute::value)
-              .orElse(1);
-            bucket.incrementCount(amount);
-          } else {
-            entry.attribute(countAttribute)
-              .flatMap(Attribute::value)
-              .filter(v -> !seen.get(value).contains(v))
-              .ifPresent(v -> {
-                seen.get(value).add(v);
-                bucket.incrementCount(1);
-              });
-          }
-        }
-      };
-
       while (!currentColumn.includes(entry)) {
         currentColumn = columns.get(columnIndex.incrementAndGet());
       }
+
       if (attribute.contains(":")) {
         String[] attributes = attribute.split(":");
         String[] values = new String[attributes.length];
@@ -159,12 +130,33 @@ public class ChartProducerImpl implements ChartProducer {
           }
           values[i] = value.get();
         }
-        updateChartData.accept(String.join(":", values));
+        if (seriesMap.containsKey(String.join(":", values))) {
+          Series series = seriesMap.get(String.join(":", values));
+          List<Bucket> buckets = series.buckets();
+          Bucket bucket = buckets.get(columnIndex.get());
+
+          Integer amount = entry.attribute(countAttribute, Integer.class)
+            .flatMap(Attribute::value)
+            .orElse(1);
+          bucket.incrementCount(amount);
+        }
       } else {
-        entry.attribute(attribute)
+        Optional<String> result = entry.attribute(attribute)
           .flatMap(Attribute::value)
-          .map(type::format)
-          .ifPresent(updateChartData);
+          .map(type::format);
+        if (result.isPresent()) {
+          String value = result.get();
+          if (seriesMap.containsKey(value)) {
+            Series series = seriesMap.get(value);
+            List<Bucket> buckets = series.buckets();
+            Bucket bucket = buckets.get(columnIndex.get());
+
+            Integer amount = entry.attribute(countAttribute, Integer.class)
+              .flatMap(Attribute::value)
+              .orElse(1);
+            bucket.incrementCount(amount);
+          }
+        }
       }
     }
 
