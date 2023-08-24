@@ -1,8 +1,7 @@
 package com.backpackcloud.sherlogholmes.impl;
 
-import com.backpackcloud.sherlogholmes.domain.chart.Chart;
-import com.backpackcloud.sherlogholmes.domain.chart.ChartDefinition;
-import com.backpackcloud.sherlogholmes.domain.chart.ChartRegistry;
+import com.backpackcloud.sherlogholmes.domain.chart_old.ChartDefinition;
+import com.backpackcloud.sherlogholmes.domain.chart_old.ChartRegistry;
 import jakarta.enterprise.context.ApplicationScoped;
 
 import java.util.HashMap;

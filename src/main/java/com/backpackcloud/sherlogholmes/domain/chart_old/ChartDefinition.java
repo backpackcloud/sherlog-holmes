@@ -1,4 +1,4 @@
-package com.backpackcloud.sherlogholmes.domain.chart;
+package com.backpackcloud.sherlogholmes.domain.chart_old;
 
 import com.backpackcloud.sherlogholmes.domain.DataFilter;
 import com.backpackcloud.sherlogholmes.domain.TimeUnit;

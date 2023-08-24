@@ -2,7 +2,7 @@ package com.backpackcloud.sherlogholmes.ui.prompt;
 
 import com.backpackcloud.cli.ui.Prompt;
 import com.backpackcloud.cli.ui.PromptWriter;
-import com.backpackcloud.sherlogholmes.domain.chart.ChartRegistry;
+import com.backpackcloud.sherlogholmes.domain.chart_old.ChartRegistry;
 import jakarta.enterprise.context.ApplicationScoped;
 
 @ApplicationScoped

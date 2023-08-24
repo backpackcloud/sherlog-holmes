@@ -22,53 +22,23 @@
  * SOFTWARE.
  */
 
-package com.backpackcloud.sherlogholmes.impl;
+package com.backpackcloud.sherlogholmes.domain.chart_old;
 
-import com.backpackcloud.sherlogholmes.domain.chart_old.Chart;
-import com.backpackcloud.sherlogholmes.domain.chart_old.Series;
-import com.fasterxml.jackson.annotation.JsonProperty;
 import io.quarkus.runtime.annotations.RegisterForReflection;
 
-import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 @RegisterForReflection
-public record ChartImpl(List<String> bucketNames, List<Series> series, Series total,
-                        Series average) implements Chart {
+public interface Chart {
 
-  @JsonProperty
-  @Override
-  public List<Series> series() {
-    return series;
-  }
+  List<String> bucketNames();
 
-  @Override
-  public List<Series> series(int maxSize) {
-    if (series.size() <= maxSize) {
-      return series;
-    }
-    List<Series> result = new ArrayList<>(series.subList(0, maxSize));
-    Iterator<Series> iterator = series.listIterator(maxSize);
-    Series others = iterator.next();
-    String seriesName = "others (" + (series.size() - maxSize) + ")";
-    while (iterator.hasNext()) {
-      others = others.add(seriesName, iterator.next());
-    }
-    result.add(others);
-    return result;
-  }
+  List<Series> series();
 
-  @JsonProperty
-  @Override
-  public Series total() {
-    return total;
-  }
+  List<Series> series(int maxSize);
 
-  @JsonProperty
-  @Override
-  public Series average() {
-    return average;
-  }
+  Series total();
+
+  Series average();
 
 }

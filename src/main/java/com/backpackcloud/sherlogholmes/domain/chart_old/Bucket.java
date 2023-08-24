@@ -22,53 +22,23 @@
  * SOFTWARE.
  */
 
-package com.backpackcloud.sherlogholmes.impl;
+package com.backpackcloud.sherlogholmes.domain.chart_old;
 
-import com.backpackcloud.sherlogholmes.domain.chart_old.Chart;
-import com.backpackcloud.sherlogholmes.domain.chart_old.Series;
-import com.fasterxml.jackson.annotation.JsonProperty;
 import io.quarkus.runtime.annotations.RegisterForReflection;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
+import java.time.temporal.Temporal;
 
 @RegisterForReflection
-public record ChartImpl(List<String> bucketNames, List<Series> series, Series total,
-                        Series average) implements Chart {
+public interface Bucket {
 
-  @JsonProperty
-  @Override
-  public List<Series> series() {
-    return series;
-  }
+  String id();
 
-  @Override
-  public List<Series> series(int maxSize) {
-    if (series.size() <= maxSize) {
-      return series;
-    }
-    List<Series> result = new ArrayList<>(series.subList(0, maxSize));
-    Iterator<Series> iterator = series.listIterator(maxSize);
-    Series others = iterator.next();
-    String seriesName = "others (" + (series.size() - maxSize) + ")";
-    while (iterator.hasNext()) {
-      others = others.add(seriesName, iterator.next());
-    }
-    result.add(others);
-    return result;
-  }
+  void incrementCount(int amount);
 
-  @JsonProperty
-  @Override
-  public Series total() {
-    return total;
-  }
+  int value();
 
-  @JsonProperty
-  @Override
-  public Series average() {
-    return average;
-  }
+  long startMillis();
 
+  Temporal start();
+  
 }

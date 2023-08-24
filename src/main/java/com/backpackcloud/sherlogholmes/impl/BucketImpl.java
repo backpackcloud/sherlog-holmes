@@ -24,7 +24,7 @@
 
 package com.backpackcloud.sherlogholmes.impl;
 
-import com.backpackcloud.sherlogholmes.domain.chart.Bucket;
+import com.backpackcloud.sherlogholmes.domain.chart_old.Bucket;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.quarkus.runtime.annotations.RegisterForReflection;
 
@@ -36,7 +36,6 @@ import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.time.temporal.ChronoField;
 import java.time.temporal.Temporal;
-import java.util.function.Function;
 
 @RegisterForReflection
 public class BucketImpl implements Bucket {

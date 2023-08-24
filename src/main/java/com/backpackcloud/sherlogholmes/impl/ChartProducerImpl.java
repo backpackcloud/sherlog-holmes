@@ -32,10 +32,10 @@ import com.backpackcloud.sherlogholmes.domain.DataEntry;
 import com.backpackcloud.sherlogholmes.domain.DataFilter;
 import com.backpackcloud.sherlogholmes.domain.DataRegistry;
 import com.backpackcloud.sherlogholmes.domain.TimeUnit;
-import com.backpackcloud.sherlogholmes.domain.chart.Bucket;
-import com.backpackcloud.sherlogholmes.domain.chart.Chart;
-import com.backpackcloud.sherlogholmes.domain.chart.ChartProducer;
-import com.backpackcloud.sherlogholmes.domain.chart.Series;
+import com.backpackcloud.sherlogholmes.domain.chart_old.Bucket;
+import com.backpackcloud.sherlogholmes.domain.chart_old.Chart;
+import com.backpackcloud.sherlogholmes.domain.chart_old.ChartProducer;
+import com.backpackcloud.sherlogholmes.domain.chart_old.Series;
 import io.quarkus.runtime.annotations.RegisterForReflection;
 import jakarta.enterprise.context.ApplicationScoped;
 

@@ -22,17 +22,20 @@
  * SOFTWARE.
  */
 
-package com.backpackcloud.sherlogholmes.domain.chart;
+package com.backpackcloud.sherlogholmes.domain.chart_old;
 
-import com.backpackcloud.sherlogholmes.domain.DataFilter;
-import com.backpackcloud.sherlogholmes.domain.TimeUnit;
+import io.quarkus.runtime.annotations.RegisterForReflection;
 
-public interface ChartProducer {
+import java.util.List;
 
-  default Chart produce(TimeUnit bucketUnit, String seriesAttribute, String countAttribute) {
-    return produce(bucketUnit, null, seriesAttribute, countAttribute);
-  }
+@RegisterForReflection
+public interface Series {
+  String name();
 
-  Chart produce(TimeUnit bucketUnit, DataFilter filter, String seriesAttribute, String countAttribute);
+  List<Bucket> buckets();
 
+  long total();
+
+  Series add(String name, Series other);
+  
 }

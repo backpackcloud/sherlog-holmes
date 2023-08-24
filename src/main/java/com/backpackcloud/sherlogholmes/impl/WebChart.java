@@ -22,9 +22,9 @@
  * SOFTWARE.
  */
 package com.backpackcloud.sherlogholmes.impl;
-import com.backpackcloud.sherlogholmes.domain.chart.Bucket;
-import com.backpackcloud.sherlogholmes.domain.chart.Chart;
-import com.backpackcloud.sherlogholmes.domain.chart.Series;
+import com.backpackcloud.sherlogholmes.domain.chart_old.Bucket;
+import com.backpackcloud.sherlogholmes.domain.chart_old.Chart;
+import com.backpackcloud.sherlogholmes.domain.chart_old.Series;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.quarkus.runtime.annotations.RegisterForReflection;
 import java.util.ArrayList;
