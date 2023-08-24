@@ -72,4 +72,5 @@ public class TemporalLabel implements Label<Long> {
   public int hashCode() {
     return Objects.hash(millis, unit, from, threshold, attribute);
   }
+
 }

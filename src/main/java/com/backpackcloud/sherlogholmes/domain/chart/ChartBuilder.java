@@ -17,7 +17,7 @@ public class ChartBuilder<X, Y> {
   private final Function<DataEntry, String> seriesFunction;
   private final Function<DataEntry, Y> dataPointFunction;
   private final Function<Collection<Y>, Y> reducerFunction;
-  private final Supplier<Collection<Y>>  collectionSupplier;
+  private final Supplier<Collection<Y>> collectionSupplier;
 
   public ChartBuilder(List<Label<X>> labels,
                       Function<DataEntry, String> seriesFunction,
@@ -38,7 +38,7 @@ public class ChartBuilder<X, Y> {
     Label<X> currentLabel = iterator.next();
     for (DataEntry entry : data) {
       while (!currentLabel.includes(entry)) {
-        currentLabel = iterator.next();
+        currentLabel = iterator.hasNext() ? iterator.next() : (iterator = labels.iterator()).next();
       }
       String series = seriesFunction.apply(entry);
       if (!seriesData.containsKey(series)) {
@@ -63,22 +63,34 @@ public class ChartBuilder<X, Y> {
   }
 
   private record SeriesImpl<X, Y>(String name,
-                               List<Label<X>> labels,
-                               List<DataPoint<X, Y>> data,
-                               Function<Collection<Y>, Y> reducerFunction) implements Series<X, Y> {
+                                  List<Label<X>> labels,
+                                  List<DataPoint<X, Y>> data,
+                                  Function<Collection<Y>, Y> reducerFunction) implements Series<X, Y> {
 
     @Override
     public Series<X, Y> merge(String newName, Series<X, Y> other) {
       List<DataPoint<X, Y>> newData = new ArrayList<>();
 
-      Iterator<DataPoint<X, Y>> lefIterator = this.data.iterator();
-      Iterator<DataPoint<X, Y>> rightIterator = other.data().iterator();
+      Iterator<DataPoint<X, Y>> lefIterator;
+      Iterator<DataPoint<X, Y>> rightIterator;
+
+      if (this.data.size() >= other.data().size()) {
+        lefIterator = this.data.iterator();
+        rightIterator = other.data().iterator();
+      } else {
+        lefIterator = other.data().iterator();
+        rightIterator = this.data.iterator();
+      }
 
       // assuming both series have the same labels
       while (lefIterator.hasNext()) {
         DataPoint<X, Y> left = lefIterator.next();
-        DataPoint<X, Y> right = rightIterator.next();
-        newData.add(new DataPointImpl<>(left.label(), reducerFunction.apply(List.of(left.value(), right.value()))));
+        if (rightIterator.hasNext()) {
+          DataPoint<X, Y> right = rightIterator.next();
+          newData.add(new DataPointImpl<>(left.label(), reducerFunction.apply(List.of(left.value(), right.value()))));
+        } else {
+          newData.add(left);
+        }
       }
 
       return new SeriesImpl<>(name, labels, newData, reducerFunction);

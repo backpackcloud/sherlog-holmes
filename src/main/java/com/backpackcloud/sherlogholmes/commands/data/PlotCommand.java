@@ -60,6 +60,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.NavigableSet;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -142,29 +144,39 @@ public class PlotCommand implements AnnotatedCommand {
   }
 
   private List createLabels(String expression) {
-    String[] split = expression.split(":");
-    String type = split[0];
+    Pattern pattern = Pattern.compile("^(?<type>\\w+)(\\.(?<parameter>)\\w+)?[|](?<attribute>.+)$");
+    Matcher matcher = pattern.matcher(expression);
 
-    return switch (type) {
-      case "temporal" -> Labels.temporal(
-        registry.entries().first(),
-        registry.entries().last(),
-        TimeUnit.valueOf(split[1].toUpperCase()),
-        split[2]
-      );
-      default -> throw new UnbelievableException("Invalid label expression");
-    };
+    if (matcher.find()) {
+      String type = matcher.group("type");
+
+      return switch (type) {
+        case "temporal" -> Labels.temporal(
+          registry.entries().first(),
+          registry.entries().last(),
+          TimeUnit.valueOf(matcher.group("parameter").toUpperCase()),
+          matcher.group("attribute")
+        );
+        case "category" -> Labels.category(registry, matcher.group("attribute"));
+        default -> throw new UnbelievableException("Invalid label expression");
+      };
+    }
+    throw new UnbelievableException("Invalid label expression");
   }
 
   @Suggestions
   public List<Suggestion> suggest(String labels, String series, String dataPoint, String name) {
     if (series == null) {
-      return Arrays.stream(TimeUnit.values())
-        .map(Enum::name)
-        .map(String::toLowerCase)
-        .flatMap(unit -> registry.attributeNames().stream()
-          .filter(attr -> registry.typeOf(attr).filter(type -> type instanceof TemporalType<?>).isPresent())
-          .map(attr -> String.format("temporal:%s:%s", unit, attr)))
+      return Stream.concat(
+          Arrays.stream(TimeUnit.values())
+            .map(Enum::name)
+            .map(String::toLowerCase)
+            .flatMap(unit -> registry.attributeNames().stream()
+              .filter(attr -> registry.typeOf(attr).filter(type -> type instanceof TemporalType<?>).isPresent())
+              .map(attr -> String.format("temporal.%s|%s", unit, attr))),
+          registry.indexedAttributes().stream()
+            .map(attr -> String.format("category|%s", attr))
+        )
         .map(PromptSuggestion::suggest)
         .collect(Collectors.toList());
     } else if (dataPoint == null) {
