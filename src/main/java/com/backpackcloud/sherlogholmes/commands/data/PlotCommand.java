@@ -27,10 +27,14 @@ import com.backpackcloud.UnbelievableException;
 import com.backpackcloud.cli.Action;
 import com.backpackcloud.cli.AnnotatedCommand;
 import com.backpackcloud.cli.CommandDefinition;
+import com.backpackcloud.cli.Suggestions;
 import com.backpackcloud.cli.preferences.UserPreferences;
+import com.backpackcloud.cli.ui.Suggestion;
+import com.backpackcloud.cli.ui.impl.PromptSuggestion;
 import com.backpackcloud.serializer.JSON;
 import com.backpackcloud.serializer.Serializer;
 import com.backpackcloud.sherlogholmes.Preferences;
+import com.backpackcloud.sherlogholmes.domain.AttributeType;
 import com.backpackcloud.sherlogholmes.domain.DataEntry;
 import com.backpackcloud.sherlogholmes.domain.DataRegistry;
 import com.backpackcloud.sherlogholmes.domain.FilterStack;
@@ -38,6 +42,7 @@ import com.backpackcloud.sherlogholmes.domain.TimeUnit;
 import com.backpackcloud.sherlogholmes.domain.chart.Chart;
 import com.backpackcloud.sherlogholmes.domain.chart.ChartBuilder;
 import com.backpackcloud.sherlogholmes.domain.chart.Labels;
+import com.backpackcloud.sherlogholmes.domain.types.TemporalType;
 import com.backpackcloud.sherlogholmes.impl.WebChart;
 import io.quarkus.runtime.annotations.RegisterForReflection;
 import jakarta.enterprise.context.ApplicationScoped;
@@ -47,12 +52,16 @@ import jakarta.websocket.Session;
 import jakarta.websocket.server.ServerEndpoint;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.NavigableSet;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.function.Function;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @CommandDefinition(
   name = "plot",
@@ -92,24 +101,32 @@ public class PlotCommand implements AnnotatedCommand {
   }
 
   @Action
-  public void execute(String name, String labels, String series, String dataPoint, String reduction) {
+  public void execute(String labels, String series, String dataPoint, String name) {
     NavigableSet<DataEntry> entries = registry.entries(filterStack.filter());
 
-    String[] split = reduction.split(":");
-    String reductionType = split[0];
+    String[] split = dataPoint.split(":", 2);
+    String countType = split[0];
+    String dataPointAttribute = split.length > 1 ? split[1] : null;
 
-    ChartBuilder builder = switch (reductionType) {
-      case "count" -> {
-        new ChartBuilder<>(
-          createLabels(labels),
-          entry -> entry.valueOf(series, String.class),
-          createReductionFunction(dataPoint),
-          createReductionFunction(reduction),
-          ArrayList::new)
-      }
-      case "unique" -> {
-
-      }
+    ChartBuilder builder = switch (countType) {
+      case "count" -> new ChartBuilder<Object, Object>(
+        createLabels(labels),
+        entry -> entry.valueOf(series, String.class),
+        entry -> dataPointAttribute != null ? entry.valueOf(dataPointAttribute) : 1,
+        data -> data.stream().reduce(0, (left, right) -> (Integer) left + (Integer) right),
+        ArrayList::new);
+      case "sum" -> new ChartBuilder<Object, Object>(
+        createLabels(labels),
+        entry -> entry.valueOf(series, String.class),
+        entry -> dataPointAttribute != null ? entry.valueOf(dataPointAttribute) : 1,
+        data -> data.stream().reduce(0, (left, right) -> (Double) left + (Double) right),
+        ArrayList::new);
+      case "unique" -> new ChartBuilder<Object, Object>(
+        createLabels(labels),
+        entry -> entry.valueOf(series, String.class),
+        entry -> dataPointAttribute != null ? entry.valueOf(dataPointAttribute) : 1,
+        Collection::size,
+        HashSet::new);
       default -> throw new UnbelievableException("Invalid reduction expression");
     };
 
@@ -122,11 +139,6 @@ public class PlotCommand implements AnnotatedCommand {
     ));
 
     sessions.forEach((sessionId, session) -> session.getAsyncRemote().sendObject(serializedChart));
-  }
-
-  private Function<Collection<DataEntry>, ?> createReductionFunction(String expression) {
-    String[] split = expression.split(":", 2);
-    String type = split[0];
   }
 
   private List createLabels(String expression) {
@@ -142,6 +154,51 @@ public class PlotCommand implements AnnotatedCommand {
       );
       default -> throw new UnbelievableException("Invalid label expression");
     };
+  }
+
+  @Suggestions
+  public List<Suggestion> suggest(String labels, String series, String dataPoint, String name) {
+    if (series == null) {
+      return Arrays.stream(TimeUnit.values())
+        .map(Enum::name)
+        .map(String::toLowerCase)
+        .flatMap(unit -> registry.attributeNames().stream()
+          .filter(attr -> registry.typeOf(attr).filter(type -> type instanceof TemporalType<?>).isPresent())
+          .map(attr -> String.format("temporal:%s:%s", unit, attr)))
+        .map(PromptSuggestion::suggest)
+        .collect(Collectors.toList());
+    } else if (dataPoint == null) {
+      String prefix;
+      if (series.contains(":")) {
+        prefix = series.substring(0, series.lastIndexOf(":") + 1);
+      } else {
+        prefix = "";
+      }
+      return registry.attributeNames().stream()
+        .map(attr -> prefix + attr)
+        .map(PromptSuggestion::suggest)
+        .map(PromptSuggestion::incomplete)
+        .collect(Collectors.toList());
+    } else if (name == null) {
+      return Stream.concat(
+          Stream.concat(
+            Stream.concat(
+              registry.attributeNames().stream()
+                .filter(attr -> registry.typeOf(attr)
+                  .filter(type -> type.equals(AttributeType.NUMBER)).isPresent())
+                .map(attr -> String.format("count:%s", attr)),
+              registry.attributeNames().stream()
+                .filter(attr -> registry.typeOf(attr)
+                  .filter(type -> type.equals(AttributeType.DECIMAL)).isPresent())
+                .map(attr -> String.format("sum:%s", attr))),
+            registry.attributeNames().stream()
+              .map(attr -> String.format("unique:%s", attr))),
+          Stream.of("count")
+        )
+        .map(PromptSuggestion::suggest)
+        .collect(Collectors.toList());
+    }
+    return Collections.emptyList();
   }
 
 }

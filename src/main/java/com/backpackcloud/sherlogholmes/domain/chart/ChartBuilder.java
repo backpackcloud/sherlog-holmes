@@ -55,9 +55,7 @@ public class ChartBuilder<X, Y> {
 
     seriesData.forEach((seriesName, rawData) -> {
       List<DataPoint<X, Y>> dataPoints = new ArrayList<>();
-      rawData.forEach((label, values) -> {
-        dataPoints.add(new DataPointImpl<>(label, reducerFunction.apply(values)));
-      });
+      rawData.forEach((label, values) -> dataPoints.add(new DataPointImpl<>(label, reducerFunction.apply(values))));
       seriesMap.put(seriesName, new SeriesImpl<>(seriesName, labels, dataPoints, reducerFunction));
     });
 

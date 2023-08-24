@@ -41,7 +41,7 @@ public class WebChart<X, Y> {
 
   public WebChart(String name, Chart<X, Y> chart, int maxSeriesSize) {
     this.name = name;
-    this.series = chart.series(maxSeriesSize)
+    this.series = chart.series()
       .stream()
       .map(WebChartSeries::new)
       .collect(Collectors.toCollection(ArrayList::new));
