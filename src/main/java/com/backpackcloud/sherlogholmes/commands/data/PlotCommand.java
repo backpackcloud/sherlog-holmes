@@ -23,45 +23,36 @@
  */
 package com.backpackcloud.sherlogholmes.commands.data;
 
+import com.backpackcloud.UnbelievableException;
 import com.backpackcloud.cli.Action;
 import com.backpackcloud.cli.AnnotatedCommand;
-import com.backpackcloud.cli.CommandContext;
 import com.backpackcloud.cli.CommandDefinition;
-import com.backpackcloud.cli.ParameterCount;
-import com.backpackcloud.cli.PreferenceValue;
-import com.backpackcloud.cli.Suggestions;
 import com.backpackcloud.cli.preferences.UserPreferences;
-import com.backpackcloud.cli.ui.Suggestion;
-import com.backpackcloud.cli.ui.impl.PromptSuggestion;
 import com.backpackcloud.serializer.JSON;
 import com.backpackcloud.serializer.Serializer;
 import com.backpackcloud.sherlogholmes.Preferences;
-import com.backpackcloud.sherlogholmes.config.Config;
+import com.backpackcloud.sherlogholmes.domain.DataEntry;
 import com.backpackcloud.sherlogholmes.domain.DataRegistry;
 import com.backpackcloud.sherlogholmes.domain.FilterStack;
 import com.backpackcloud.sherlogholmes.domain.TimeUnit;
-import com.backpackcloud.sherlogholmes.domain.chart_old.ChartDefinition;
-import com.backpackcloud.sherlogholmes.domain.chart_old.ChartProducer;
-import com.backpackcloud.sherlogholmes.domain.chart_old.ChartRegistry;
+import com.backpackcloud.sherlogholmes.domain.chart.Chart;
+import com.backpackcloud.sherlogholmes.domain.chart.ChartBuilder;
+import com.backpackcloud.sherlogholmes.domain.chart.Labels;
 import com.backpackcloud.sherlogholmes.impl.WebChart;
-import com.backpackcloud.sherlogholmes.ui.suggestions.AttributeSuggester;
-import com.backpackcloud.sherlogholmes.ui.suggestions.ChronoUnitSuggestions;
 import io.quarkus.runtime.annotations.RegisterForReflection;
-import io.quarkus.vertx.ConsumeEvent;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.websocket.OnClose;
 import jakarta.websocket.OnOpen;
 import jakarta.websocket.Session;
 import jakarta.websocket.server.ServerEndpoint;
 
-import java.util.Collections;
-import java.util.HashSet;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
-import java.util.UUID;
+import java.util.NavigableSet;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.stream.Collectors;
+import java.util.function.Function;
 
 @CommandDefinition(
   name = "plot",
@@ -74,29 +65,20 @@ import java.util.stream.Collectors;
 public class PlotCommand implements AnnotatedCommand {
 
   private final Map<String, Session> sessions = new ConcurrentHashMap<>();
-  private final ChartProducer chartDataProducer;
-  private final AttributeSuggester attributeSuggester;
+
+  private final DataRegistry registry;
   private final UserPreferences preferences;
   private final Serializer serializer;
   private final FilterStack filterStack;
-  private final ChartRegistry chartRegistry;
-  private final Set<String> configTemplates;
 
-  public PlotCommand(ChartProducer chartDataProducer,
-                     DataRegistry registry,
+  public PlotCommand(DataRegistry registry,
                      UserPreferences preferences,
                      @JSON Serializer serializer,
-                     FilterStack filterStack,
-                     ChartRegistry chartRegistry, Config config) {
-    this.chartDataProducer = chartDataProducer;
-    this.attributeSuggester = new AttributeSuggester(registry);
+                     FilterStack filterStack) {
+    this.registry = registry;
     this.preferences = preferences;
     this.serializer = serializer;
     this.filterStack = filterStack;
-    this.chartRegistry = chartRegistry;
-    this.configTemplates = new HashSet<>(config.charts().keySet());
-
-    this.preferences.get(Preferences.MAX_SERIES_COUNT).listen(o -> drawCharts());
   }
 
   @OnOpen
@@ -110,62 +92,56 @@ public class PlotCommand implements AnnotatedCommand {
   }
 
   @Action
-  public void execute(String template,
-                      TimeUnit unit,
-                      String field,
-                      String countAttribute,
-                      @PreferenceValue("count-attribute") String countAttributePref) {
-    ChartDefinition def = new ChartDefinition(
-      template,
-      filterStack.filter(),
-      unit,
-      field,
-      countAttribute != null ? countAttribute : countAttributePref
-    );
-    UUID id = chartRegistry.add(def);
-    drawChart(id, def);
-  }
+  public void execute(String name, String labels, String series, String dataPoint, String reduction) {
+    NavigableSet<DataEntry> entries = registry.entries(filterStack.filter());
 
-  @Suggestions
-  public List<Suggestion> execute(@ParameterCount int paramCount) {
-    if (paramCount == 1) {
-      return configTemplates.stream()
-        .map(PromptSuggestion::suggest)
-        .collect(Collectors.toList());
-    } else if (paramCount == 2) {
-      return ChronoUnitSuggestions.suggestUnits();
-    } else if (paramCount == 3) {
-      return attributeSuggester.suggestIndexedAttributes();
-    } else if (paramCount == 4) {
-      return attributeSuggester.suggestAttributeNames();
-    }
-    return Collections.emptyList();
-  }
+    String[] split = reduction.split(":");
+    String reductionType = split[0];
 
-  @ConsumeEvent("command.filter")
-  public void onFilter(CommandContext context) {
-    drawCharts();
-  }
+    ChartBuilder builder = switch (reductionType) {
+      case "count" -> {
+        new ChartBuilder<>(
+          createLabels(labels),
+          entry -> entry.valueOf(series, String.class),
+          createReductionFunction(dataPoint),
+          createReductionFunction(reduction),
+          ArrayList::new)
+      }
+      case "unique" -> {
 
-  @ConsumeEvent("command.clear")
-  public void onClearCharts(CommandContext context) {
-    if (chartRegistry.isEmpty()) {
-      sessions.forEach(((s, session) -> session.getAsyncRemote().sendObject("clear")));
-    }
-  }
+      }
+      default -> throw new UnbelievableException("Invalid reduction expression");
+    };
 
-  private void drawCharts() {
-    chartRegistry.forEach(this::drawChart);
-  }
+    Chart chart = builder.build(entries.stream().toList());
 
-  private void drawChart(UUID chartId, ChartDefinition definition) {
-    String chart = serializer.serialize(new WebChart(
-      chartId.toString(),
-      definition.config(),
-      chartDataProducer.produce(definition.unit(), definition.filter(), definition.field(), definition.counter()),
+    String serializedChart = serializer.serialize(new WebChart(
+      name,
+      chart,
       preferences.number(Preferences.MAX_SERIES_COUNT).get()
     ));
-    sessions.forEach((sessionId, session) -> session.getAsyncRemote().sendObject(chart));
+
+    sessions.forEach((sessionId, session) -> session.getAsyncRemote().sendObject(serializedChart));
+  }
+
+  private Function<Collection<DataEntry>, ?> createReductionFunction(String expression) {
+    String[] split = expression.split(":", 2);
+    String type = split[0];
+  }
+
+  private List createLabels(String expression) {
+    String[] split = expression.split(":");
+    String type = split[0];
+
+    return switch (type) {
+      case "temporal" -> Labels.temporal(
+        registry.entries().first(),
+        registry.entries().last(),
+        TimeUnit.valueOf(split[1].toUpperCase()),
+        split[2]
+      );
+      default -> throw new UnbelievableException("Invalid label expression");
+    };
   }
 
 }

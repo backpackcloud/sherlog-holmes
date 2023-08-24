@@ -2,12 +2,12 @@ package com.backpackcloud.sherlogholmes.domain.chart;
 
 import java.util.List;
 
-public interface Chart<E> {
+public interface Chart<X, Y> {
 
-  List<Label> labels();
+  List<Label<X>> labels();
 
-  List<Series<E>> series();
+  List<Series<X, Y>> series();
 
-  List<Series<E>> series(int maxSize);
+  List<Series<X, Y>> series(int maxSize);
 
 }

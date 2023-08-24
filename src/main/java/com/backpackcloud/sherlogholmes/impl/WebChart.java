@@ -22,41 +22,33 @@
  * SOFTWARE.
  */
 package com.backpackcloud.sherlogholmes.impl;
-import com.backpackcloud.sherlogholmes.domain.chart_old.Bucket;
-import com.backpackcloud.sherlogholmes.domain.chart_old.Chart;
-import com.backpackcloud.sherlogholmes.domain.chart_old.Series;
+
+import com.backpackcloud.sherlogholmes.domain.chart.Chart;
+import com.backpackcloud.sherlogholmes.domain.chart.DataPoint;
+import com.backpackcloud.sherlogholmes.domain.chart.Series;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.quarkus.runtime.annotations.RegisterForReflection;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
 @RegisterForReflection
-public class WebChart {
+public class WebChart<X, Y> {
 
-  private final String id;
-  private final String config;
+  private final String name;
   private final List<WebChartSeries> series;
 
-  public WebChart(String id, String config, Chart chart, int maxSeriesSize) {
-    this.id = id;
-    this.config = config;
+  public WebChart(String name, Chart<X, Y> chart, int maxSeriesSize) {
+    this.name = name;
     this.series = chart.series(maxSeriesSize)
       .stream()
       .map(WebChartSeries::new)
       .collect(Collectors.toCollection(ArrayList::new));
-    this.series.add(new WebChartSeries(chart.total()));
-    this.series.add(new WebChartSeries(chart.average()));
   }
-
   @JsonProperty
-  public String id() {
-    return id;
-  }
-
-  @JsonProperty
-  public String config() {
-    return config;
+  public String name() {
+    return name;
   }
 
   @JsonProperty
@@ -65,16 +57,17 @@ public class WebChart {
   }
 
   @RegisterForReflection
-  public static class WebChartSeries {
+  public static class WebChartSeries<X, Y> {
 
     private final String name;
-    private final long[][] data;
-    public WebChartSeries(Series series) {
+    private final Object[][] data;
+
+    public WebChartSeries(Series<X, Y> series) {
       this.name = series.name();
-      this.data = new long[series.buckets().size()][2];
+      this.data = new Object[series.data().size()][2];
       int i = 0;
-      for (Bucket bucket : series.buckets()) {
-        this.data[i++] = new long[]{bucket.startMillis(), bucket.value()};
+      for (DataPoint<?, ?> dataPoint : series.data()) {
+        this.data[i++] = new Object[]{dataPoint.label().value(), dataPoint.value()};
       }
     }
 
@@ -84,7 +77,7 @@ public class WebChart {
     }
 
     @JsonProperty
-    public long[][] data() {
+    public Object[][] data() {
       return data;
     }
 

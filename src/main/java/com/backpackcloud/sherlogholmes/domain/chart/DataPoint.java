@@ -1,9 +1,9 @@
 package com.backpackcloud.sherlogholmes.domain.chart;
 
-public interface DataPoint<E> {
+public interface DataPoint<X, Y> {
 
-  Label label();
+  Label<X> label();
 
-  E value();
+  Y value();
 
 }

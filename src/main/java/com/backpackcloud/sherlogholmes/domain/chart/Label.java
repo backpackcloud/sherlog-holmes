@@ -2,9 +2,9 @@ package com.backpackcloud.sherlogholmes.domain.chart;
 
 import com.backpackcloud.sherlogholmes.domain.DataEntry;
 
-public interface Label {
+public interface Label<E> {
 
-  String name();
+  E value();
 
   boolean includes(DataEntry entry);
 

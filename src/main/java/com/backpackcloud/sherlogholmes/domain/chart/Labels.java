@@ -15,15 +15,15 @@ public final class Labels {
 
   }
 
-  public static List<Label> temporal(DataEntry from, DataEntry to, TimeUnit unit, String attribute) {
-    List<Label> labels = new ArrayList<>();
+  public static List<Label<Long>> temporal(DataEntry from, DataEntry to, TimeUnit unit, String attribute) {
+    List<Label<Long>> labels = new ArrayList<>();
 
     Temporal start = unit.truncate(from.attribute(attribute, Temporal.class)
       .flatMap(Attribute::value)
       .orElseThrow());
     Temporal end = start.plus(1, unit.chronoUnit());
 
-    Label label;
+    Label<Long> label;
     do {
       label = new TemporalLabel(unit, start, end, attribute);
       labels.add(label);

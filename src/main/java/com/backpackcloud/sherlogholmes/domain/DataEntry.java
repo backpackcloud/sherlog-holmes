@@ -29,6 +29,8 @@ import com.backpackcloud.cli.Writer;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public interface DataEntry extends Comparable<DataEntry>, Displayable {
 
@@ -57,5 +59,21 @@ public interface DataEntry extends Comparable<DataEntry>, Displayable {
   void displayFormat(String format);
 
   void toDisplay(Writer writer, String format);
+
+  default <E> E valueOf(String attributeName) {
+    return (E) valueOf(attributeName, Object.class);
+  }
+
+  default <E> E valueOf(String attributeName, Class<E> type) {
+    if (attributeName.contains(":")) {
+      return (E) Stream.of(attributeName.split(":"))
+        .map(attr -> valueOf(attr, String.class))
+        .collect(Collectors.joining(":"));
+    }
+    if (type.equals(String.class)) {
+      return (E) attribute(attributeName).flatMap(Attribute::formattedValue).orElse(null);
+    }
+    return (E) attribute(attributeName, type).flatMap(Attribute::value).orElse(null);
+  }
 
 }
