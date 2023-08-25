@@ -29,10 +29,11 @@ import com.backpackcloud.cli.AnnotatedCommand;
 import com.backpackcloud.cli.CommandContext;
 import com.backpackcloud.cli.CommandDefinition;
 import com.backpackcloud.cli.ParameterCount;
-import com.backpackcloud.cli.PreferenceValue;
 import com.backpackcloud.cli.Suggestions;
+import com.backpackcloud.cli.preferences.UserPreferences;
 import com.backpackcloud.cli.ui.Paginator;
 import com.backpackcloud.cli.ui.Suggestion;
+import com.backpackcloud.sherlogholmes.Preferences;
 import com.backpackcloud.sherlogholmes.domain.Attribute;
 import com.backpackcloud.sherlogholmes.domain.Count;
 import com.backpackcloud.sherlogholmes.domain.DataEntry;
@@ -61,10 +62,12 @@ public class CountCommand implements AnnotatedCommand {
 
   private final DataRegistry registry;
   private final AttributeSuggester attributeSuggester;
+  private final UserPreferences preferences;
 
-  public CountCommand(DataRegistry registry) {
+  public CountCommand(DataRegistry registry, UserPreferences preferences) {
     this.registry = registry;
     this.attributeSuggester = new AttributeSuggester(registry);
+    this.preferences = preferences;
   }
 
   private int count(NavigableSet<DataEntry> set, String countAttribute) {
@@ -92,8 +95,9 @@ public class CountCommand implements AnnotatedCommand {
   public void execute(CommandContext context,
                       Paginator paginator,
                       String attribute,
-                      @PreferenceValue("count-attribute") String countAttribute) {
+                      String counter) {
     Map<?, NavigableSet<DataEntry>> valuesMap = registry.index(attribute);
+    String countAttribute = counter != null ? counter : preferences.text(Preferences.COUNT_ATTRIBUTE).get();
 
     Map<String, Count<?>> countMap = new HashMap<>();
     AtomicInteger total = new AtomicInteger();

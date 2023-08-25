@@ -144,7 +144,7 @@ public class PlotCommand implements AnnotatedCommand {
   }
 
   private List createLabels(String expression) {
-    Pattern pattern = Pattern.compile("^(?<type>\\w+)(\\.(?<parameter>)\\w+)?[|](?<attribute>.+)$");
+    Pattern pattern = Pattern.compile("^(?<type>\\w+)(\\.(?<parameter>\\w+))?[|](?<attribute>.+)$");
     Matcher matcher = pattern.matcher(expression);
 
     if (matcher.find()) {

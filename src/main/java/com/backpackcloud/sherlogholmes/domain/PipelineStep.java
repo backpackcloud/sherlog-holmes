@@ -25,6 +25,7 @@
 package com.backpackcloud.sherlogholmes.domain;
 
 import com.backpackcloud.sherlogholmes.domain.steps.AttributeExtractStep;
+import com.backpackcloud.sherlogholmes.domain.steps.AttributeRelationStep;
 import com.backpackcloud.sherlogholmes.domain.steps.AttributeReplaceStep;
 import com.backpackcloud.sherlogholmes.domain.steps.AttributeSetStep;
 import com.backpackcloud.sherlogholmes.domain.steps.BasicPipelineStep;
@@ -61,7 +62,10 @@ public interface PipelineStep {
                              @JsonProperty("assign") AttributeSetStep attributeSetStep,
                              @JsonProperty("extract") AttributeExtractStep attributeExtractStep,
                              @JsonProperty("map") RegexMapperStep regexMapperStep,
-                             @JsonProperty("replace") AttributeReplaceStep attributeReplaceStep) {
+                             @JsonProperty("relate") AttributeRelationStep attributeRelationStep,
+                             @JsonProperty("replace") AttributeReplaceStep attributeReplaceStep,
+                             @JsonProperty("do") List<PipelineStep> nestedSteps,
+                             @JsonProperty("else") PipelineStep alternativeStep) {
     List<Predicate<DataEntry>> predicates = new ArrayList<>();
 
     if (filter != null) {
@@ -76,11 +80,17 @@ public interface PipelineStep {
         attributeSetStep,
         attributeExtractStep,
         regexMapperStep,
+        attributeRelationStep,
         attributeReplaceStep)
       .filter(Objects::nonNull)
       .reduce(NOTHING, PipelineStep::andThen);
 
-    return new BasicPipelineStep(predicate, steps);
+    if (nestedSteps != null) {
+      steps = Stream.concat(Stream.of(steps), nestedSteps.stream())
+        .reduce(NOTHING, PipelineStep::andThen);
+    }
+
+    return new BasicPipelineStep(predicate, steps, alternativeStep != null ? alternativeStep : NOTHING);
   }
 
 }

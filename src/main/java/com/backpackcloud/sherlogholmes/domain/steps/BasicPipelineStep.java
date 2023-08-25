@@ -32,19 +32,24 @@ import java.util.function.Predicate;
 public class BasicPipelineStep implements PipelineStep {
 
   private final Predicate<DataEntry> predicate;
-  private final PipelineStep step;
+  private final PipelineStep stepIfPositive;
+  private final PipelineStep stepIfNegative;
 
   public BasicPipelineStep(Predicate<DataEntry> predicate,
-                           PipelineStep step) {
+                           PipelineStep stepIfPositive,
+                           PipelineStep stepIfNegative) {
     this.predicate = predicate;
-    this.step = step;
+    this.stepIfPositive = stepIfPositive;
+    this.stepIfNegative = stepIfNegative;
   }
 
 
   @Override
   public void analyze(DataEntry dataEntry) {
     if (predicate.test(dataEntry)) {
-      step.analyze(dataEntry);
+      stepIfPositive.analyze(dataEntry);
+    } else {
+      stepIfNegative.analyze(dataEntry);
     }
   }
 
