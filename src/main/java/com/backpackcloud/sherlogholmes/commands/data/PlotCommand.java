@@ -23,7 +23,6 @@
  */
 package com.backpackcloud.sherlogholmes.commands.data;
 
-import com.backpackcloud.UnbelievableException;
 import com.backpackcloud.cli.Action;
 import com.backpackcloud.cli.AnnotatedCommand;
 import com.backpackcloud.cli.CommandDefinition;
@@ -35,14 +34,11 @@ import com.backpackcloud.serializer.JSON;
 import com.backpackcloud.serializer.Serializer;
 import com.backpackcloud.sherlogholmes.Preferences;
 import com.backpackcloud.sherlogholmes.domain.AttributeType;
-import com.backpackcloud.sherlogholmes.domain.DataEntry;
 import com.backpackcloud.sherlogholmes.domain.DataRegistry;
 import com.backpackcloud.sherlogholmes.domain.FilterStack;
 import com.backpackcloud.sherlogholmes.domain.TimeUnit;
 import com.backpackcloud.sherlogholmes.domain.chart.Chart;
 import com.backpackcloud.sherlogholmes.domain.chart.ChartBuilder;
-import com.backpackcloud.sherlogholmes.domain.chart.Labels;
-import com.backpackcloud.sherlogholmes.domain.types.TemporalType;
 import com.backpackcloud.sherlogholmes.impl.WebChart;
 import io.quarkus.runtime.annotations.RegisterForReflection;
 import jakarta.enterprise.context.ApplicationScoped;
@@ -51,17 +47,11 @@ import jakarta.websocket.OnOpen;
 import jakarta.websocket.Session;
 import jakarta.websocket.server.ServerEndpoint;
 
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.NavigableSet;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -103,36 +93,10 @@ public class PlotCommand implements AnnotatedCommand {
   }
 
   @Action
-  public void execute(String labels, String series, String dataPoint, String name) {
-    NavigableSet<DataEntry> entries = registry.entries(filterStack.filter());
+  public void execute(String label, String series, String reduction, String name) {
+    ChartBuilder builder = ChartBuilder.create(label, series, reduction);
 
-    String[] split = dataPoint.split(":", 2);
-    String countType = split[0];
-    String dataPointAttribute = split.length > 1 ? split[1] : null;
-
-    ChartBuilder builder = switch (countType) {
-      case "count" -> new ChartBuilder<Object, Object>(
-        createLabels(labels),
-        entry -> entry.valueOf(series, String.class),
-        entry -> dataPointAttribute != null ? entry.valueOf(dataPointAttribute) : 1,
-        data -> data.stream().reduce(0, (left, right) -> (Integer) left + (Integer) right),
-        ArrayList::new);
-      case "sum" -> new ChartBuilder<Object, Object>(
-        createLabels(labels),
-        entry -> entry.valueOf(series, String.class),
-        entry -> dataPointAttribute != null ? entry.valueOf(dataPointAttribute) : 1,
-        data -> data.stream().reduce(0, (left, right) -> (Double) left + (Double) right),
-        ArrayList::new);
-      case "unique" -> new ChartBuilder<Object, Object>(
-        createLabels(labels),
-        entry -> entry.valueOf(series, String.class),
-        entry -> dataPointAttribute != null ? entry.valueOf(dataPointAttribute) : 1,
-        Collection::size,
-        HashSet::new);
-      default -> throw new UnbelievableException("Invalid reduction expression");
-    };
-
-    Chart chart = builder.build(entries.stream().toList());
+    Chart chart = builder.build(registry.entries(filterStack.filter()).stream());
 
     String serializedChart = serializer.serialize(new WebChart(
       name,
@@ -143,46 +107,24 @@ public class PlotCommand implements AnnotatedCommand {
     sessions.forEach((sessionId, session) -> session.getAsyncRemote().sendObject(serializedChart));
   }
 
-  private List createLabels(String expression) {
-    Pattern pattern = Pattern.compile("^(?<type>\\w+)(\\.(?<parameter>\\w+))?[|](?<attribute>.+)$");
-    Matcher matcher = pattern.matcher(expression);
-
-    if (matcher.find()) {
-      String type = matcher.group("type");
-
-      return switch (type) {
-        case "temporal" -> Labels.temporal(
-          registry.entries().first(),
-          registry.entries().last(),
-          TimeUnit.valueOf(matcher.group("parameter").toUpperCase()),
-          matcher.group("attribute")
-        );
-        case "category" -> Labels.category(registry, matcher.group("attribute"));
-        default -> throw new UnbelievableException("Invalid label expression");
-      };
-    }
-    throw new UnbelievableException("Invalid label expression");
-  }
-
   @Suggestions
-  public List<Suggestion> suggest(String labels, String series, String dataPoint, String name) {
+  public List<Suggestion> suggest(String label, String series, String reduction, String name) {
     if (series == null) {
       return Stream.concat(
           Arrays.stream(TimeUnit.values())
             .map(Enum::name)
             .map(String::toLowerCase)
-            .flatMap(unit -> registry.attributeNames().stream()
-              .filter(attr -> registry.typeOf(attr).filter(type -> type instanceof TemporalType<?>).isPresent())
-              .map(attr -> String.format("temporal.%s|%s", unit, attr))),
-          registry.indexedAttributes().stream()
-            .map(attr -> String.format("category|%s", attr))
+            .map(unit -> String.format("temporal.%s", unit)),
+          Stream.of("category")
         )
         .map(PromptSuggestion::suggest)
         .collect(Collectors.toList());
-    } else if (dataPoint == null) {
+    } else if (reduction == null) {
       String prefix;
       if (series.contains(":")) {
         prefix = series.substring(0, series.lastIndexOf(":") + 1);
+      } else if (series.contains(",")) {
+        prefix = series.substring(0, series.indexOf(",") + 1);
       } else {
         prefix = "";
       }

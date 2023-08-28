@@ -25,6 +25,7 @@
 package com.backpackcloud.sherlogholmes.domain.chart;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface Series<X, Y> {
 
@@ -33,6 +34,8 @@ public interface Series<X, Y> {
   List<Label<X>> labels();
 
   List<DataPoint<X, Y>> data();
+
+  Optional<DataPoint<X, Y>> at(Label<X> label);
 
   Series<X, Y> merge(String newName, Series<X, Y> other);
 

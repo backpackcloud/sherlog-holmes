@@ -38,7 +38,7 @@ public class DefaultFilterFactory implements FilterFactory {
   @Override
   public DataFilter create(String expression) {
     if (expression == null || expression.isBlank()) {
-      throw new UnbelievableException("Invalid filter expression");
+      return DataFilter.ALLOW_ALL;
     }
 
     StringTokenizer tokenizer = new StringTokenizer(expression);
