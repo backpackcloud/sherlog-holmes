@@ -46,7 +46,7 @@ public class CsvDataExporter implements DataExporter {
   @Override
   public void export(Writer writer, Stream<DataEntry> stream) {
     if (includeHeader) {
-      writer.write(String.join(",", attributes));
+      writer.write("\"").write(String.join("\",\"", attributes)).write("\"");
     }
 
     stream.map(entry -> {
@@ -55,10 +55,10 @@ public class CsvDataExporter implements DataExporter {
       Stream.of(attributes).map(name ->
           entry.attribute(name)
             .flatMap(Attribute::formattedValue)
-            .orElse(null))
+            .orElse(""))
         .forEach(row::add);
 
-      return String.join(",", row);
+      return "\"" + String.join("\",\"", row) + "\"";
     }).forEach(writer::writeln);
   }
 
