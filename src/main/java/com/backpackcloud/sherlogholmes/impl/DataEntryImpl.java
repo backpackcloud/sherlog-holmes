@@ -30,6 +30,8 @@ import com.backpackcloud.sherlogholmes.domain.AttributeBuilder;
 import com.backpackcloud.sherlogholmes.domain.AttributeSpec;
 import com.backpackcloud.sherlogholmes.domain.DataEntry;
 import com.backpackcloud.text.StringWalker;
+import com.fasterxml.jackson.annotation.JsonValue;
+import io.quarkus.runtime.annotations.RegisterForReflection;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -38,8 +40,10 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 
+@RegisterForReflection
 public class DataEntryImpl implements DataEntry {
 
+  @JsonValue
   private final Map<String, Attribute> attributes;
   private String displayFormat;
 

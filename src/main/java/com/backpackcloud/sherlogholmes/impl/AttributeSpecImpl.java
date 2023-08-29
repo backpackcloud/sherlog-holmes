@@ -26,8 +26,11 @@ package com.backpackcloud.sherlogholmes.impl;
 
 import com.backpackcloud.sherlogholmes.domain.AttributeSpec;
 import com.backpackcloud.sherlogholmes.domain.AttributeType;
+import io.quarkus.runtime.annotations.RegisterForReflection;
 
+@RegisterForReflection
 public record AttributeSpecImpl<E>(AttributeType<E> type,
                                    boolean multivalued)
   implements AttributeSpec<E> {
+
 }

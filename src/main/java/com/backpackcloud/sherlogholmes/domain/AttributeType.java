@@ -26,6 +26,8 @@ package com.backpackcloud.sherlogholmes.domain;
 
 import com.backpackcloud.sherlogholmes.domain.types.EnumType;
 import com.backpackcloud.sherlogholmes.domain.types.TemporalType;
+import com.fasterxml.jackson.annotation.JsonValue;
+import io.quarkus.runtime.annotations.RegisterForReflection;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -33,7 +35,11 @@ import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Comparator;
 
+@RegisterForReflection
 public interface AttributeType<E> extends Converter<E>, Formatter<E>, Validator<E>, Comparator<E> {
+
+  @JsonValue
+  String name();
 
   @Override
   default String format(E value) {
@@ -50,13 +56,27 @@ public interface AttributeType<E> extends Converter<E>, Formatter<E>, Validator<
     return ((Comparable) o1).compareTo(o2);
   }
 
-  AttributeType<String> TEXT = input -> input;
-  AttributeType<Integer> NUMBER = input -> Integer.parseInt(input);
-  AttributeType<Double> DECIMAL = input -> Double.parseDouble(input);
+  AttributeType<String> TEXT = create("text", input -> input);
+  AttributeType<Integer> NUMBER = create("number", Integer::parseInt);
+  AttributeType<Double> DECIMAL = create("decimal", Double::parseDouble);
   AttributeType<LocalTime> TIME = new TemporalType<>(DateTimeFormatter.ISO_TIME, LocalTime::from);
   AttributeType<LocalDate> DATE = new TemporalType<>(DateTimeFormatter.ISO_DATE, LocalDate::from);
   AttributeType<LocalDateTime> DATETIME = new TemporalType<>(DateTimeFormatter.ISO_DATE_TIME, LocalDateTime::from);
-  AttributeType<Boolean> FLAG = input -> Boolean.parseBoolean(input);
+  AttributeType<Boolean> FLAG = create("flag", Boolean::parseBoolean);
+
+  static <E> AttributeType<E> create(String name, Converter<E> converter) {
+    return new AttributeType<>() {
+      @Override
+      public String name() {
+        return name;
+      }
+
+      @Override
+      public E convert(String input) {
+        return converter.convert(input);
+      }
+    };
+  }
 
   static AttributeType<String> enumOf(String... values) {
     return new EnumType(values);

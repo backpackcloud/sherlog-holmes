@@ -41,6 +41,11 @@ public class TemporalType<E extends Temporal> implements AttributeType<E> {
   }
 
   @Override
+  public String name() {
+    return "temporal";
+  }
+
+  @Override
   public String format(E value) {
     return formatter.format(value);
   }

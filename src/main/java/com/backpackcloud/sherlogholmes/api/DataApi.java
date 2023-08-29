@@ -3,11 +3,14 @@ package com.backpackcloud.sherlogholmes.api;
 import com.backpackcloud.cli.preferences.UserPreferences;
 import com.backpackcloud.sherlogholmes.Preferences;
 import com.backpackcloud.sherlogholmes.domain.AttributeType;
+import com.backpackcloud.sherlogholmes.domain.DataEntry;
 import com.backpackcloud.sherlogholmes.domain.DataFilter;
 import com.backpackcloud.sherlogholmes.domain.DataRegistry;
 import com.backpackcloud.sherlogholmes.domain.FilterFactory;
+import com.backpackcloud.sherlogholmes.domain.Operand;
 import com.backpackcloud.sherlogholmes.domain.chart.Chart;
 import com.backpackcloud.sherlogholmes.domain.chart.ChartBuilder;
+import com.backpackcloud.sherlogholmes.impl.DefaultDataFilter;
 import com.backpackcloud.sherlogholmes.impl.WebChart;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.ws.rs.GET;
@@ -16,11 +19,8 @@ import jakarta.ws.rs.PathParam;
 import jakarta.ws.rs.QueryParam;
 import jakarta.ws.rs.core.Response;
 
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
 
 @ApplicationScoped
@@ -44,7 +44,7 @@ public class DataApi {
                           @QueryParam("reduction") String reduction,
                           @QueryParam("filter") String filter) {
     ChartBuilder builder = ChartBuilder.create(label, series, reduction);
-    DataFilter dataFilter = createFilter(filter);
+    DataFilter dataFilter = createFilter(DataFilter.ALLOW_ALL, filter);
 
     Chart chart = builder.build(registry.entries().stream().filter(dataFilter));
     WebChart webChart = new WebChart(
@@ -58,19 +58,26 @@ public class DataApi {
 
   @GET
   @Path("/entries")
-  public Response entries(@QueryParam("fields") String fields, String filter) {
-    List<Map<String, Object>> result = new ArrayList<>();
-    DataFilter dataFilter = createFilter(filter);
-    String[] attributes = fields.split(",");
+  public Response entries(@QueryParam("filter") String filter) {
+    DataFilter dataFilter = createFilter(DataFilter.ALLOW_ALL, filter);
 
-    registry.entries().stream()
+    List<DataEntry> result = registry.entries().stream()
       .filter(dataFilter)
-      .forEach(entry -> {
-        Map<String, Object> map = new HashMap<>();
-        Arrays.stream(attributes)
-          .forEach(attr -> map.put(attr, entry.valueOf(attr)));
-        result.add(map);
-      });
+      .collect(Collectors.toList());
+
+    return Response.ok(result).build();
+  }
+
+  @GET
+  @Path("/entries/{attribute}/{value}")
+  public Response entriesWith(@PathParam("attribute") String attribute,
+                              @PathParam("value") String value,
+                              @QueryParam("filter") String filter) {
+    DataFilter dataFilter = createFilter(new DefaultDataFilter(attribute, Operand.EQUAL, value), filter);
+
+    List<DataEntry> result = registry.entries().stream()
+      .filter(dataFilter)
+      .collect(Collectors.toList());
 
     return Response.ok(result).build();
   }
@@ -88,10 +95,11 @@ public class DataApi {
     return Response.ok(result).build();
   }
 
-  private DataFilter createFilter(String filter) {
+  private DataFilter createFilter(DataFilter initial, String filter) {
     DataFilter dataFilter = Arrays.stream(filter != null ? filter.split(",") : new String[0])
       .map(filterFactory::create)
-      .reduce(DataFilter.ALLOW_ALL, DataFilter::and);
+      .reduce(initial, DataFilter::and);
+
     return dataFilter;
   }
 

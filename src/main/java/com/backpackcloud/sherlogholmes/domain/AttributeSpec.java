@@ -28,6 +28,8 @@ import com.backpackcloud.UnbelievableException;
 import com.backpackcloud.sherlogholmes.domain.types.SemanticVersionType;
 import com.backpackcloud.sherlogholmes.domain.types.TemporalType;
 import com.backpackcloud.sherlogholmes.impl.AttributeSpecImpl;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import io.quarkus.runtime.annotations.RegisterForReflection;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -38,10 +40,13 @@ import java.time.format.DateTimeFormatter;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+@RegisterForReflection
 public interface AttributeSpec<E> {
 
+  @JsonProperty
   AttributeType<E> type();
 
+  @JsonProperty
   boolean multivalued();
 
   static AttributeSpec create(String spec) {

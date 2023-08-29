@@ -29,6 +29,11 @@ import com.backpackcloud.sherlogholmes.domain.AttributeType;
 public class SemanticVersionType implements AttributeType<SemanticVersion> {
 
   @Override
+  public String name() {
+    return "version";
+  }
+
+  @Override
   public SemanticVersion convert(String input) {
     return SemanticVersion.of(input);
   }

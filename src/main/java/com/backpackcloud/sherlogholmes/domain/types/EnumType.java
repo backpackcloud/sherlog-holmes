@@ -42,6 +42,11 @@ public class EnumType implements AttributeType<String> {
   }
 
   @Override
+  public String name() {
+    return "enum";
+  }
+
+  @Override
   public String convert(String input) {
     return input;
   }

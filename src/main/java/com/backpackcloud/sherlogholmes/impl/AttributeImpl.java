@@ -27,6 +27,8 @@ package com.backpackcloud.sherlogholmes.impl;
 import com.backpackcloud.UnbelievableException;
 import com.backpackcloud.sherlogholmes.domain.Attribute;
 import com.backpackcloud.sherlogholmes.domain.AttributeSpec;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import io.quarkus.runtime.annotations.RegisterForReflection;
 
 import java.util.HashSet;
 import java.util.Objects;
@@ -34,13 +36,16 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Stream;
 
+@RegisterForReflection
 public class AttributeImpl<E> implements Attribute<E> {
 
+  @JsonProperty
   private final String name;
+  @JsonProperty
   private final AttributeSpec<E> spec;
-
+  @JsonProperty
   private E value;
-
+  @JsonProperty
   private Set<E> values;
 
   public AttributeImpl(String name, AttributeSpec<E> spec) {
