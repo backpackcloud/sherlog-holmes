@@ -46,7 +46,7 @@ public class CsvDataExporter implements DataExporter {
   @Override
   public void export(Writer writer, Stream<DataEntry> stream) {
     if (includeHeader) {
-      writer.write("\"").write(String.join("\",\"", attributes)).write("\"");
+      writer.write("\"").write(String.join("\",\"", attributes)).writeln("\"");
     }
 
     stream.map(entry -> {

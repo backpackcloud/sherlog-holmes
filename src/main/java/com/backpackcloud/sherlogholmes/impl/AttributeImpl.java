@@ -39,7 +39,6 @@ import java.util.stream.Stream;
 @RegisterForReflection
 public class AttributeImpl<E> implements Attribute<E> {
 
-  @JsonProperty
   private final String name;
   @JsonProperty
   private final AttributeSpec<E> spec;

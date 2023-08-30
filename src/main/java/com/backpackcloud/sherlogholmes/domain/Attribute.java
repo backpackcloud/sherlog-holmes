@@ -24,9 +24,12 @@
 
 package com.backpackcloud.sherlogholmes.domain;
 
+import io.quarkus.runtime.annotations.RegisterForReflection;
+
 import java.util.Optional;
 import java.util.stream.Stream;
 
+@RegisterForReflection
 public interface Attribute<E> extends Comparable<Attribute<E>> {
 
   String name();
