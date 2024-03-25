@@ -24,31 +24,7 @@
 
 package com.backpackcloud.sherlogholmes.domain.types;
 
-import java.util.Objects;
-
-public class SemanticVersion implements Comparable<SemanticVersion> {
-
-  private final int major;
-  private final int minor;
-  private final int micro;
-
-  public SemanticVersion(int major, int minor, int micro) {
-    this.major = major;
-    this.minor = minor;
-    this.micro = micro;
-  }
-
-  public int major() {
-    return major;
-  }
-
-  public int minor() {
-    return minor;
-  }
-
-  public int micro() {
-    return micro;
-  }
+public record SemanticVersion(int major, int minor, int micro) implements Comparable<SemanticVersion> {
 
   @Override
   public String toString() {
@@ -70,11 +46,6 @@ public class SemanticVersion implements Comparable<SemanticVersion> {
     if (o == null || getClass() != o.getClass()) return false;
     SemanticVersion that = (SemanticVersion) o;
     return major == that.major && minor == that.minor && micro == that.micro;
-  }
-
-  @Override
-  public int hashCode() {
-    return Objects.hash(major, minor, micro);
   }
 
   @Override
