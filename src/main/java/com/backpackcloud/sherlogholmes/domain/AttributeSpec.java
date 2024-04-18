@@ -27,6 +27,8 @@ package com.backpackcloud.sherlogholmes.domain;
 import com.backpackcloud.UnbelievableException;
 import com.backpackcloud.sherlogholmes.domain.types.SemanticVersionType;
 import com.backpackcloud.sherlogholmes.domain.types.TemporalType;
+import com.backpackcloud.sherlogholmes.domain.types.UriType;
+import com.backpackcloud.sherlogholmes.domain.types.UrlType;
 import com.backpackcloud.sherlogholmes.impl.AttributeSpecImpl;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.quarkus.runtime.annotations.RegisterForReflection;
@@ -80,6 +82,8 @@ public interface AttributeSpec<E> {
         );
         case "flag" -> new AttributeSpecImpl<>(AttributeType.flag(), multivalued);
         case "version" -> new AttributeSpecImpl<>(new SemanticVersionType(), false);
+        case "url" -> new AttributeSpecImpl<>(new UrlType(), false);
+        case "uri" -> new AttributeSpecImpl<>(new UriType(), false);
         default -> throw new UnbelievableException("Invalid type: " + type);
       };
     }
