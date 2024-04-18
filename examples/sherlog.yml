@@ -19,10 +19,7 @@ preferences:
   # Sets the header for exporting csv content
   csv-header:            true
 
-  # Sets the max number of series shown in the web chart
-  max-series-count:      5
   # Sets the data attribute which holds the timestamp information
-  # This is used for plotting the web chart
   timestamp-attribute:   timestamp
 
   # Enables data paging for commands that displays data
@@ -317,37 +314,3 @@ styles:
   attribute-thread:      grey
   attribute-message:     white
   attribute-exception:   red
-
-# Chart templates to be used on plot commands
-charts:
-  main:
-    properties:
-      title: Sherlog Holmes
-
-      chart:
-        zoomType: x
-        height:   56.25%
-
-      xAxis:
-        type: datetime
-
-      yAxis:
-        title:
-          text: Count
-
-      tooltip:
-        crosshairs: true
-        shared:     true
-
-    series:
-      default:
-        type: column
-
-      average:
-        dashStyle: dash
-        type: spline
-
-      total:
-        type: spline
-        dataLabels:
-          enabled: true

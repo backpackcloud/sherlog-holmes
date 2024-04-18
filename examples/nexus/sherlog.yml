@@ -110,35 +110,3 @@ styles:
   attribute-message:     white
   attribute-exception:   red
   attribute-class:       yellow
-
-charts:
-  - properties:
-      title: Sherlog Holmes
-
-      chart:
-        zoomType: x
-        height:   56.25%
-
-      xAxis:
-        type: datetime
-
-      yAxis:
-        title:
-          text: Count
-
-      tooltip:
-        crosshairs: true
-        shared:     true
-
-    series:
-      default:
-        type: column
-
-      average:
-        dashStyle: dash
-        type: spline
-
-      total:
-        type: spline
-        dataLabels:
-          enabled: true

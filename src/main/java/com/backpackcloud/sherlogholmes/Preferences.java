@@ -46,12 +46,6 @@ public enum Preferences implements PreferenceSpec {
     "true"
   ),
 
-  MAX_SERIES_COUNT(
-    "sets the max number of series for charts before combining the remaining ones",
-    Type.NUMBER,
-    "5"
-  ),
-
   DEFAULT_FALLBACK_MODE(
     "sets the default fallback behavior to use when parsing content fails",
     Type.TEXT,
