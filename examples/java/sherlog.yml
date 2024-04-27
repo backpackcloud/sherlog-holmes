@@ -8,36 +8,20 @@ models:
   java:
     format: '{@exception}{#timestamp} {#level|-5} {#category} {#thread} {#message}'
     attributes:
-      timestamp:
-        type:      datetime
-        indexable: false
-        format:    yyyy-MM-dd HH:mm:ss,SSS
+      timestamp: datetime | yyyy-MM-dd HH:mm:ss,SSS
+      level:     enum | TRACE,DEBUG,INFO,WARN,ERROR,FATAL
+      category:  text
+      thread:    text
+      exception: text[]
+      message:   text
+      code:      text
 
-      level:
-        type:      enum
-        indexable: true
-        values:    TRACE,DEBUG,INFO,WARN,ERROR,FATAL
-
-      category:
-        type:      text
-        indexable: true
-
-      thread:
-        type:      text
-        indexable: true
-
-      exception:
-        type:        text
-        indexable:   true
-        multivalued: true
-
-      message:
-        type:      text
-        indexable: false
-
-      code:
-        type:      text
-        indexable: true
+index:
+  - level
+  - category
+  - thread
+  - exception
+  - code
 
 readers:
   file:
@@ -90,7 +74,7 @@ pipelines:
 
 exporters:
   json:
-    type: json
+    type:       json
     attributes: timestamp,level,category,thread,code,message
 
 icons:

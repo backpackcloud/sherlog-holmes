@@ -40,12 +40,6 @@ public enum Preferences implements PreferenceSpec {
     ""
   ),
 
-  CSV_HEADER(
-    "sets whether to show csv headers or not",
-    Type.FLAG,
-    "true"
-  ),
-
   DEFAULT_FALLBACK_MODE(
     "sets the default fallback behavior to use when parsing content fails",
     Type.TEXT,

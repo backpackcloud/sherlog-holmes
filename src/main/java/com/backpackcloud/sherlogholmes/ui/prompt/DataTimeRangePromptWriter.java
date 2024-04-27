@@ -24,20 +24,24 @@
 
 package com.backpackcloud.sherlogholmes.ui.prompt;
 
+import com.backpackcloud.cli.preferences.UserPreferences;
 import com.backpackcloud.cli.ui.Prompt;
 import com.backpackcloud.cli.ui.PromptWriter;
+import com.backpackcloud.sherlogholmes.Preferences;
 import com.backpackcloud.sherlogholmes.domain.DataRegistry;
-
 import jakarta.enterprise.context.ApplicationScoped;
+
 import java.time.Duration;
 
 @ApplicationScoped
 public class DataTimeRangePromptWriter implements PromptWriter {
 
   private final DataRegistry registry;
+  private final UserPreferences preferences;
 
-  public DataTimeRangePromptWriter(DataRegistry registry) {
+  public DataTimeRangePromptWriter(DataRegistry registry, UserPreferences preferences) {
     this.registry = registry;
+    this.preferences = preferences;
   }
 
   @Override
@@ -51,7 +55,7 @@ public class DataTimeRangePromptWriter implements PromptWriter {
       return;
     }
 
-    Duration duration = registry.durationOf("timestamp");
+    Duration duration = registry.durationOf(preferences.text(Preferences.TIMESTAMP_ATTRIBUTE).get());
 
     if (!duration.isZero()) {
       Prompt.PromptSegmentBuilder segment = prompt
