@@ -11,4 +11,4 @@ mvn:package:
       - target/sherlog-holmes
   script:
     - build
-    - mv target/sherlog-holmes-runner sherlog-holmes
+    - mv target/sherlog-holmes-runner target/sherlog-holmes
