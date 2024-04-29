@@ -1,0 +1,20 @@
+image: registry.backpackcloud.com/backpackcloud/maven
+
+stages:
+  - build
+  - release
+
+mvn:package:
+  stage: build
+  artifacts:
+    paths:
+      - target/sherlog-holmes
+  script:
+    - build native
+
+mvn:publish:
+  stage: release
+  script:
+    - release
+  dependencies:
+    - mvn:package
