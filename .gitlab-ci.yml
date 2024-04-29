@@ -10,11 +10,5 @@ mvn:package:
     paths:
       - target/sherlog-holmes
   script:
-    - build native
-
-mvn:publish:
-  stage: release
-  script:
-    - release
-  dependencies:
-    - mvn:package
+    - build
+    - mv target/sherlog-holmes-runner sherlog-holmes
