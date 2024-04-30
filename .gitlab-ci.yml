@@ -8,7 +8,7 @@ mvn:package:
   stage: build
   artifacts:
     paths:
-      - target/sherlog-holmes
+      - target/sherlog-holmes-runner
   script:
     - build
-    - mv target/sherlog-holmes-runner target/sherlog-holmes
+    - upload target/sherlog-holmes-runner sherlog-holmes
