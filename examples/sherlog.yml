@@ -1,7 +1,6 @@
 # The preferences section tunes the global preferences for Sherlog Holmes
 #
-# Preferences can also be adjusted from the command line using the "preferences"
-# command.
+# Preferences can also be adjusted from the command line using the "preferences" command.
 preferences:
   # Adds metadata to parsed entries
   add-metadata:          true
@@ -64,6 +63,8 @@ models:
     #
     # Attributes might have multiple values (indicated with an '[]' after the type), which can be useful in situations
     # where you need a collection of values like exceptions that are shown in a stacktrace.
+    #
+    # For attributes requiring configuration, it's passed with an '|' after the type, followed by the configuration
     attributes:
 
       # this will also apply for printing out the value
@@ -80,10 +81,8 @@ models:
 
       message: text
 
-# The registry will keep track of
-# all assigned values and which entries hold the values. Indexed attributes that also
-# have an icon will appear in the prompt together with a counter for how many values
-# were indexed.
+# The registry will keep track of all assigned values and which entries hold the values. Indexed attributes that also
+# have an icon will appear in the prompt together with a counter for how many different values were indexed.
 index:
   - level
   - category
@@ -92,8 +91,7 @@ index:
   - level:exception
   - category:exception
 
-# Readers are the first component in the chain, responsible for getting the raw content and
-# forward them line by line.
+# Readers are the first component in the chain, responsible for getting the raw content and forward them line by line.
 #
 # Currently, there are 3 different types of readers:
 # - file: read the content of a file
@@ -257,7 +255,7 @@ pipelines:
     parser:   wildfly
     mapper:   java
     steps:    java
-    # Defines how the content that wasn't parsed will be handled
+    # Defines how the content that isn't parsed will be handled
     # append: appends the content to the last parsed content (useful for log stacktraces)
     # ignore: ignores the content
     fallback: append
