@@ -11,4 +11,10 @@ mvn:package:
       - target/sherlog-holmes-runner
   script:
     - build
+
+release:downstream:
+  stage: release
+  dependencies:
+    - mvn:package
+  script:
     - upload target/sherlog-holmes-runner sherlog-holmes
