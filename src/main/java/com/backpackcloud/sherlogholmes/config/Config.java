@@ -69,8 +69,6 @@ public class Config {
   private final Map<String, PipelineConfig> pipelines;
   private final Map<String, DataExporterConfig> exporters;
 
-  private final Map<String, Map> charts;
-
   @JsonCreator
   public Config(@JacksonInject UserPreferences userPreferences,
                 @JacksonInject Theme theme,
@@ -89,7 +87,6 @@ public class Config {
                 @JsonProperty("steps") Map<String, List<PipelineStep>> steps,
                 @JsonProperty("pipelines") Map<String, PipelineConfig> pipelines,
                 @JsonProperty("exporters") Map<String, DataExporterConfig> exporters,
-                @JsonProperty("charts") Map<String, Map> charts,
                 @JsonProperty("index") List<String> index) {
     this.preferences = userPreferences;
     this.commands = commands != null ? commands : Collections.emptyList();
@@ -101,7 +98,6 @@ public class Config {
     this.steps = steps != null ? steps : Collections.emptyMap();
     this.pipelines = pipelines != null ? pipelines : new HashMap<>();
     this.exporters = exporters;
-    this.charts = charts != null ? charts : Collections.emptyMap();
 
     this.preferences.register(Preferences.values());
     this.patterns = patterns != null ? patterns : Collections.emptyMap();
@@ -197,10 +193,6 @@ public class Config {
 
   public UserPreferences preferences() {
     return preferences;
-  }
-
-  public Map<String, Map> charts() {
-    return charts;
   }
 
 }
