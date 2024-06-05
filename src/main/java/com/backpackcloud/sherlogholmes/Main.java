@@ -24,7 +24,6 @@
 
 package com.backpackcloud.sherlogholmes;
 
-import com.backpackcloud.configuration.UserConfigurationLoader;
 import io.quarkus.runtime.Quarkus;
 import io.quarkus.runtime.annotations.QuarkusMain;
 
@@ -36,9 +35,6 @@ import java.util.List;
 public class Main {
 
   public static void main(String[] args) throws IOException {
-    UserConfigurationLoader loader = new UserConfigurationLoader("sherlog");
-    loader.resolveLocation().map(file -> System.setProperty("sherlog.config.file", file));
-
     List<String> cliArgs = new ArrayList<>();
     boolean setCliArgs = false;
 
