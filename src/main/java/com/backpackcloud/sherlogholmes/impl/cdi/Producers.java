@@ -28,16 +28,16 @@ import com.backpackcloud.UnbelievableException;
 import com.backpackcloud.cli.preferences.UserPreferences;
 import com.backpackcloud.cli.ui.Theme;
 import com.backpackcloud.configuration.Configuration;
-import com.backpackcloud.configuration.UserConfigurationLoader;
+import com.backpackcloud.configuration.ConfigurationSupplier;
 import com.backpackcloud.serializer.Serializer;
 import com.backpackcloud.sherlogholmes.config.Config;
 import com.backpackcloud.sherlogholmes.domain.DataRegistry;
 import com.backpackcloud.sherlogholmes.domain.FilterFactory;
-import org.eclipse.microprofile.config.inject.ConfigProperty;
-
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.enterprise.inject.Produces;
 import jakarta.inject.Singleton;
+import org.eclipse.microprofile.config.inject.ConfigProperty;
+
 import java.io.File;
 
 @ApplicationScoped
@@ -60,8 +60,8 @@ public class Producers {
     serializer.addDependency(FilterFactory.class, filterFactory);
 
     if ("__default__".equals(configFile)) {
-      return new UserConfigurationLoader("sherlog")
-        .resolve()
+      return new ConfigurationSupplier("sherlog")
+        .get()
         .map(Configuration::read)
         .map(config -> serializer.deserialize(config, Config.class))
         .orElseThrow(UnbelievableException.because("Configuration is not supplied"));

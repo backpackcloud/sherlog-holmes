@@ -44,7 +44,7 @@
 
     <zipper.version>1.0.0-SNAPSHOT</zipper.version>
 
-    <opencsv.version>5.7.0</opencsv.version>
+    <opencsv.version>5.9</opencsv.version>
 
     <surefire-plugin.version>2.22.1</surefire-plugin.version>
   </properties>
