@@ -24,7 +24,6 @@
 
 package com.backpackcloud.sherlogholmes.impl.cdi;
 
-import com.backpackcloud.UnbelievableException;
 import com.backpackcloud.cli.preferences.UserPreferences;
 import com.backpackcloud.cli.ui.Theme;
 import com.backpackcloud.configuration.Configuration;
@@ -39,6 +38,7 @@ import jakarta.inject.Singleton;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
 
 import java.io.File;
+import java.util.function.Consumer;
 
 @ApplicationScoped
 public class Producers {
@@ -59,15 +59,26 @@ public class Producers {
     serializer.addDependency(DataRegistry.class, registry);
     serializer.addDependency(FilterFactory.class, filterFactory);
 
+    ConfigurationSupplier configSupplier = new ConfigurationSupplier("sherlog");
+
+    Config config = serializer.deserialize(configSupplier.getDefault().read(), Config.class);
+
+    Consumer<Configuration> merge = configuration -> config.mergeWith(
+      serializer.deserialize(configuration.read(), Config.class)
+    );
+
+    configSupplier.fromUserHome().ifSet(merge);
+    configSupplier.fromWorkingDir().ifSet(merge);
+
     if ("__default__".equals(configFile)) {
-      return new ConfigurationSupplier("sherlog")
-        .get()
-        .map(Configuration::read)
-        .map(config -> serializer.deserialize(config, Config.class))
-        .orElseThrow(UnbelievableException.because("Configuration is not supplied"));
+      return config;
     }
 
-    return serializer.deserialize(new File(configFile), Config.class);
+    Config userConfig = serializer.deserialize(new File(configFile), Config.class);
+
+    config.mergeWith(userConfig);
+
+    return config;
   }
 
 }

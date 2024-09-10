@@ -24,9 +24,11 @@
 
 package com.backpackcloud.sherlogholmes.config;
 
+import com.backpackcloud.cli.preferences.UserPreferences;
 import com.backpackcloud.sherlogholmes.Preferences;
 import com.backpackcloud.sherlogholmes.domain.FallbackMode;
 import com.backpackcloud.sherlogholmes.domain.Pipeline;
+import com.fasterxml.jackson.annotation.JacksonInject;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.quarkus.runtime.annotations.RegisterForReflection;
@@ -38,6 +40,8 @@ import java.util.stream.Collectors;
 @RegisterForReflection
 public class PipelineConfig implements ConfigObject<Pipeline> {
 
+
+  private final UserPreferences preferences;
   private final String modelId;
   private final String parserId;
   private final String mapperId;
@@ -45,11 +49,13 @@ public class PipelineConfig implements ConfigObject<Pipeline> {
   private final String fallbackMode;
 
   @JsonCreator
-  public PipelineConfig(@JsonProperty("model") String modelId,
+  public PipelineConfig(@JacksonInject UserPreferences preferences,
+                        @JsonProperty("model") String modelId,
                         @JsonProperty("parser") String parserId,
                         @JsonProperty("mapper") String mapperId,
                         @JsonProperty("steps") String stepsIds,
                         @JsonProperty("fallback") String fallbackMode) {
+    this.preferences = preferences;
     this.modelId = modelId;
     this.parserId = parserId;
     this.mapperId = mapperId;
@@ -84,10 +90,10 @@ public class PipelineConfig implements ConfigObject<Pipeline> {
         .flatMap(List::stream)
         .collect(Collectors.toList()),
       FallbackMode.valueOf(
-        (fallbackMode != null ? fallbackMode : config.preferences().text(Preferences.DEFAULT_FALLBACK_MODE).get())
+        (fallbackMode != null ? fallbackMode : preferences.text(Preferences.DEFAULT_FALLBACK_MODE).get())
           .toUpperCase()
       ),
-      config.preferences()
+      preferences
     );
   }
 

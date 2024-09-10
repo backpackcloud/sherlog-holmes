@@ -50,6 +50,7 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.quarkus.runtime.annotations.RegisterForReflection;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -58,7 +59,6 @@ import java.util.Map;
 @RegisterForReflection
 public class Config {
   private final Map<String, String> patterns;
-  private final UserPreferences preferences;
   private final List<String> commands;
   private final Map<String, List<String>> macros;
   private final Map<String, DataModelConfig> models;
@@ -88,23 +88,7 @@ public class Config {
                 @JsonProperty("pipelines") Map<String, PipelineConfig> pipelines,
                 @JsonProperty("exporters") Map<String, DataExporterConfig> exporters,
                 @JsonProperty("index") List<String> index) {
-    this.preferences = userPreferences;
-    this.commands = commands != null ? commands : Collections.emptyList();
-    this.macros = macros != null ? macros : Collections.emptyMap();
-    this.models = models;
-    this.readers = readers;
-    this.parsers = parsers;
-    this.mappers = mappers;
-    this.steps = steps != null ? steps : Collections.emptyMap();
-    this.pipelines = pipelines != null ? pipelines : new HashMap<>();
-    this.exporters = exporters;
-
-    this.preferences.register(Preferences.values());
-    this.patterns = patterns != null ? patterns : Collections.emptyMap();
-
-    if (preferences != null) {
-      this.preferences.load(preferences);
-    }
+    this(patterns, commands, macros, models, readers, parsers, mappers, steps, pipelines, exporters);
 
     if (icons != null) {
       IconMap iconMap = theme.iconMap();
@@ -121,15 +105,43 @@ public class Config {
       styles.forEach(styleMap::put);
     }
 
-    models.forEach((id, map) -> {
-      if (this.parsers.containsKey(id) && this.mappers.containsKey(id)) {
-        this.pipelines.put(id, new PipelineConfig(id, id, id, id, null));
-      }
-    });
-
-    if(index != null) {
+    if (index != null) {
       index.forEach(registry::addIndex);
     }
+
+    userPreferences.register(Preferences.values());
+
+    if (preferences != null) {
+      userPreferences.load(preferences);
+    }
+
+    models.forEach((id, map) -> {
+      if (this.parsers.containsKey(id) && this.mappers.containsKey(id)) {
+        this.pipelines.put(id, new PipelineConfig(userPreferences, id, id, id, id, null));
+      }
+    });
+  }
+
+  private Config(Map<String, String> patterns,
+                 List<String> commands,
+                 Map<String, List<String>> macros,
+                 Map<String, DataModelConfig> models,
+                 Map<String, DataReaderConfig> readers,
+                 Map<String, DataParserConfig> parsers,
+                 Map<String, DataMapperConfig> mappers,
+                 Map<String, List<PipelineStep>> steps,
+                 Map<String, PipelineConfig> pipelines,
+                 Map<String, DataExporterConfig> exporters) {
+    this.commands = commands != null ? commands : new ArrayList<>();
+    this.macros = macros != null ? macros : new HashMap<>();
+    this.models = models != null ? models : new HashMap<>();
+    this.readers = readers != null ? readers : new HashMap<>();
+    this.parsers = parsers != null ? parsers : new HashMap<>();
+    this.mappers = mappers != null ? mappers : new HashMap<>();
+    this.steps = steps != null ? steps : new HashMap<>();
+    this.pipelines = pipelines != null ? pipelines : new HashMap<>();
+    this.exporters = exporters != null ? exporters : new HashMap<>();
+    this.patterns = patterns != null ? patterns : new HashMap<>();
   }
 
   public List<String> commands() {
@@ -191,8 +203,23 @@ public class Config {
     return exporters;
   }
 
-  public UserPreferences preferences() {
-    return preferences;
+  /**
+   * Combines this configuration with the given one. The given configuration takes
+   * precedence.
+   *
+   * @param other the configuration to combine
+   */
+  public void mergeWith(Config other) {
+    this.patterns.putAll(other.patterns);
+    this.commands.addAll(other.commands);
+    this.macros.putAll(other.macros);
+    this.models.putAll(other.models);
+    this.readers.putAll(other.readers);
+    this.parsers.putAll(other.parsers);
+    this.mappers.putAll(other.mappers);
+    this.steps.putAll(other.steps);
+    this.pipelines.putAll(other.pipelines);
+    this.exporters.putAll(other.exporters);
   }
 
 }
