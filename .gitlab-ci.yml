@@ -1,4 +1,4 @@
-image: registry.backpackcloud.com/backpackcloud/maven
+image: registry.backpackcloud.com/backpackcloud/maven:1.0
 
 stages:
   - build
