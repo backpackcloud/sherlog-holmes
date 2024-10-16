@@ -24,6 +24,7 @@
 
 package com.backpackcloud.sherlogholmes.config.model;
 
+import com.backpackcloud.configuration.Configuration;
 import com.backpackcloud.sherlogholmes.config.ConfigObject;
 import com.backpackcloud.sherlogholmes.domain.AttributeSpec;
 import com.fasterxml.jackson.annotation.JsonCreator;
@@ -33,8 +34,8 @@ import io.quarkus.runtime.annotations.RegisterForReflection;
 public interface DataAttributeConfig extends ConfigObject<AttributeSpec> {
 
   @JsonCreator
-  static DataAttributeConfig create(String spec) {
-    return config -> AttributeSpec.create(spec);
+  static DataAttributeConfig create(Configuration spec) {
+    return config -> AttributeSpec.create(spec.get());
   }
 
 }

@@ -8,20 +8,36 @@ models:
   java:
     format: '{@exception}{#timestamp} {#level|-5} {#category} {#thread} {#message}'
     attributes:
-      timestamp: datetime | yyyy-MM-dd HH:mm:ss,SSS
-      level:     enum | TRACE,DEBUG,INFO,WARN,ERROR,FATAL
-      category:  text
-      thread:    text
-      exception: text[]
-      message:   text
-      code:      text
+      timestamp:
+        env:      SHERLOG_MODEL_JAVA_TIMESTAMP
+        property: sherlog.model.java.timestamp
+        value:    datetime | yyyy-MM-dd HH:mm:ss,SSS
+      level:
+        env:      SHERLOG_MODEL_JAVA_LEVEL
+        property: sherlog.model.java.level
+        value:    enum | TRACE,DEBUG,INFO,WARN,ERROR,FATAL
+      category:
+        env:      SHERLOG_MODEL_JAVA_CATEGORY
+        property: sherlog.model.java.category
+        value:    text
+      thread:
+        env:      SHERLOG_MODEL_JAVA_THREAD
+        property: sherlog.model.java.thread
+        value:    text
+      exception:
+        env:      SHERLOG_MODEL_JAVA_EXCEPTION
+        property: sherlog.model.java.exception
+        value:    text[]
+      message:
+        env:      SHERLOG_MODEL_JAVA_MESSAGE
+        property: sherlog.model.java.message
+        value:    text
 
 index:
   - level
   - category
   - thread
   - exception
-  - code
 
 readers:
   file:
@@ -37,13 +53,12 @@ parsers:
     type:    regex
     pattern: '{{timestamp}} {{level}}\s+{{thread}} {{category}} {{message}}'
 
-  wildfly:
-    type:    regex
-    pattern: '{{timestamp}} {{level}}\s+{{category}} {{thread}} {{message}}'
-
-  quarkus:
-    type:    regex
-    pattern: '{{timestamp}} {{level}}\s+{{category}} {{thread}} {{message}}'
+  java:
+    type: regex
+    pattern:
+      env:      SHERLOG_PARSER_JAVA_PATTERN
+      property: sherlog.parser.java.pattern
+      value:    '{{timestamp}} {{level}}\s+{{category}} {{thread}} {{message}}'
 
 mappers:
   java:
@@ -51,11 +66,26 @@ mappers:
     copy: timestamp,level,category,thread,code,message
 
 patterns:
-  timestamp: '(?<timestamp>\d{2,4}-\d{2}-\d{2,4} \d{2}:\d{2}:\d{2},\d{3})'
-  level:     '(?<level>\w+)'
-  category:  '\[(?<category>[^]]+)]'
-  thread:    '\((?<thread>[^)]+)\)'
-  message:   '(?<message>((?<code>[A-Z]{4,6}\d{4,6}): )?.+)'
+  timestamp:
+    env: SHERLOG_PATTERN_TIMESTAMP
+    property: sherlog.pattern.timestamp
+    value: '(?<timestamp>\d{2,4}-\d{2}-\d{2,4} \d{2}:\d{2}:\d{2},\d{3})'
+  level:
+    env: SHERLOG_PATTERN_LEVEL
+    property: sherlog.pattern.level
+    value: '(?<level>\w+)'
+  category:
+    env: SHERLOG_PATTERN_CATEGORY
+    property: sherlog.pattern.category
+    value: '\[(?<category>[^]]+)]'
+  thread:
+    env: SHERLOG_PATTERN_THREAD
+    property: sherlog.pattern.thread
+    value: '\((?<thread>[^)]+)\)'
+  message:
+    env: SHERLOG_PATTERN_MESSAGE
+    property: sherlog.pattern.message
+    value: '(?<message>.+)'
 
 steps:
   java:
@@ -64,12 +94,6 @@ steps:
         regex: '(?<exception>\w+(\.\w+)+(Exception|Error))'
 
 pipelines:
-  wildfly:
-    model:  java
-    parser: wildfly
-    mapper: java
-    steps:  java
-
   infinispan:
     model:  java
     parser: infinispan

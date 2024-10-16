@@ -74,7 +74,7 @@ public class Config {
                 @JacksonInject Theme theme,
                 @JacksonInject DataRegistry registry,
                 @JsonProperty("preferences") Map<String, Configuration> preferences,
-                @JsonProperty("patterns") Map<String, String> patterns,
+                @JsonProperty("patterns") Map<String, Configuration> patterns,
                 @JsonProperty("icons") Map<String, String> icons,
                 @JsonProperty("colors") Map<String, String> colors,
                 @JsonProperty("styles") Map<String, String> styles,
@@ -122,7 +122,7 @@ public class Config {
     });
   }
 
-  private Config(Map<String, String> patterns,
+  private Config(Map<String, Configuration> patterns,
                  List<String> commands,
                  Map<String, List<String>> macros,
                  Map<String, DataModelConfig> models,
@@ -141,7 +141,9 @@ public class Config {
     this.steps = steps != null ? steps : new HashMap<>();
     this.pipelines = pipelines != null ? pipelines : new HashMap<>();
     this.exporters = exporters != null ? exporters : new HashMap<>();
-    this.patterns = patterns != null ? patterns : new HashMap<>();
+    this.patterns = new HashMap<>();
+
+    patterns.forEach((pattern, config) -> this.patterns.put(pattern, config.get()));
   }
 
   public List<String> commands() {
