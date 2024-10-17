@@ -24,10 +24,10 @@
 
 package com.backpackcloud.sherlogholmes.domain;
 
-import java.util.function.Consumer;
+import java.util.function.BiConsumer;
 
 public interface DataReader {
 
-  void read(String location, Consumer<String> consumer);
+  void read(String location, BiConsumer<Metadata, String> consumer);
 
 }

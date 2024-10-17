@@ -45,10 +45,20 @@ public class DataEntryImpl implements DataEntry {
 
   @JsonValue
   private final Map<String, Attribute> attributes;
-  private String displayFormat;
+  private final String displayFormat;
 
   public DataEntryImpl() {
+    this(null);
+  }
+
+  public DataEntryImpl(String displayFormat) {
+    this.displayFormat = displayFormat;
     this.attributes = new LinkedHashMap<>();
+  }
+
+  public DataEntryImpl(Map<String, Attribute> attributes, String displayFormat) {
+    this.attributes = attributes;
+    this.displayFormat = displayFormat;
   }
 
   @Override
@@ -115,8 +125,13 @@ public class DataEntryImpl implements DataEntry {
   }
 
   @Override
-  public void displayFormat(String format) {
-    this.displayFormat = format;
+  public String displayFormat() {
+    return displayFormat;
+  }
+
+  @Override
+  public DataEntry displayFormat(String format) {
+    return new DataEntryImpl(attributes, format);
   }
 
   @Override

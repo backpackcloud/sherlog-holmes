@@ -26,6 +26,7 @@ package com.backpackcloud.sherlogholmes.domain.readers;
 
 import com.backpackcloud.UnbelievableException;
 import com.backpackcloud.sherlogholmes.domain.DataReader;
+import com.backpackcloud.sherlogholmes.domain.Metadata;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -34,7 +35,7 @@ import java.io.InputStreamReader;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.nio.charset.Charset;
-import java.util.function.Consumer;
+import java.util.function.BiConsumer;
 
 public class SocketDataReader implements DataReader {
 
@@ -45,16 +46,17 @@ public class SocketDataReader implements DataReader {
   }
 
   @Override
-  public void read(String location, Consumer<String> consumer) {
+  public void read(String location, BiConsumer<Metadata, String> consumer) {
     try (
       ServerSocket serverSocket = new ServerSocket(Integer.parseInt(location));
       Socket socket = serverSocket.accept();
       InputStream inputStream = socket.getInputStream()
     ) {
       BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream, charset));
+      int count = 0;
       String line;
       while ((line = reader.readLine()) != null) {
-        consumer.accept(line);
+        consumer.accept(new Metadata("socket:" + location, ++count), line);
       }
       reader.close();
     } catch (IOException e) {

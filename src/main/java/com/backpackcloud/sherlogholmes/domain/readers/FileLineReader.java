@@ -26,6 +26,7 @@ package com.backpackcloud.sherlogholmes.domain.readers;
 
 import com.backpackcloud.UnbelievableException;
 import com.backpackcloud.sherlogholmes.domain.DataReader;
+import com.backpackcloud.sherlogholmes.domain.Metadata;
 
 import java.io.File;
 import java.io.IOException;
@@ -35,8 +36,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.PathMatcher;
 import java.util.concurrent.atomic.AtomicInteger;
-import java.util.function.Consumer;
-import java.util.function.Predicate;
+import java.util.function.BiConsumer;
 
 public class FileLineReader implements DataReader {
 
@@ -49,7 +49,7 @@ public class FileLineReader implements DataReader {
   }
 
   @Override
-  public void read(String location, Consumer<String> consumer) {
+  public void read(String location, BiConsumer<Metadata, String> consumer) {
     PathMatcher matcher = FileSystems.getDefault().getPathMatcher("glob:" + location);
     File directory = new File(location).getParentFile();
 
@@ -65,13 +65,15 @@ public class FileLineReader implements DataReader {
     }
   }
 
-  private void readLines(Path path, Consumer<String> consumer) {
+  private void readLines(Path path, BiConsumer<Metadata, String> consumer) {
     AtomicInteger count = new AtomicInteger(0);
-    Predicate<String> ignoredLines = s -> count.incrementAndGet() > linesToSkip;
     try {
       Files.lines(path, charset)
-        .filter(ignoredLines)
-        .forEach(consumer);
+        .forEach(line -> {
+          if (count.incrementAndGet() > linesToSkip) {
+            consumer.accept(new Metadata(path.getFileName().toString(), count.get()), line);
+          }
+        });
     } catch (IOException e) {
       throw new UnbelievableException(e);
     }

@@ -56,7 +56,9 @@ public interface DataEntry extends Comparable<DataEntry>, Displayable {
 
   List<Attribute> attributes();
 
-  void displayFormat(String format);
+  String displayFormat();
+
+  DataEntry displayFormat(String format);
 
   void toDisplay(Writer writer, String format);
 

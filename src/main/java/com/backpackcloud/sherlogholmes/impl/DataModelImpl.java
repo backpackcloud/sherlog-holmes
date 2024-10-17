@@ -74,11 +74,8 @@ public class DataModelImpl implements DataModel {
   @Override
   public Supplier<DataEntry> dataSupplier() {
     return () -> {
-      DataEntry dataEntry = new DataEntryImpl();
+      DataEntry dataEntry = new DataEntryImpl(format);
       attributes.forEach(dataEntry::addAttribute);
-      if (format != null) {
-        dataEntry.displayFormat(format);
-      }
       return dataEntry;
     };
   }

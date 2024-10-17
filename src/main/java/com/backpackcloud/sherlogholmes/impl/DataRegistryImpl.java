@@ -168,6 +168,8 @@ public class DataRegistryImpl implements DataRegistry {
       this.entries = new TreeSet<>();
       this.index = new HashMap<>();
       this.attributeTypes = new HashMap<>();
+
+      addIndex("location");
     }
 
     @Override

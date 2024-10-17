@@ -33,7 +33,6 @@ import io.quarkus.runtime.annotations.RegisterForReflection;
 @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, property = "type")
 @JsonSubTypes({
   @JsonSubTypes.Type(name = "file", value = FileDataReaderConfig.class),
-  @JsonSubTypes.Type(name = "http", value = HttpDataReaderConfig.class),
   @JsonSubTypes.Type(name = "socket", value = SocketDataReaderConfig.class),
 })
 @RegisterForReflection

@@ -34,16 +34,14 @@ import com.backpackcloud.cli.ui.Suggestion;
 import com.backpackcloud.cli.ui.impl.FileSuggester;
 import com.backpackcloud.cli.ui.impl.PromptSuggestion;
 import com.backpackcloud.sherlogholmes.config.Config;
-import com.backpackcloud.sherlogholmes.config.PipelineConfig;
 import com.backpackcloud.sherlogholmes.domain.DataReader;
 import com.backpackcloud.sherlogholmes.domain.DataRegistry;
 import com.backpackcloud.sherlogholmes.domain.Pipeline;
 import io.quarkus.runtime.annotations.RegisterForReflection;
-
 import jakarta.enterprise.context.ApplicationScoped;
+
 import java.util.List;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 @CommandDefinition(
   name = "inspect",
@@ -65,28 +63,15 @@ public class InspectCommand implements AnnotatedCommand {
   }
 
   @Action
-  public void execute(@PreferenceValue("add-metadata") boolean addMetadata,
-                      @PreferenceValue("show-added-entries") boolean showEntries,
+  public void execute(@PreferenceValue("show-added-entries") boolean showEntries,
                       Writer writer,
                       String readerId,
                       String pipelineId,
                       String location) {
     DataReader dataReader = config.dataReaderFor(readerId);
-    PipelineConfig objConfig = config.pipelines().get(pipelineId);
     Pipeline pipeline = config.pipelineFor(pipelineId);
 
-    if (addMetadata) {
-      Stream.of("model", "reader", "parser", "mapper")
-        .forEach(registry::addIndex);
-    }
-
     pipeline.run(dataReader, location, entry -> {
-      if (addMetadata) {
-        entry.addAttribute("model").withValue(objConfig.modelId());
-        entry.addAttribute("reader").withValue(readerId);
-        entry.addAttribute("parser").withValue(objConfig.parserId());
-        entry.addAttribute("mapper").withValue(objConfig.mapperId());
-      }
       if (showEntries) {
         writer.writeln(entry);
       }

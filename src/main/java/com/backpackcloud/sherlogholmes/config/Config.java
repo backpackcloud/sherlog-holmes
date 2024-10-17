@@ -115,11 +115,13 @@ public class Config {
       userPreferences.load(preferences);
     }
 
-    models.forEach((id, map) -> {
-      if (this.parsers.containsKey(id) && this.mappers.containsKey(id)) {
-        this.pipelines.put(id, new PipelineConfig(userPreferences, id, id, id, id, null));
-      }
-    });
+    if (models != null) {
+      models.forEach((id, map) -> {
+        if (this.parsers.containsKey(id) && this.mappers.containsKey(id)) {
+          this.pipelines.put(id, new PipelineConfig(userPreferences, id, id, id, id, null));
+        }
+      });
+    }
   }
 
   private Config(Map<String, Configuration> patterns,
@@ -143,7 +145,9 @@ public class Config {
     this.exporters = exporters != null ? exporters : new HashMap<>();
     this.patterns = new HashMap<>();
 
-    patterns.forEach((pattern, config) -> this.patterns.put(pattern, config.get()));
+    if (patterns != null) {
+      patterns.forEach((pattern, config) -> this.patterns.put(pattern, config.get()));
+    }
   }
 
   public List<String> commands() {

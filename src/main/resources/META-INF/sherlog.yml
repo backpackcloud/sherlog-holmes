@@ -1,7 +1,7 @@
 preferences:
   default-fallback-mode: append
-  show-added-entries:    true
-  add-metadata:          true
+  show-added-entries:    false
+  show-metadata:         false
   remove-ansi-colors:    true
 
 models:
@@ -15,7 +15,7 @@ models:
       level:
         env:      SHERLOG_MODEL_JAVA_LEVEL
         property: sherlog.model.java.level
-        value:    enum | TRACE,DEBUG,INFO,WARN,ERROR,FATAL
+        value:    enum | TRACE,DEBUG,INFO,WARN,WARNING,SEVERE,ERROR,FATAL
       category:
         env:      SHERLOG_MODEL_JAVA_CATEGORY
         property: sherlog.model.java.category
@@ -67,25 +67,25 @@ mappers:
 
 patterns:
   timestamp:
-    env: SHERLOG_PATTERN_TIMESTAMP
+    env:      SHERLOG_PATTERN_TIMESTAMP
     property: sherlog.pattern.timestamp
-    value: '(?<timestamp>\d{2,4}-\d{2}-\d{2,4} \d{2}:\d{2}:\d{2},\d{3})'
+    value:    '(?<timestamp>\d{2,4}-\d{2}-\d{2,4} \d{2}:\d{2}:\d{2},\d{3})'
   level:
-    env: SHERLOG_PATTERN_LEVEL
+    env:      SHERLOG_PATTERN_LEVEL
     property: sherlog.pattern.level
-    value: '(?<level>\w+)'
+    value:    '(?<level>\w+)'
   category:
-    env: SHERLOG_PATTERN_CATEGORY
+    env:      SHERLOG_PATTERN_CATEGORY
     property: sherlog.pattern.category
-    value: '\[(?<category>[^]]+)]'
+    value:    '\[(?<category>[^]]+)]'
   thread:
-    env: SHERLOG_PATTERN_THREAD
+    env:      SHERLOG_PATTERN_THREAD
     property: sherlog.pattern.thread
-    value: '\((?<thread>[^)]+)\)'
+    value:    '\((?<thread>[^)]+)\)'
   message:
-    env: SHERLOG_PATTERN_MESSAGE
+    env:      SHERLOG_PATTERN_MESSAGE
     property: sherlog.pattern.message
-    value: '(?<message>.+)'
+    value:    '(?<message>.+)'
 
 steps:
   java:

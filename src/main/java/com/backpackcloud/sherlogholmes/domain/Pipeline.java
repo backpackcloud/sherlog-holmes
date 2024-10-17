@@ -62,19 +62,21 @@ public class Pipeline {
 
   public void run(DataReader dataReader, String location, Consumer<DataEntry> consumer) {
     switch (fallbackMode) {
-      case IGNORE -> dataReader.read(location, content -> dataParser.parse(normalize(content))
+      case IGNORE -> dataReader.read(location, (metadata, content) -> dataParser.parse(normalize(content))
         .ifPresent(struct -> dataMapper.map(dataModel.dataSupplier(), struct)
           .stream()
+          .peek(entry -> entry.addAttribute("location", metadata.location()))
+          .peek(entry -> entry.addAttribute("line", metadata.line()))
           .peek(entry -> analysisSteps.forEach(step -> step.analyze(entry)))
           .forEach(consumer)));
       case APPEND -> {
         StagingArea stagingArea = new StagingArea(consumer);
 
-        dataReader.read(location, content ->
+        dataReader.read(location, (metadata, content) ->
           dataParser.parse(normalize(content))
             .ifPresentOrElse(
-              structure -> stagingArea.push(content, structure),
-              () -> stagingArea.push(content)
+              structure -> stagingArea.push(content, metadata, structure),
+              () -> stagingArea.push(content, metadata)
             ));
 
         stagingArea.push();
@@ -86,6 +88,7 @@ public class Pipeline {
 
     private StringBuilder content;
     private Object structure;
+    private Metadata metadata;
     private final Consumer<DataEntry> consumer;
 
     private StagingArea(Consumer<DataEntry> consumer) {
@@ -96,6 +99,8 @@ public class Pipeline {
       if (this.structure != null) {
         dataMapper.map(dataModel.dataSupplier(), this.structure)
           .stream()
+          .peek(entry -> entry.addAttribute("location", metadata.location()))
+          .peek(entry -> entry.addAttribute("line", metadata.line()))
           .peek(entry -> analysisSteps.forEach(step -> step.analyze(entry)))
           .forEach(consumer);
         this.structure = null;
@@ -103,16 +108,17 @@ public class Pipeline {
       }
     }
 
-    public void push(String content) {
+    public void push(String content, Metadata metadata) {
       this.structure = null;
       if (this.content == null) {
         this.content = new StringBuilder(content);
+        this.metadata = metadata;
       } else {
         this.content.append("\n").append(content);
       }
     }
 
-    public void push(String content, Object structure) {
+    public void push(String content, Metadata metadata, Object structure) {
       if (this.structure == null && this.content != null) {
         dataParser.parse(this.content.toString())
           .ifPresent(struct -> this.structure = struct);
@@ -120,6 +126,7 @@ public class Pipeline {
       push();
       this.content = new StringBuilder(content);
       this.structure = structure;
+      this.metadata = metadata;
     }
 
   }

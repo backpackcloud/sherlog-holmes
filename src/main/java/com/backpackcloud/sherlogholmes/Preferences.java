@@ -52,10 +52,10 @@ public enum Preferences implements PreferenceSpec {
     "false"
   ),
 
-  ADD_METADATA(
-    "adds metadata about the data analysis (model, reader, parser and mapper)",
+  SHOW_METADATA(
+    "shows the parsed metadata when viewing entries",
     Type.FLAG,
-    "true"
+    "false"
   ),
 
   STACK_OPERATION(
