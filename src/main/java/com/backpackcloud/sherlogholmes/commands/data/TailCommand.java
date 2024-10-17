@@ -28,6 +28,7 @@ import com.backpackcloud.cli.Action;
 import com.backpackcloud.cli.AnnotatedCommand;
 import com.backpackcloud.cli.CommandDefinition;
 import com.backpackcloud.cli.Paginate;
+import com.backpackcloud.cli.PreferenceValue;
 import com.backpackcloud.cli.Suggestions;
 import com.backpackcloud.cli.ui.Suggestion;
 import com.backpackcloud.sherlogholmes.domain.Attribute;
@@ -63,12 +64,11 @@ public class TailCommand implements AnnotatedCommand {
 
   @Paginate
   @Action
-  public Stream<DataEntry> execute(Integer amount, ChronoUnit unit) {
+  public Stream<DataEntry> execute(Integer amount, ChronoUnit unit,
+                                   @PreferenceValue("show-metadata") boolean showMetadata) {
     if (registry.isEmpty()) {
       return Stream.empty();
     }
-
-    Stream<DataEntry> stream;
 
     if (unit == null) {
       List<DataEntry> entries = new ArrayList<>(registry.entries()
@@ -79,15 +79,14 @@ public class TailCommand implements AnnotatedCommand {
 
       Collections.reverse(entries);
 
-      return entries.stream();
-
+      return wrap(entries.stream(), showMetadata);
     } else {
       Temporal reference = registry.entries().first()
         .attribute("timestamp", Temporal.class)
         .flatMap(Attribute::value)
         .map(temporal -> temporal.minus(amount, unit))
         .orElseThrow();
-      return registry.entries()
+      return wrap(registry.entries()
         .stream()
         .filter(entry ->
           entry.attribute("timestamp", Temporal.class)
@@ -95,8 +94,21 @@ public class TailCommand implements AnnotatedCommand {
             .map(timestamp -> registry.typeOf("timestamp")
               .orElseThrow()
               .compare(timestamp, reference) >= 0)
-            .orElse(false));
+            .orElse(false)), showMetadata);
     }
+  }
+
+  private Stream<DataEntry> wrap(Stream<DataEntry> stream, boolean showMetadata) {
+    if (showMetadata) {
+      String prefix;
+      if (registry.index("$source").size() > 1) {
+        prefix = "{$source}:{$line} ";
+      } else {
+        prefix = "{$line}";
+      }
+      return stream.map(entry -> entry.displayFormat(prefix + entry.displayFormat()));
+    }
+    return stream;
   }
 
   @Suggestions

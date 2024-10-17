@@ -28,6 +28,7 @@ import com.backpackcloud.cli.Action;
 import com.backpackcloud.cli.AnnotatedCommand;
 import com.backpackcloud.cli.CommandDefinition;
 import com.backpackcloud.cli.Paginate;
+import com.backpackcloud.cli.PreferenceValue;
 import com.backpackcloud.cli.Suggestions;
 import com.backpackcloud.cli.ui.Suggestion;
 import com.backpackcloud.sherlogholmes.domain.Attribute;
@@ -35,8 +36,8 @@ import com.backpackcloud.sherlogholmes.domain.DataEntry;
 import com.backpackcloud.sherlogholmes.domain.DataRegistry;
 import com.backpackcloud.sherlogholmes.ui.suggestions.ChronoUnitSuggestions;
 import io.quarkus.runtime.annotations.RegisterForReflection;
-
 import jakarta.enterprise.context.ApplicationScoped;
+
 import java.time.temporal.ChronoUnit;
 import java.time.temporal.Temporal;
 import java.util.Collections;
@@ -63,14 +64,14 @@ public class HeadCommand implements AnnotatedCommand {
 
   @Action
   @Paginate
-  public Stream<DataEntry> execute(Integer amount, ChronoUnit unit) {
+  public Stream<DataEntry> execute(Integer amount, ChronoUnit unit,
+                                   @PreferenceValue("show-metadata") boolean showMetadata) {
     if (registry.isEmpty()) {
       return Stream.empty();
     }
 
     if (unit == null) {
-      return registry.stream()
-        .limit(amount);
+      return wrap(registry.stream().limit(amount), showMetadata);
     } else {
       NavigableSet<DataEntry> entries = registry.entries();
       Temporal reference = entries.first()
@@ -78,15 +79,28 @@ public class HeadCommand implements AnnotatedCommand {
         .flatMap(Attribute::value)
         .map(temporal -> temporal.plus(amount, unit))
         .orElseThrow();
-      return entries.stream()
+      return wrap(entries.stream()
         .filter(entry ->
           entry.attribute("timestamp", Temporal.class)
             .flatMap(Attribute::value)
             .map(timestamp -> registry.typeOf("timestamp")
               .orElseThrow()
               .compare(timestamp, reference) <= 0)
-            .orElse(false));
+            .orElse(false)), showMetadata);
     }
+  }
+
+  private Stream<DataEntry> wrap(Stream<DataEntry> stream, boolean showMetadata) {
+    if (showMetadata) {
+      String prefix;
+      if (registry.index("$source").size() > 1) {
+        prefix = "{$source}:{$line} ";
+      } else {
+        prefix = "{$line}";
+      }
+      return stream.map(entry -> entry.displayFormat(prefix + entry.displayFormat()));
+    }
+    return stream;
   }
 
   @Suggestions
