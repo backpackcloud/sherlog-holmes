@@ -65,7 +65,8 @@ public class TailCommand implements AnnotatedCommand {
   @Paginate
   @Action
   public Stream<DataEntry> execute(Integer amount, ChronoUnit unit,
-                                   @PreferenceValue("show-metadata") boolean showMetadata) {
+                                   @PreferenceValue("show-metadata") boolean showMetadata,
+                                   @PreferenceValue("timestamp-attribute") String timestampAttribute) {
     if (registry.isEmpty()) {
       return Stream.empty();
     }
@@ -82,14 +83,14 @@ public class TailCommand implements AnnotatedCommand {
       return wrap(entries.stream(), showMetadata);
     } else {
       Temporal reference = registry.entries().first()
-        .attribute("timestamp", Temporal.class)
+        .attribute(timestampAttribute, Temporal.class)
         .flatMap(Attribute::value)
         .map(temporal -> temporal.minus(amount, unit))
         .orElseThrow();
       return wrap(registry.entries()
         .stream()
         .filter(entry ->
-          entry.attribute("timestamp", Temporal.class)
+          entry.attribute(timestampAttribute, Temporal.class)
             .flatMap(Attribute::value)
             .map(timestamp -> registry.typeOf("timestamp")
               .orElseThrow()

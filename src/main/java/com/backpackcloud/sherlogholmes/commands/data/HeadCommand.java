@@ -65,7 +65,8 @@ public class HeadCommand implements AnnotatedCommand {
   @Action
   @Paginate
   public Stream<DataEntry> execute(Integer amount, ChronoUnit unit,
-                                   @PreferenceValue("show-metadata") boolean showMetadata) {
+                                   @PreferenceValue("show-metadata") boolean showMetadata,
+                                   @PreferenceValue("timestamp-attribute") String timestampAttribute) {
     if (registry.isEmpty()) {
       return Stream.empty();
     }
@@ -75,13 +76,13 @@ public class HeadCommand implements AnnotatedCommand {
     } else {
       NavigableSet<DataEntry> entries = registry.entries();
       Temporal reference = entries.first()
-        .attribute("timestamp", Temporal.class)
+        .attribute(timestampAttribute, Temporal.class)
         .flatMap(Attribute::value)
         .map(temporal -> temporal.plus(amount, unit))
         .orElseThrow();
       return wrap(entries.stream()
         .filter(entry ->
-          entry.attribute("timestamp", Temporal.class)
+          entry.attribute(timestampAttribute, Temporal.class)
             .flatMap(Attribute::value)
             .map(timestamp -> registry.typeOf("timestamp")
               .orElseThrow()
