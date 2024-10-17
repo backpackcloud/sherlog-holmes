@@ -169,7 +169,8 @@ public class DataRegistryImpl implements DataRegistry {
       this.index = new HashMap<>();
       this.attributeTypes = new HashMap<>();
 
-      addIndex("location");
+      // add metadata index
+      addIndex("$source");
     }
 
     @Override

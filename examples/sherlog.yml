@@ -2,8 +2,6 @@
 #
 # Preferences can also be adjusted from the command line using the "preferences" command.
 preferences:
-  # Adds metadata to parsed entries
-  add-metadata:          true
   # Displays all entries that are parsed and added to the registry
   show-added-entries:    true
   # Removes the ANSI colors from the content before parsing it

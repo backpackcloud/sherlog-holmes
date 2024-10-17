@@ -18,9 +18,6 @@ percentage: orange
 separator: white
 total: white
 
-attribute-location: grey//i
-attribute-line: grey//i
-
 timeline: white
 timeline-empty: grey
 timeline-highlight: blue

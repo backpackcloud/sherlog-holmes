@@ -58,10 +58,10 @@ public class ListDataCommand implements AnnotatedCommand {
   public Stream<DataEntry> execute(@PreferenceValue("show-metadata") boolean showMetadata) {
     if (showMetadata) {
       String prefix;
-      if (registry.index("location").size() > 1) {
-        prefix = "{location}:{line} ";
+      if (registry.index("$source").size() > 1) {
+        prefix = "{$source}:{$line} ";
       } else {
-        prefix = "{line}";
+        prefix = "{$line}";
       }
       return registry.stream()
         .map(entry -> entry.displayFormat(prefix + entry.displayFormat()));

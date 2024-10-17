@@ -1,7 +1,7 @@
 preferences:
   default-fallback-mode: append
   show-added-entries:    false
-  show-metadata:         false
+  show-metadata:         true
   remove-ansi-colors:    true
 
 models:
@@ -112,6 +112,8 @@ icons:
   attribute-thread:    nf-fa-code_fork
   attribute-message:   nf-mdi-message
   attribute-exception: nf-fa-bug
+  attribute-$line:     nf-pl-line_number
+  attribute-$source:   nf-cod-location
 
 styles:
   attribute-timestamp:   grey//i
@@ -127,3 +129,6 @@ styles:
   attribute-thread:      grey
   attribute-message:     white
   attribute-exception:   red
+
+  attribute-$source: grey//iu
+  attribute-$line: grey//iu

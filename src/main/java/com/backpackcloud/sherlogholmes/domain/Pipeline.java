@@ -65,8 +65,7 @@ public class Pipeline {
       case IGNORE -> dataReader.read(location, (metadata, content) -> dataParser.parse(normalize(content))
         .ifPresent(struct -> dataMapper.map(dataModel.dataSupplier(), struct)
           .stream()
-          .peek(entry -> entry.addAttribute("location", metadata.location()))
-          .peek(entry -> entry.addAttribute("line", metadata.line()))
+          .peek(metadata::attachTo)
           .peek(entry -> analysisSteps.forEach(step -> step.analyze(entry)))
           .forEach(consumer)));
       case APPEND -> {
@@ -99,8 +98,7 @@ public class Pipeline {
       if (this.structure != null) {
         dataMapper.map(dataModel.dataSupplier(), this.structure)
           .stream()
-          .peek(entry -> entry.addAttribute("location", metadata.location()))
-          .peek(entry -> entry.addAttribute("line", metadata.line()))
+          .peek(metadata::attachTo)
           .peek(entry -> analysisSteps.forEach(step -> step.analyze(entry)))
           .forEach(consumer);
         this.structure = null;
