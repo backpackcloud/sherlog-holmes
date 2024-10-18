@@ -1,12 +1,11 @@
 preferences:
   default-fallback-mode: append
   show-added-entries:    false
-  show-metadata:         true
   remove-ansi-colors:    true
 
 models:
   java:
-    format: '{@exception}{#timestamp} {#level|-5} {#category} {#thread} {#message}'
+    format: '{@exception}{#$source}:{$line} {#timestamp} {#level|-5} {#category} {#thread} {#message}'
     attributes:
       timestamp:
         env:      SHERLOG_MODEL_JAVA_TIMESTAMP
@@ -15,7 +14,7 @@ models:
       level:
         env:      SHERLOG_MODEL_JAVA_LEVEL
         property: sherlog.model.java.level
-        value:    enum | TRACE,DEBUG,INFO,WARN,WARNING,SEVERE,ERROR,FATAL
+        value:    enum | TRACE,DEBUG,INFO,WARN,WARNING,ERROR,SEVERE,FATAL
       category:
         env:      SHERLOG_MODEL_JAVA_CATEGORY
         property: sherlog.model.java.category
@@ -89,7 +88,8 @@ patterns:
 
 steps:
   java:
-    - map:
+    - when: level >= WARN
+      map:
         from:  message
         regex: '(?<exception>\w+(\.\w+)+(Exception|Error))'
 
@@ -106,7 +106,7 @@ exporters:
     attributes: timestamp,level,category,thread,message
 
 icons:
-  attribute-timestamp: "󱑁"
+  attribute-timestamp: ""
   attribute-level:     "󰒢"
   attribute-category:  "󰓹"
   attribute-thread:    "󰓁"

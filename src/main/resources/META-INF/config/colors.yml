@@ -17,6 +17,3 @@ count:                  blue
 percentage:             orange
 separator:              white
 total:                  white
-
-attribute-$source:      purple
-attribute-$line:        purple
