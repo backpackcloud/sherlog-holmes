@@ -10,7 +10,8 @@ separator:         white
 total:             white
 
 icon-data:         blue
-icon-time-range:   purple
+icon-attribute:    teal
+icon-time-range:   yellow
 icon-stack:        orange
 
 attribute-$source: purple

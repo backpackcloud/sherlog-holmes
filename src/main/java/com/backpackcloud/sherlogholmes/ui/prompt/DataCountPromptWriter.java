@@ -28,8 +28,8 @@ import com.backpackcloud.cli.ui.Prompt;
 import com.backpackcloud.cli.ui.PromptWriter;
 import com.backpackcloud.cli.ui.Theme;
 import com.backpackcloud.sherlogholmes.domain.DataRegistry;
-
 import jakarta.enterprise.context.ApplicationScoped;
+
 import java.util.Set;
 
 @ApplicationScoped
@@ -59,7 +59,10 @@ public class DataCountPromptWriter implements PromptWriter {
     registry.indexedAttributes().forEach(index -> {
       String key = "attribute-" + index;
       if (icons.contains(key)) {
-        segment.addIcon(key, "icon-data").add(registry.index(index).size());
+        int size = registry.index(index).size();
+        if (size > 0) {
+          segment.addIcon(key, "icon-attribute").add(size);
+        }
       }
     });
   }
