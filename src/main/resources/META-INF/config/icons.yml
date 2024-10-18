@@ -1,3 +1,6 @@
-data:    
-filter:  
-stack:   
+data:              ""
+filter:            ""
+stack:             ""
+time-range:        "󰔚"
+
+attribute-$source: ""

@@ -63,7 +63,7 @@ parsers:
 mappers:
   java:
     type: function
-    copy: timestamp,level,category,thread,code,message
+    copy: timestamp,level,category,thread,message
 
 patterns:
   timestamp:
@@ -103,17 +103,15 @@ pipelines:
 exporters:
   json:
     type:       json
-    attributes: timestamp,level,category,thread,code,message
+    attributes: timestamp,level,category,thread,message
 
 icons:
-  attribute-timestamp: 
-  attribute-level:     󰒢
-  attribute-category:  󰝰
-  attribute-thread:    󰓁
-  attribute-message:   󰍧
-  attribute-exception: 
-  attribute-$line:     
-  attribute-$source:   
+  attribute-timestamp: "󱑁"
+  attribute-level:     "󰒢"
+  attribute-category:  "󰓹"
+  attribute-thread:    "󰓁"
+  attribute-message:   "󰍧"
+  attribute-exception: ""
 
 styles:
   attribute-timestamp:   grey//i
@@ -129,6 +127,3 @@ styles:
   attribute-thread:      grey
   attribute-message:     white
   attribute-exception:   red
-
-  attribute-$source:     grey//iu
-  attribute-$line:       grey//iu

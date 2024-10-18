@@ -60,7 +60,7 @@ public class DataTimeRangePromptWriter implements PromptWriter {
     if (!duration.isZero()) {
       Prompt.PromptSegmentBuilder segment = prompt
         .newSegment("data_range")
-        .addIcon("nf-fa-calendar");
+        .addIcon("time-range");
       long days = duration.toDays();
       if (days > 0) {
         segment.add(days + "d");

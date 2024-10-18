@@ -29,8 +29,10 @@ import com.backpackcloud.cli.AnnotatedCommand;
 import com.backpackcloud.cli.CommandDefinition;
 import com.backpackcloud.cli.Paginate;
 import com.backpackcloud.cli.PreferenceValue;
+import com.backpackcloud.cli.preferences.UserPreferences;
 import com.backpackcloud.sherlogholmes.domain.DataEntry;
 import com.backpackcloud.sherlogholmes.domain.DataRegistry;
+import com.backpackcloud.sherlogholmes.domain.MetadataDataRegistry;
 import io.quarkus.runtime.annotations.RegisterForReflection;
 import jakarta.enterprise.context.ApplicationScoped;
 
@@ -49,23 +51,13 @@ public class ListDataCommand implements AnnotatedCommand {
 
   private final DataRegistry registry;
 
-  public ListDataCommand(DataRegistry registry) {
-    this.registry = registry;
+  public ListDataCommand(DataRegistry registry, UserPreferences userPreferences) {
+    this.registry = new MetadataDataRegistry(registry, userPreferences);
   }
 
   @Action
   @Paginate
   public Stream<DataEntry> execute(@PreferenceValue("show-metadata") boolean showMetadata) {
-    if (showMetadata) {
-      String prefix;
-      if (registry.index("$source").size() > 1) {
-        prefix = "{#$source} {#$line} ";
-      } else {
-        prefix = "{#$line} ";
-      }
-      return registry.stream()
-        .map(entry -> entry.displayFormat(prefix + entry.displayFormat()));
-    }
     return registry.stream();
   }
 

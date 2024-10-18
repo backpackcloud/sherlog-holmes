@@ -30,10 +30,12 @@ import com.backpackcloud.cli.CommandDefinition;
 import com.backpackcloud.cli.Paginate;
 import com.backpackcloud.cli.PreferenceValue;
 import com.backpackcloud.cli.Suggestions;
+import com.backpackcloud.cli.preferences.UserPreferences;
 import com.backpackcloud.cli.ui.Suggestion;
 import com.backpackcloud.sherlogholmes.domain.Attribute;
 import com.backpackcloud.sherlogholmes.domain.DataEntry;
 import com.backpackcloud.sherlogholmes.domain.DataRegistry;
+import com.backpackcloud.sherlogholmes.domain.MetadataDataRegistry;
 import com.backpackcloud.sherlogholmes.ui.suggestions.ChronoUnitSuggestions;
 import io.quarkus.runtime.annotations.RegisterForReflection;
 
@@ -58,8 +60,8 @@ public class TailCommand implements AnnotatedCommand {
 
   private final DataRegistry registry;
 
-  public TailCommand(DataRegistry registry) {
-    this.registry = registry;
+  public TailCommand(DataRegistry registry, UserPreferences userPreferences) {
+    this.registry = new MetadataDataRegistry(registry, userPreferences);
   }
 
   @Paginate
@@ -80,14 +82,14 @@ public class TailCommand implements AnnotatedCommand {
 
       Collections.reverse(entries);
 
-      return wrap(entries.stream(), showMetadata);
+      return entries.stream();
     } else {
       Temporal reference = registry.entries().first()
         .attribute(timestampAttribute, Temporal.class)
         .flatMap(Attribute::value)
         .map(temporal -> temporal.minus(amount, unit))
         .orElseThrow();
-      return wrap(registry.entries()
+      return registry.entries()
         .stream()
         .filter(entry ->
           entry.attribute(timestampAttribute, Temporal.class)
@@ -95,21 +97,8 @@ public class TailCommand implements AnnotatedCommand {
             .map(timestamp -> registry.typeOf("timestamp")
               .orElseThrow()
               .compare(timestamp, reference) >= 0)
-            .orElse(false)), showMetadata);
+            .orElse(false));
     }
-  }
-
-  private Stream<DataEntry> wrap(Stream<DataEntry> stream, boolean showMetadata) {
-    if (showMetadata) {
-      String prefix;
-      if (registry.index("$source").size() > 1) {
-        prefix = "{#$source} {#$line} ";
-      } else {
-        prefix = "{#$line} ";
-      }
-      return stream.map(entry -> entry.displayFormat(prefix + entry.displayFormat()));
-    }
-    return stream;
   }
 
   @Suggestions
