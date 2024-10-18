@@ -47,8 +47,8 @@ public class FilterStackPromptWriter implements PromptWriter {
   @Override
   public void addTo(Prompt prompt, PromptSide side) {
     if (!stack.isEmpty()) {
-      prompt.newSegment("filter_size")
-        .addIcon("stack")
+      prompt.newSegment()
+        .addIcon("stack", "icon-stack")
         .add(stack.size());
     }
   }

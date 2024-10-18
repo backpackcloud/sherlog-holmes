@@ -76,11 +76,11 @@ patterns:
   category:
     env:      SHERLOG_PATTERN_CATEGORY
     property: sherlog.pattern.category
-    value:    '\[(?<category>[^]]+)]'
+    value:    '\[(?<category>[^]]+]*)]'
   thread:
     env:      SHERLOG_PATTERN_THREAD
     property: sherlog.pattern.thread
-    value:    '\((?<thread>[^)]+)\)'
+    value:    '\((?<thread>[^)]+\)*)\)'
   message:
     env:      SHERLOG_PATTERN_MESSAGE
     property: sherlog.pattern.message
@@ -112,6 +112,13 @@ icons:
   attribute-thread:    "󰓁"
   attribute-message:   "󰍧"
   attribute-exception: ""
+
+colors:
+  attribute-level:     yellow
+  attribute-category:  blue
+  attribute-thread:    grey
+  attribute-message:   white
+  attribute-exception: red
 
 styles:
   attribute-timestamp:   grey//i

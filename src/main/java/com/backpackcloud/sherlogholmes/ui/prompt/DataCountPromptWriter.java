@@ -52,14 +52,14 @@ public class DataCountPromptWriter implements PromptWriter {
   public void addTo(Prompt prompt, PromptSide side) {
     Set<String> icons = theme.iconMap().icons();
 
-    Prompt.PromptSegmentBuilder segment = prompt.newSegment("data_count")
-      .addIcon("data")
+    Prompt.PromptSegmentBuilder segment = prompt.newSegment()
+      .addIcon("data", "icon-data")
       .add(registry.size());
 
     registry.indexedAttributes().forEach(index -> {
       String key = "attribute-" + index;
       if (icons.contains(key)) {
-        segment.addIcon(key).add(registry.index(index).size());
+        segment.addIcon(key, "icon-data").add(registry.index(index).size());
       }
     });
   }
