@@ -30,16 +30,14 @@ import com.backpackcloud.cli.CommandDefinition;
 import com.backpackcloud.cli.Paginate;
 import com.backpackcloud.cli.PreferenceValue;
 import com.backpackcloud.cli.Suggestions;
-import com.backpackcloud.cli.preferences.UserPreferences;
 import com.backpackcloud.cli.ui.Suggestion;
 import com.backpackcloud.sherlogholmes.domain.Attribute;
 import com.backpackcloud.sherlogholmes.domain.DataEntry;
 import com.backpackcloud.sherlogholmes.domain.DataRegistry;
-import com.backpackcloud.sherlogholmes.domain.MetadataDataRegistry;
 import com.backpackcloud.sherlogholmes.ui.suggestions.ChronoUnitSuggestions;
 import io.quarkus.runtime.annotations.RegisterForReflection;
-
 import jakarta.enterprise.context.ApplicationScoped;
+
 import java.time.temporal.ChronoUnit;
 import java.time.temporal.Temporal;
 import java.util.ArrayList;
@@ -60,14 +58,13 @@ public class TailCommand implements AnnotatedCommand {
 
   private final DataRegistry registry;
 
-  public TailCommand(DataRegistry registry, UserPreferences userPreferences) {
-    this.registry = new MetadataDataRegistry(registry, userPreferences);
+  public TailCommand(DataRegistry registry) {
+    this.registry = registry;
   }
 
   @Paginate
   @Action
   public Stream<DataEntry> execute(Integer amount, ChronoUnit unit,
-                                   @PreferenceValue("show-metadata") boolean showMetadata,
                                    @PreferenceValue("timestamp-attribute") String timestampAttribute) {
     if (registry.isEmpty()) {
       return Stream.empty();

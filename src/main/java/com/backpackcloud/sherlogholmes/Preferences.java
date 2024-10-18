@@ -52,12 +52,6 @@ public enum Preferences implements PreferenceSpec {
     "false"
   ),
 
-  SHOW_METADATA(
-    "shows the parsed metadata when viewing entries",
-    Type.FLAG,
-    "false"
-  ),
-
   STACK_OPERATION(
     "sets the stack operation for creating the filter (and/or)",
     Type.TEXT,
