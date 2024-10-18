@@ -110,7 +110,7 @@ icons:
   attribute-level:     nf-fa-signal
   attribute-category:  nf-fa-folder_open
   attribute-thread:    nf-fa-code_fork
-  attribute-message:   nf-mdi-message
+  attribute-message:   nf-md-message
   attribute-exception: nf-fa-bug
   attribute-$line:     nf-pl-line_number
   attribute-$source:   nf-cod-location
