@@ -61,7 +61,7 @@ public class ListDataCommand implements AnnotatedCommand {
       if (registry.index("$source").size() > 1) {
         prefix = "{$source}:{$line} ";
       } else {
-        prefix = "{$line}";
+        prefix = "{$line} ";
       }
       return registry.stream()
         .map(entry -> entry.displayFormat(prefix + entry.displayFormat()));

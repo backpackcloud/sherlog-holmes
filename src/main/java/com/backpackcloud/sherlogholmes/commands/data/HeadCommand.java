@@ -97,7 +97,7 @@ public class HeadCommand implements AnnotatedCommand {
       if (registry.index("$source").size() > 1) {
         prefix = "{$source}:{$line} ";
       } else {
-        prefix = "{$line}";
+        prefix = "{$line} ";
       }
       return stream.map(entry -> entry.displayFormat(prefix + entry.displayFormat()));
     }
