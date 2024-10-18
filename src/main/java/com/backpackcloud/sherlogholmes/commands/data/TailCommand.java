@@ -103,7 +103,7 @@ public class TailCommand implements AnnotatedCommand {
     if (showMetadata) {
       String prefix;
       if (registry.index("$source").size() > 1) {
-        prefix = "{#$source}:{#$line} ";
+        prefix = "{#$source} {#$line} ";
       } else {
         prefix = "{#$line} ";
       }
