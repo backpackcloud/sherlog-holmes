@@ -106,14 +106,14 @@ exporters:
     attributes: timestamp,level,category,thread,code,message
 
 icons:
-  attribute-timestamp: nf-fa-calendar
-  attribute-level:     nf-fa-signal
-  attribute-category:  nf-fa-folder_open
-  attribute-thread:    nf-fa-code_fork
-  attribute-message:   nf-md-message
-  attribute-exception: nf-fa-bug
-  attribute-$line:     nf-pl-line_number
-  attribute-$source:   nf-cod-location
+  attribute-timestamp: 
+  attribute-level:     󰒢
+  attribute-category:  󰝰
+  attribute-thread:    󰓁
+  attribute-message:   󰍧
+  attribute-exception: 
+  attribute-$line:     
+  attribute-$source:   
 
 styles:
   attribute-timestamp:   grey//i
@@ -130,5 +130,5 @@ styles:
   attribute-message:     white
   attribute-exception:   red
 
-  attribute-$source: grey//iu
-  attribute-$line: grey//iu
+  attribute-$source:     grey//iu
+  attribute-$line:       grey//iu
