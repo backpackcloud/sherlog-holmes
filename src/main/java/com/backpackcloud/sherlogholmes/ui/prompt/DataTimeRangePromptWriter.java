@@ -60,7 +60,7 @@ public class DataTimeRangePromptWriter implements PromptWriter {
     if (!duration.isZero()) {
       Prompt.PromptSegmentBuilder segment = prompt
         .newSegment()
-        .addIcon("time-range", "icon-time-range");
+        .addIcon("time-range", "icon-data");
       long days = duration.toDays();
       if (days > 0) {
         segment.add(days + "d");
