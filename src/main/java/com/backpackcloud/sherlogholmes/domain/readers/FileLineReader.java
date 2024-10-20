@@ -38,14 +38,12 @@ import java.nio.file.PathMatcher;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.BiConsumer;
 
-public class FileLineReader implements DataReader {
+public class FileLineReader implements DataReader<String> {
 
   private final Charset charset;
-  private final int linesToSkip;
 
-  public FileLineReader(Charset charset, int linesToSkip) {
+  public FileLineReader(Charset charset) {
     this.charset = charset;
-    this.linesToSkip = linesToSkip;
   }
 
   @Override
@@ -69,11 +67,8 @@ public class FileLineReader implements DataReader {
     AtomicInteger count = new AtomicInteger(0);
     try {
       Files.lines(path, charset)
-        .forEach(line -> {
-          if (count.incrementAndGet() > linesToSkip) {
-            consumer.accept(new Metadata(path.getFileName().toString(), count.get()), line);
-          }
-        });
+        .forEach(line ->
+          consumer.accept(new Metadata(path.getFileName().toString(), count.incrementAndGet()), line));
     } catch (IOException e) {
       throw new UnbelievableException(e);
     }

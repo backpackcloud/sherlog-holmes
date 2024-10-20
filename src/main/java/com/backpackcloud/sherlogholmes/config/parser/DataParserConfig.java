@@ -33,7 +33,6 @@ import io.quarkus.runtime.annotations.RegisterForReflection;
 @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, property = "type")
 @JsonSubTypes({
   @JsonSubTypes.Type(name = "regex", value = RegexDataParserConfig.class),
-  @JsonSubTypes.Type(name = "csv", value = CsvDataParserConfig.class),
   @JsonSubTypes.Type(name = "json", value = JsonDataParserConfig.class),
   @JsonSubTypes.Type(name = "split", value = SplitDataParserConfig.class),
 })

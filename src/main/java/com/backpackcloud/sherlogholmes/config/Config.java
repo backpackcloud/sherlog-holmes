@@ -32,16 +32,12 @@ import com.backpackcloud.cli.ui.StyleMap;
 import com.backpackcloud.cli.ui.Theme;
 import com.backpackcloud.configuration.Configuration;
 import com.backpackcloud.sherlogholmes.Preferences;
-import com.backpackcloud.sherlogholmes.config.exporter.DataExporterConfig;
 import com.backpackcloud.sherlogholmes.config.mapper.DataMapperConfig;
 import com.backpackcloud.sherlogholmes.config.model.DataModelConfig;
 import com.backpackcloud.sherlogholmes.config.parser.DataParserConfig;
-import com.backpackcloud.sherlogholmes.config.reader.DataReaderConfig;
-import com.backpackcloud.sherlogholmes.domain.DataExporter;
 import com.backpackcloud.sherlogholmes.domain.DataMapper;
 import com.backpackcloud.sherlogholmes.domain.DataModel;
 import com.backpackcloud.sherlogholmes.domain.DataParser;
-import com.backpackcloud.sherlogholmes.domain.DataReader;
 import com.backpackcloud.sherlogholmes.domain.DataRegistry;
 import com.backpackcloud.sherlogholmes.domain.Pipeline;
 import com.backpackcloud.sherlogholmes.domain.PipelineStep;
@@ -62,12 +58,10 @@ public class Config {
   private final List<String> commands;
   private final Map<String, List<String>> macros;
   private final Map<String, DataModelConfig> models;
-  private final Map<String, DataReaderConfig> readers;
   private final Map<String, DataParserConfig> parsers;
   private final Map<String, DataMapperConfig> mappers;
   private final Map<String, List<PipelineStep>> steps;
   private final Map<String, PipelineConfig> pipelines;
-  private final Map<String, DataExporterConfig> exporters;
 
   @JsonCreator
   public Config(@JacksonInject UserPreferences userPreferences,
@@ -81,14 +75,12 @@ public class Config {
                 @JsonProperty("commands") List<String> commands,
                 @JsonProperty("macros") Map<String, List<String>> macros,
                 @JsonProperty("models") Map<String, DataModelConfig> models,
-                @JsonProperty("readers") Map<String, DataReaderConfig> readers,
                 @JsonProperty("parsers") Map<String, DataParserConfig> parsers,
                 @JsonProperty("mappers") Map<String, DataMapperConfig> mappers,
                 @JsonProperty("steps") Map<String, List<PipelineStep>> steps,
                 @JsonProperty("pipelines") Map<String, PipelineConfig> pipelines,
-                @JsonProperty("exporters") Map<String, DataExporterConfig> exporters,
                 @JsonProperty("index") List<String> index) {
-    this(patterns, commands, macros, models, readers, parsers, mappers, steps, pipelines, exporters);
+    this(patterns, commands, macros, models, parsers, mappers, steps, pipelines);
 
     if (icons != null) {
       IconMap iconMap = theme.iconMap();
@@ -128,21 +120,17 @@ public class Config {
                  List<String> commands,
                  Map<String, List<String>> macros,
                  Map<String, DataModelConfig> models,
-                 Map<String, DataReaderConfig> readers,
                  Map<String, DataParserConfig> parsers,
                  Map<String, DataMapperConfig> mappers,
                  Map<String, List<PipelineStep>> steps,
-                 Map<String, PipelineConfig> pipelines,
-                 Map<String, DataExporterConfig> exporters) {
+                 Map<String, PipelineConfig> pipelines) {
     this.commands = commands != null ? commands : new ArrayList<>();
     this.macros = macros != null ? macros : new HashMap<>();
     this.models = models != null ? models : new HashMap<>();
-    this.readers = readers != null ? readers : new HashMap<>();
     this.parsers = parsers != null ? parsers : new HashMap<>();
     this.mappers = mappers != null ? mappers : new HashMap<>();
     this.steps = steps != null ? steps : new HashMap<>();
     this.pipelines = pipelines != null ? pipelines : new HashMap<>();
-    this.exporters = exporters != null ? exporters : new HashMap<>();
     this.patterns = new HashMap<>();
 
     if (patterns != null) {
@@ -173,10 +161,6 @@ public class Config {
     return getObject(models, id);
   }
 
-  public DataReader dataReaderFor(String id) {
-    return getObject(readers, id);
-  }
-
   public DataParser dataParserFor(String id) {
     return getObject(parsers, id);
   }
@@ -193,20 +177,8 @@ public class Config {
     return getObject(pipelines, id);
   }
 
-  public DataExporter dataExporterFor(String id) {
-    return getObject(exporters, id);
-  }
-
-  public Map<String, DataReaderConfig> readers() {
-    return readers;
-  }
-
   public Map<String, PipelineConfig> pipelines() {
     return pipelines;
-  }
-
-  public Map<String, DataExporterConfig> exporters() {
-    return exporters;
   }
 
   /**
@@ -220,12 +192,10 @@ public class Config {
     this.commands.addAll(other.commands);
     this.macros.putAll(other.macros);
     this.models.putAll(other.models);
-    this.readers.putAll(other.readers);
     this.parsers.putAll(other.parsers);
     this.mappers.putAll(other.mappers);
     this.steps.putAll(other.steps);
     this.pipelines.putAll(other.pipelines);
-    this.exporters.putAll(other.exporters);
   }
 
 }

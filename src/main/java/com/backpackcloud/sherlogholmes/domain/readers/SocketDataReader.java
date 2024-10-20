@@ -37,7 +37,7 @@ import java.net.Socket;
 import java.nio.charset.Charset;
 import java.util.function.BiConsumer;
 
-public class SocketDataReader implements DataReader {
+public class SocketDataReader implements DataReader<Integer> {
 
   private final Charset charset;
 
@@ -46,9 +46,9 @@ public class SocketDataReader implements DataReader {
   }
 
   @Override
-  public void read(String location, BiConsumer<Metadata, String> consumer) {
+  public void read(Integer port, BiConsumer<Metadata, String> consumer) {
     try (
-      ServerSocket serverSocket = new ServerSocket(Integer.parseInt(location));
+      ServerSocket serverSocket = new ServerSocket(port);
       Socket socket = serverSocket.accept();
       InputStream inputStream = socket.getInputStream()
     ) {
@@ -56,7 +56,7 @@ public class SocketDataReader implements DataReader {
       int count = 0;
       String line;
       while ((line = reader.readLine()) != null) {
-        consumer.accept(new Metadata("socket:" + location, ++count), line);
+        consumer.accept(new Metadata("socket-" + port, ++count), line);
       }
       reader.close();
     } catch (IOException e) {

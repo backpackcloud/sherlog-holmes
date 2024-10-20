@@ -168,13 +168,10 @@ public class DataRegistryImpl implements DataRegistry {
       this.entries = new TreeSet<>();
       this.index = new HashMap<>();
       this.attributeTypes = new HashMap<>();
-
-      // add metadata index
-      addIndex("$source");
     }
 
     @Override
-    public void add(DataEntry entry) {
+    public synchronized void add(DataEntry entry) {
       this.entries.add(entry);
 
       entry.attributes()

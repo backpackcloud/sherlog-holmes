@@ -2,6 +2,10 @@ preferences:
   default-fallback-mode: append
   show-added-entries:    false
   remove-ansi-colors:    true
+  input-charset:         UTF-8
+  result-paging:         true
+  results-per-page:      15
+  clear-on-paging:       true
 
 models:
   java:
@@ -33,19 +37,11 @@ models:
         value:    text
 
 index:
+  - $source
   - level
   - category
   - thread
   - exception
-
-readers:
-  file:
-    type:    file
-    charset: UTF-8
-
-  socket:
-    type:    socket
-    charset: UTF-8
 
 parsers:
   infinispan:
@@ -99,11 +95,6 @@ pipelines:
     parser: infinispan
     mapper: java
     steps:  java
-
-exporters:
-  json:
-    type:       json
-    attributes: timestamp,level,category,thread,message
 
 icons:
   attribute-timestamp: ""

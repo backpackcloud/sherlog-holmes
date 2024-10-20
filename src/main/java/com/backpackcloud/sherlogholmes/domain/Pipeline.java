@@ -60,7 +60,7 @@ public class Pipeline {
     return content;
   }
 
-  public void run(DataReader dataReader, String location, Consumer<DataEntry> consumer) {
+  public <T> void run(DataReader<T> dataReader, T location, Consumer<DataEntry> consumer) {
     switch (fallbackMode) {
       case IGNORE -> dataReader.read(location, (metadata, content) -> dataParser.parse(normalize(content))
         .ifPresent(struct -> dataMapper.map(dataModel.dataSupplier(), struct)

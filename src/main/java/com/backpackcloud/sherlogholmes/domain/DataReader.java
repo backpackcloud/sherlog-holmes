@@ -26,8 +26,8 @@ package com.backpackcloud.sherlogholmes.domain;
 
 import java.util.function.BiConsumer;
 
-public interface DataReader {
+public interface DataReader<T> {
 
-  void read(String location, BiConsumer<Metadata, String> consumer);
+  void read(T location, BiConsumer<Metadata, String> consumer);
 
 }

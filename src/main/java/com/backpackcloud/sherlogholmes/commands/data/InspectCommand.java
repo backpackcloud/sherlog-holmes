@@ -37,9 +37,11 @@ import com.backpackcloud.sherlogholmes.config.Config;
 import com.backpackcloud.sherlogholmes.domain.DataReader;
 import com.backpackcloud.sherlogholmes.domain.DataRegistry;
 import com.backpackcloud.sherlogholmes.domain.Pipeline;
+import com.backpackcloud.sherlogholmes.domain.readers.FileLineReader;
 import io.quarkus.runtime.annotations.RegisterForReflection;
 import jakarta.enterprise.context.ApplicationScoped;
 
+import java.nio.charset.Charset;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -64,11 +66,11 @@ public class InspectCommand implements AnnotatedCommand {
 
   @Action
   public void execute(@PreferenceValue("show-added-entries") boolean showEntries,
+                      @PreferenceValue("input-charset") String inputCharset,
                       Writer writer,
-                      String readerId,
                       String pipelineId,
                       String location) {
-    DataReader dataReader = config.dataReaderFor(readerId);
+    DataReader dataReader = new FileLineReader(Charset.forName(inputCharset));
     Pipeline pipeline = config.pipelineFor(pipelineId);
 
     pipeline.run(dataReader, location, entry -> {
@@ -80,12 +82,7 @@ public class InspectCommand implements AnnotatedCommand {
   }
 
   @Suggestions
-  public List<Suggestion> execute(String readerId, String investigationId, String location) {
-    if (investigationId == null) {
-      return config.readers().keySet()
-        .stream().map(PromptSuggestion::suggest)
-        .collect(Collectors.toList());
-    }
+  public List<Suggestion> execute(String pipelineId, String location) {
     if (location == null) {
       return config.pipelines().keySet()
         .stream().map(PromptSuggestion::suggest)

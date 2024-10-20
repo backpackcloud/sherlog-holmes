@@ -40,6 +40,12 @@ public enum Preferences implements PreferenceSpec {
     ""
   ),
 
+  INPUT_CHARSET(
+    "sets the charset to use for reading input files",
+    Type.TEXT,
+    "UTF-8"
+  ),
+
   DEFAULT_FALLBACK_MODE(
     "sets the default fallback behavior to use when parsing content fails",
     Type.TEXT,
