@@ -50,7 +50,6 @@ import java.util.stream.Stream;
   name = "tail",
   description = "Shows the last N entries",
   type = "Data Visualization",
-  allowOutputRedirect = true,
   aliases = "last"
 )
 @RegisterForReflection

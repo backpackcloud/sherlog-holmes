@@ -54,8 +54,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 @CommandDefinition(
   name = "count",
   type = "Data Visualization",
-  description = "Counts the entries in the registry",
-  allowOutputRedirect = true
+  description = "Counts the entries in the registry"
 )
 @RegisterForReflection
 public class CountCommand implements AnnotatedCommand {

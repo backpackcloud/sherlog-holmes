@@ -42,8 +42,7 @@ import java.util.stream.Collectors;
 @CommandDefinition(
   name = "index",
   description = "shows index information",
-  type = "Data Visualization",
-  allowOutputRedirect = true
+  type = "Data Visualization"
 )
 @ApplicationScoped
 @RegisterForReflection

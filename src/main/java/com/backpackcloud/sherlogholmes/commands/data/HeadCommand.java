@@ -50,7 +50,6 @@ import java.util.stream.Stream;
   name = "head",
   description = "Shows the first N entries",
   type = "Data Visualization",
-  allowOutputRedirect = true,
   aliases = "first"
 )
 @RegisterForReflection

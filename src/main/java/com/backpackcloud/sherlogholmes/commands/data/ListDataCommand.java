@@ -40,8 +40,7 @@ import java.util.stream.Stream;
   name = "list",
   aliases = {"ls", "show"},
   type = "Data Visualization",
-  description = "Shows the current entries",
-  allowOutputRedirect = true
+  description = "Shows the current entries"
 )
 @RegisterForReflection
 public class ListDataCommand implements AnnotatedCommand {
