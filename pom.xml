@@ -40,7 +40,7 @@
 
   <properties>
     <quarkus.version>3.9.4</quarkus.version>
-    <quarkus.package.type>native</quarkus.package.type>
+    <quarkus.package.type>uber-jar</quarkus.package.type>
 
     <zipper.version>1.0.0-SNAPSHOT</zipper.version>
 
@@ -83,13 +83,11 @@
       <version>${zipper.version}</version>
     </dependency>
 
-
     <dependency>
       <groupId>com.opencsv</groupId>
       <artifactId>opencsv</artifactId>
       <version>${opencsv.version}</version>
     </dependency>
-
 
     <dependency>
       <groupId>io.quarkus</groupId>
@@ -102,7 +100,6 @@
       <artifactId>quarkus-junit5-mockito</artifactId>
       <scope>test</scope>
     </dependency>
-
   </dependencies>
 
   <build>
