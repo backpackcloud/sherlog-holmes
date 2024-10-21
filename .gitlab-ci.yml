@@ -17,4 +17,4 @@ release:downstream:
   dependencies:
     - mvn:package
   script:
-    - upload target/sherlog-holmes-runner sherlog-holmes
+    - release
