@@ -31,9 +31,6 @@ import io.quarkus.runtime.QuarkusApplication;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 
-import java.util.ArrayList;
-import java.util.List;
-
 @ApplicationScoped
 public class Application implements QuarkusApplication {
 
@@ -54,10 +51,8 @@ public class Application implements QuarkusApplication {
 
   @Override
   public int run(String... args) {
-    List<String> commands = new ArrayList<>(config.commands());
-    commands.addAll(List.of(args));
     config.macros().forEach(cli::registerMacro);
-    cli.execute(commands.toArray(new String[config.commands().size() + args.length]));
+    cli.execute(config.commands().toArray(new String[0]));
     cli.start();
     return 0;
   }

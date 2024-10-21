@@ -28,29 +28,18 @@ import io.quarkus.runtime.Quarkus;
 import io.quarkus.runtime.annotations.QuarkusMain;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 
 @QuarkusMain
 public class Main {
 
   public static void main(String[] args) throws IOException {
-    List<String> cliArgs = new ArrayList<>();
-    boolean setCliArgs = false;
-
-    for (String arg : args) {
-      if ("--".equals(arg)) {
-        setCliArgs = true;
-      } else if (setCliArgs) {
-        cliArgs.add(arg);
-      } else {
-        System.setProperty("sherlog.config.file", arg);
-      }
+    if (args.length > 0) {
+      System.setProperty("sherlog.config.file", args[0]);
     }
 
     System.out.println(new String(Main.class.getResourceAsStream("/META-INF/banner.txt").readAllBytes()));
 
-    Quarkus.run(Application.class, cliArgs.toArray(new String[0]));
+    Quarkus.run(Application.class);
     Quarkus.waitForExit();
   }
 
