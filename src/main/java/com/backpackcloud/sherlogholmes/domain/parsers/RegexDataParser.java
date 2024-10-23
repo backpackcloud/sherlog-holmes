@@ -25,6 +25,7 @@
 package com.backpackcloud.sherlogholmes.domain.parsers;
 
 import com.backpackcloud.sherlogholmes.domain.DataParser;
+import com.backpackcloud.sherlogholmes.domain.Metadata;
 
 import java.util.Optional;
 import java.util.function.Function;
@@ -40,7 +41,7 @@ public class RegexDataParser implements DataParser<Function<String, String>> {
   }
 
   @Override
-  public Optional<Function<String, String>> parse(String content) {
+  public Optional<Function<String, String>> parse(Metadata metadata, String content) {
     Matcher matcher = pattern.matcher(content);
     if (matcher.find()) {
       return Optional.of(matcher::group);

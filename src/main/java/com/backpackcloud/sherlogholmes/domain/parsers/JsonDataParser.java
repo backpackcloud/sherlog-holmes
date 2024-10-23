@@ -26,6 +26,7 @@ package com.backpackcloud.sherlogholmes.domain.parsers;
 
 import com.backpackcloud.serializer.Serializer;
 import com.backpackcloud.sherlogholmes.domain.DataParser;
+import com.backpackcloud.sherlogholmes.domain.Metadata;
 import com.fasterxml.jackson.databind.JsonNode;
 
 import java.util.Optional;
@@ -40,7 +41,7 @@ public class JsonDataParser implements DataParser<Function<String, String>> {
   }
 
   @Override
-  public Optional<Function<String, String>> parse(String content) {
+  public Optional<Function<String, String>> parse(Metadata metadata, String content) {
     JsonNode jsonNode = serializer.deserialize(content.trim(), JsonNode.class);
     return Optional.of(pointer -> jsonNode.at(pointer).asText());
   }

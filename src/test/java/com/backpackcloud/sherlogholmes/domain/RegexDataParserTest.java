@@ -53,7 +53,7 @@ public class RegexDataParserTest {
   private final DataMapper<Function<String, String>> mapper = FunctionDataMapper.attributesFrom(model);
 
   private DataEntry entryFrom(String content) {
-    Function<String, String> function = parser.parse(content).orElseThrow();
+    Function<String, String> function = parser.parse(new Metadata("test", 1), content).orElseThrow();
     return mapper.map(model.dataSupplier(), function).orElseThrow();
   }
 

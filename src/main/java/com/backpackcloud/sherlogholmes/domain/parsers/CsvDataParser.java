@@ -22,12 +22,40 @@
  * SOFTWARE.
  */
 
-package com.backpackcloud.sherlogholmes.domain;
+package com.backpackcloud.sherlogholmes.domain.parsers;
 
+import com.backpackcloud.UnbelievableException;
+import com.backpackcloud.sherlogholmes.domain.DataParser;
+import com.backpackcloud.sherlogholmes.domain.Metadata;
+import com.opencsv.CSVReader;
+import com.opencsv.exceptions.CsvValidationException;
+
+import java.io.IOException;
+import java.io.StringReader;
 import java.util.Optional;
 
-public interface DataParser<T> {
+public class CsvDataParser implements DataParser<String[]> {
 
-  Optional<T> parse(Metadata metadata, String content);
+  private final boolean skipFirstLine;
+
+  public CsvDataParser(boolean skipFirstLine) {
+    this.skipFirstLine = skipFirstLine;
+  }
+
+  @Override
+  public Optional<String[]> parse(Metadata metadata, String content) {
+    if (skipFirstLine && metadata.line() == 1) {
+      return Optional.empty();
+    }
+
+    CSVReader csvReader = new CSVReader(new StringReader(content));
+
+    try {
+      return Optional.ofNullable(csvReader.readNext());
+    } catch (IOException | CsvValidationException e) {
+      throw new UnbelievableException(e);
+    }
+
+  }
 
 }

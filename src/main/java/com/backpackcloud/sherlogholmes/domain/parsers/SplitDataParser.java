@@ -25,6 +25,7 @@
 package com.backpackcloud.sherlogholmes.domain.parsers;
 
 import com.backpackcloud.sherlogholmes.domain.DataParser;
+import com.backpackcloud.sherlogholmes.domain.Metadata;
 
 import java.util.Optional;
 import java.util.regex.Pattern;
@@ -40,7 +41,7 @@ public class SplitDataParser implements DataParser<String[]> {
   }
 
   @Override
-  public Optional<String[]> parse(String content) {
+  public Optional<String[]> parse(Metadata metadata, String content) {
     return Optional.ofNullable(pattern.split(content, limit));
   }
 

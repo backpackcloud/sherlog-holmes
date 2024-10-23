@@ -22,12 +22,29 @@
  * SOFTWARE.
  */
 
-package com.backpackcloud.sherlogholmes.domain;
+package com.backpackcloud.sherlogholmes.config.parser;
 
-import java.util.Optional;
+import com.backpackcloud.configuration.Configuration;
+import com.backpackcloud.sherlogholmes.config.Config;
+import com.backpackcloud.sherlogholmes.domain.DataParser;
+import com.backpackcloud.sherlogholmes.domain.parsers.CsvDataParser;
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import io.quarkus.runtime.annotations.RegisterForReflection;
 
-public interface DataParser<T> {
+@RegisterForReflection
+public class CsvDataParserConfig implements DataParserConfig {
 
-  Optional<T> parse(Metadata metadata, String content);
+  private final Configuration skipFirstLine;
+
+  @JsonCreator
+  public CsvDataParserConfig(@JsonProperty("skipFirstLine") Configuration skipFirstLine) {
+    this.skipFirstLine = skipFirstLine;
+  }
+
+  @Override
+  public DataParser<String[]> get(Config config) {
+    return new CsvDataParser(skipFirstLine.orElse(false));
+  }
 
 }

@@ -62,7 +62,7 @@ public class Pipeline {
 
   public <T> void run(DataReader<T> dataReader, T location, Consumer<DataEntry> consumer) {
     switch (fallbackMode) {
-      case IGNORE -> dataReader.read(location, (metadata, content) -> dataParser.parse(normalize(content))
+      case IGNORE -> dataReader.read(location, (metadata, content) -> dataParser.parse(metadata, normalize(content))
         .ifPresent(struct -> dataMapper.map(dataModel.dataSupplier(), struct)
           .stream()
           .peek(metadata::attachTo)
@@ -72,7 +72,7 @@ public class Pipeline {
         StagingArea stagingArea = new StagingArea(consumer);
 
         dataReader.read(location, (metadata, content) ->
-          dataParser.parse(normalize(content))
+          dataParser.parse(metadata, normalize(content))
             .ifPresentOrElse(
               structure -> stagingArea.push(content, metadata, structure),
               () -> stagingArea.push(content, metadata)
@@ -109,8 +109,10 @@ public class Pipeline {
     public void push(String content, Metadata metadata) {
       this.structure = null;
       if (this.content == null) {
-        this.content = new StringBuilder(content);
-        this.metadata = metadata;
+        if (metadata.line() > 1){
+          this.content = new StringBuilder(content);
+          this.metadata = metadata;
+        }
       } else {
         this.content.append("\n").append(content);
       }
@@ -118,7 +120,7 @@ public class Pipeline {
 
     public void push(String content, Metadata metadata, Object structure) {
       if (this.structure == null && this.content != null) {
-        dataParser.parse(this.content.toString())
+        dataParser.parse(metadata, this.content.toString())
           .ifPresent(struct -> this.structure = struct);
       }
       push();
