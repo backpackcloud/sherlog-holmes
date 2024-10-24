@@ -53,8 +53,8 @@ public class ListenCommand implements AnnotatedCommand {
 
     executorService.submit(() ->
       pipeline.run(dataReader, port, entry -> {
-        writer.writeln(entry);
         registry.add(entry);
+        writer.writeln(entry);
       })
     );
   }
@@ -68,6 +68,5 @@ public class ListenCommand implements AnnotatedCommand {
     }
     return Collections.emptyList();
   }
-
 
 }
