@@ -108,57 +108,59 @@ public class CountCommand implements AnnotatedCommand {
       .peek(count -> nameLength.set((Math.max(nameLength.get(), count.object().toString().length()))))
       .forEach(count -> countMap.put(count.object().toString(), count));
 
-    int valueLength = Integer.toString(total.get()).length();
+    if (total.get() > 0) {
+      int valueLength = Integer.toString(total.get()).length();
 
-    boolean subset = countAttribute == null && total.get() < registry.size();
+      boolean subset = countAttribute == null && total.get() < registry.size();
 
-    paginator.from(
-      countMap.values().stream()
-        .sorted(Comparator.reverseOrder())
-    ).print((writer, count) -> {
-      writer
-        .withStyle("name")
-        .write(String.format("%-" + nameLength + "s", count.object()))
-        .write(" ")
+      paginator.from(
+        countMap.values().stream()
+          .sorted(Comparator.reverseOrder())
+      ).print((writer, count) -> {
+        writer
+          .withStyle("name")
+          .write(String.format("%-" + nameLength + "s", count.object()))
+          .write(" ")
 
-        .withStyle("count")
-        .write(String.format("%" + valueLength + "d", count.value()))
-        .write(" ")
+          .withStyle("count")
+          .write(String.format("%" + valueLength + "d", count.value()))
+          .write(" ")
 
-        .withStyle("percentage//i")
-        .write(String.format("%7.3f%%", count.percentageOf(total.get())))
-        .write(" ");
-
-      if (subset) {
-        writer.withStyle("percentage//b")
-          .write(String.format("%7.3f%%", count.percentageOf(registry.size())))
+          .withStyle("percentage//i")
+          .write(String.format("%7.3f%%", count.percentageOf(total.get())))
           .write(" ");
-      }
 
-      writer.newLine();
-    }).paginate();
+        if (subset) {
+          writer.withStyle("percentage//b")
+            .write(String.format("%7.3f%%", count.percentageOf(registry.size())))
+            .write(" ");
+        }
 
-    context.writer().write(String.format("%-" + Math.min(3, nameLength.get()) + "s ", "="))
-      .withStyle("count//b")
-      .write(total.get());
-
-    if (subset && !countMap.isEmpty()) {
-      Integer totalCount = countMap.values().stream()
-        .map(Count::value)
-        .reduce(0, Integer::sum, Integer::sum);
+        writer.newLine();
+      }).paginate();
 
       context.writer().write(String.format("%-" + Math.min(3, nameLength.get()) + "s ", "="))
         .withStyle("count//b")
-        .write(total.get())
+        .write(total.get());
 
-        // we're not adding any number to the table
-        .write(" ".repeat(10))
+      if (subset && !countMap.isEmpty()) {
+        Integer totalCount = countMap.values().stream()
+          .map(Count::value)
+          .reduce(0, Integer::sum, Integer::sum);
 
-        .withStyle("percentage//b")
-        .write(String.format("%7.3f%%", 100.0 * totalCount / registry.size()));
+        context.writer().write(String.format("%-" + Math.min(3, nameLength.get()) + "s ", "="))
+          .withStyle("count//b")
+          .write(total.get())
+
+          // we're not adding any number to the table
+          .write(" ".repeat(10))
+
+          .withStyle("percentage//b")
+          .write(String.format("%7.3f%%", 100.0 * totalCount / registry.size()));
+      }
+
+      context.writer().newLine();
     }
-
-    context.writer().newLine();
   }
 
   @Suggestions
