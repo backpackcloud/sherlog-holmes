@@ -24,10 +24,13 @@
 
 package com.backpackcloud.sherlogholmes.domain;
 
+import com.backpackcloud.UnbelievableException;
 import com.backpackcloud.cli.preferences.UserPreferences;
 import com.backpackcloud.sherlogholmes.Preferences;
 
 import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.function.Consumer;
 
 public class Pipeline {
@@ -79,6 +82,7 @@ public class Pipeline {
             ));
 
         stagingArea.push();
+        stagingArea.close();
       }
     }
   }
@@ -89,9 +93,30 @@ public class Pipeline {
     private Object structure;
     private Metadata metadata;
     private final Consumer<DataEntry> consumer;
+    private final ExecutorService pushChecker;
+    private boolean closed = false;
+    private long lastPush;
 
     private StagingArea(Consumer<DataEntry> consumer) {
       this.consumer = consumer;
+      this.pushChecker = Executors.newSingleThreadExecutor();
+      this.pushChecker.submit(() -> {
+        while(!closed) {
+          if (System.currentTimeMillis() - lastPush >= 1000) {
+            push();
+          }
+          try {
+            Thread.sleep(500);
+          } catch (InterruptedException e) {
+            throw new UnbelievableException(e);
+          }
+        }
+      });
+    }
+
+    public void close() {
+      this.closed = true;
+      this.pushChecker.close();
     }
 
     public void push() {
@@ -108,6 +133,7 @@ public class Pipeline {
 
     public void push(String content, Metadata metadata) {
       this.structure = null;
+      this.lastPush = System.currentTimeMillis();
       if (this.content == null) {
         if (metadata.line() > 1){
           this.content = new StringBuilder(content);
