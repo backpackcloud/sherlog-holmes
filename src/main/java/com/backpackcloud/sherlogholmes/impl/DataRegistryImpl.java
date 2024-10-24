@@ -43,6 +43,7 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.function.Consumer;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 @ApplicationScoped
@@ -232,7 +233,10 @@ public class DataRegistryImpl implements DataRegistry {
 
     @Override
     public Set<String> indexedAttributes() {
-      return new HashSet<>(this.index.keySet());
+      return this.index.entrySet().stream()
+        .filter(entry -> !entry.getValue().isEmpty())
+        .map(Map.Entry::getKey)
+        .collect(Collectors.toSet());
     }
 
     @Override
