@@ -17,6 +17,7 @@ import io.quarkus.runtime.annotations.RegisterForReflection;
 import jakarta.enterprise.context.ApplicationScoped;
 
 import java.nio.charset.Charset;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
@@ -47,16 +48,29 @@ public class ListenCommand implements AnnotatedCommand {
   public void execute(@PreferenceValue("input-charset") String inputCharset,
                       Writer writer,
                       String pipelineId,
-                      Integer port) {
+                      String portsInput) {
+    List<Integer> ports = new ArrayList<>();
+
+    String[] split = portsInput.split(",");
+    for (String segment : split) {
+      String[] range = segment.split("-", 2);
+      int from = Integer.parseInt(range[0]);
+      int to = range.length == 1 ? from : Integer.parseInt(range[1]);
+
+      while(from <= to) {
+        ports.add(from++);
+      }
+    }
+
     DataReader<Integer> dataReader = new SocketDataReader(Charset.forName(inputCharset));
     Pipeline pipeline = config.pipelineFor(pipelineId);
 
-    executorService.submit(() ->
-      pipeline.run(dataReader, port, entry -> {
+    ports.stream()
+      .map(port -> (Runnable) () -> pipeline.run(dataReader, port, entry -> {
         registry.add(entry);
         writer.writeln(entry);
-      })
-    );
+      }))
+      .forEach(this.executorService::submit);
   }
 
   @Suggestions
