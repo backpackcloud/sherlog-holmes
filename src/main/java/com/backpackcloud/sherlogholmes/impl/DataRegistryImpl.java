@@ -311,7 +311,7 @@ public class DataRegistryImpl implements DataRegistry {
     @Override
     public void clear() {
       this.entries.clear();
-      this.index.clear();
+      this.index.forEach((attr, map) -> map.clear());
       this.attributeTypes.clear();
     }
   }
