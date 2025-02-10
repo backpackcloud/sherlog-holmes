@@ -24,51 +24,19 @@
 
 package com.backpackcloud.sherlogholmes.domain.types;
 
-public record SemanticVersion(int major, int minor, int micro) implements Comparable<SemanticVersion> {
+import com.backpackcloud.sherlogholmes.domain.AttributeType;
+import com.backpackcloud.versiontm.Version;
+
+public class VersionType implements AttributeType<Version> {
 
   @Override
-  public String toString() {
-    return String.format("%d.%d.%d", major, minor, micro);
-  }
-
-  public static SemanticVersion of(String value) {
-    String[] fields = value.split("\\.");
-    int major = Integer.parseInt(fields[0]);
-    int minor = fields.length > 1 ? Integer.parseInt(fields[1]) : 0;
-    int patch = fields.length > 2 ? Integer.parseInt(fields[2]) : 0;
-
-    return new SemanticVersion(major, minor, patch);
+  public String name() {
+    return "version";
   }
 
   @Override
-  public boolean equals(Object o) {
-    if (this == o) return true;
-    if (o == null || getClass() != o.getClass()) return false;
-    SemanticVersion that = (SemanticVersion) o;
-    return major == that.major && minor == that.minor && micro == that.micro;
-  }
-
-  @Override
-  public int compareTo(SemanticVersion that) {
-    if (this.major > that.major) {
-      return 1;
-    } else if (this.major < that.major) {
-      return -1;
-    }
-
-    if (this.minor > that.minor) {
-      return 1;
-    } else if (this.minor < that.minor) {
-      return -1;
-    }
-
-    if (this.micro > that.micro) {
-      return 1;
-    } else if (this.micro < that.micro) {
-      return -1;
-    }
-
-    return 0;
+  public Version convert(String input) {
+    return Version.of(input);
   }
 
 }

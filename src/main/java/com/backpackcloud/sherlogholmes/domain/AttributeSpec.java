@@ -25,7 +25,7 @@
 package com.backpackcloud.sherlogholmes.domain;
 
 import com.backpackcloud.UnbelievableException;
-import com.backpackcloud.sherlogholmes.domain.types.SemanticVersionType;
+import com.backpackcloud.sherlogholmes.domain.types.VersionType;
 import com.backpackcloud.sherlogholmes.domain.types.TemporalType;
 import com.backpackcloud.sherlogholmes.domain.types.UriType;
 import com.backpackcloud.sherlogholmes.domain.types.UrlType;
@@ -81,7 +81,7 @@ public interface AttributeSpec<E> {
           new TemporalType<>(DateTimeFormatter.ofPattern(configuration), OffsetDateTime::from), multivalued
         );
         case "flag" -> new AttributeSpecImpl<>(AttributeType.flag(), multivalued);
-        case "version" -> new AttributeSpecImpl<>(new SemanticVersionType(), false);
+        case "version" -> new AttributeSpecImpl<>(new VersionType(), false);
         case "url" -> new AttributeSpecImpl<>(new UrlType(), false);
         case "uri" -> new AttributeSpecImpl<>(new UriType(), false);
         default -> throw new UnbelievableException("Invalid type: " + type);

@@ -18,7 +18,7 @@ models:
       level:
         env:      SHERLOG_MODEL_JAVA_LEVEL
         property: sherlog.model.java.level
-        value:    enum | TRACE,DEBUG,INFO,WARN,WARNING,ERROR,SEVERE,FATAL
+        value:    enum | TRACE,DEBUG,FINE,INFO,WARN,WARNING,ERROR,SEVERE,FATAL
       category:
         env:      SHERLOG_MODEL_JAVA_CATEGORY
         property: sherlog.model.java.category
@@ -116,6 +116,7 @@ styles:
 
   attribute-level-TRACE: cyan
   attribute-level-DEBUG: cyan
+  attribute-level-FINE: cyan
   attribute-level-INFO:  orange
   attribute-level-WARN:  yellow
   attribute-level-ERROR: red//b

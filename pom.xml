@@ -43,9 +43,9 @@
     <quarkus.package.type>uber-jar</quarkus.package.type>
 
     <zipper.version>1.0.0-SNAPSHOT</zipper.version>
+    <version-tm.version>1.1.0</version-tm.version>
 
     <opencsv.version>5.9</opencsv.version>
-
     <surefire-plugin.version>2.22.1</surefire-plugin.version>
   </properties>
 
@@ -81,6 +81,12 @@
       <groupId>com.backpackcloud</groupId>
       <artifactId>zipper</artifactId>
       <version>${zipper.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>com.backpackcloud</groupId>
+      <artifactId>version-tm</artifactId>
+      <version>${version-tm.version}</version>
     </dependency>
 
     <dependency>
