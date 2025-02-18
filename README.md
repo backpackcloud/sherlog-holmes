@@ -11,14 +11,13 @@ services and visualization tools, then Sherlog Holmes will probably suit you wel
 
 To use Sherlog Holmes, you will need:
 
-- Linux or macOS (Windows users can use WSL with no issues)
+- Java 21
 - A terminal with a [Nerd Font](https://www.nerdfonts.com)
 
 To build Sherlog Holmes, you will need:
 
-- GraalVM 22.1 with Java 17
+- Java 21
 - Maven 3.8
-- Patience (builds might take 3 minutes, depending on your hardware)
 
 ## How to build
 
@@ -28,7 +27,8 @@ Easier than falling off a skateboard... drunk... blindfolded...
 mvn package
 ```
 
-After the process, you should see a file `sherlog-holmes-runner` inside the `target` folder.
+After the process, you should see a file `sherlog-holmes-runner.jar` inside the `target` folder. Just run it with your
+`java -jar` command and you're good to go.
 
 ## How it works
 
