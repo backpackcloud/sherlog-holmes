@@ -29,13 +29,13 @@ import com.backpackcloud.sherlogholmes.domain.mappers.FunctionDataMapper;
 import com.backpackcloud.sherlogholmes.domain.parsers.RegexDataParser;
 import com.backpackcloud.sherlogholmes.impl.AttributeSpecImpl;
 import com.backpackcloud.sherlogholmes.impl.DataModelImpl;
-import com.backpackcloud.spectaculous.Backstage;
-import com.backpackcloud.spectaculous.Operation;
 import org.junit.jupiter.api.Test;
 
 import java.time.LocalDateTime;
 import java.util.function.Function;
 import java.util.regex.Pattern;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class RegexDataParserTest {
 
@@ -52,41 +52,37 @@ public class RegexDataParserTest {
 
   private final DataMapper<Function<String, String>> mapper = FunctionDataMapper.attributesFrom(model);
 
-  private DataEntry entryFrom(String content) {
-    Function<String, String> function = parser.parse(new Metadata("test", 1), content).orElseThrow();
-    return mapper.map(model.dataSupplier(), function).orElseThrow();
-  }
-
   @Test
   public void testSingleLineParsing() {
-    String line = "2022-09-26T20:59:24 DEBUG [chat] (room-1702) chat bot is glorious, replying to Baylor Harris with an ASCII image of a horse";
-    DataEntry data = entryFrom(line);
-    Backstage.describe(DataEntry.class)
-      .given(data)
+    entryFrom("2022-09-26T20:59:24 DEBUG [chat] (room-1702) chat bot is glorious, replying to Baylor Harris with an ASCII image of a horse");
 
-      .from(attribute("level")).expect("DEBUG")
-      .from(attribute("category")).expect("chat")
-      .from(attribute("origin")).expect("room-1702")
-      .from(attribute("message")).expect("chat bot is glorious, replying to Baylor Harris with an ASCII image of a horse")
-      .from(attribute("timestamp")).expect(LocalDateTime.parse("2022-09-26T20:59:24"));
+    assertEquals(("DEBUG"), attribute("level"));
+    assertEquals(("chat"), attribute("category"));
+    assertEquals(("room-1702"), attribute("origin"));
+    assertEquals(("chat bot is glorious, replying to Baylor Harris with an ASCII image of a horse"), attribute("message"));
+    assertEquals((LocalDateTime.parse("2022-09-26T20:59:24")), attribute("timestamp"));
   }
 
   @Test
   public void testMultilineParsing() {
-    String lines = "2022-09-26T20:59:24 DEBUG [chat] (room-1702) chat bot is glorious,\nreplying to Baylor Harris with\nan ASCII image of a horse";
-    DataEntry data = entryFrom(lines);
-    Backstage.describe(DataEntry.class)
-      .given(data)
+    entryFrom("2022-09-26T20:59:24 DEBUG [chat] (room-1702) chat bot is glorious,\nreplying to Baylor Harris with\nan ASCII image of a horse");
 
-      .from(attribute("level")).expect("DEBUG")
-      .from(attribute("category")).expect("chat")
-      .from(attribute("origin")).expect("room-1702")
-      .from(attribute("message")).expect("chat bot is glorious,\nreplying to Baylor Harris with\nan ASCII image of a horse")
-      .from(attribute("timestamp")).expect(LocalDateTime.parse("2022-09-26T20:59:24"));
+    assertEquals(("DEBUG"), attribute("level"));
+    assertEquals(("chat"), attribute("category"));
+    assertEquals(("room-1702"), attribute("origin"));
+    assertEquals(("chat bot is glorious,\nreplying to Baylor Harris with\nan ASCII image of a horse"), attribute("message"));
+    assertEquals((LocalDateTime.parse("2022-09-26T20:59:24")), attribute("timestamp"));
   }
 
-  private static <E> Operation<DataEntry, E> attribute(String name) {
-    return entry -> (E) entry.attribute(name).orElseThrow(UnbelievableException::new).value().orElse(null);
+  DataEntry data;
+
+  private void entryFrom(String content) {
+    Function<String, String> function = parser.parse(new Metadata("test", 1), content).orElseThrow();
+    data = mapper.map(model.dataSupplier(), function).orElseThrow();
+  }
+
+  private Object attribute(String name) {
+    return data.attribute(name).orElseThrow(UnbelievableException::new).value().orElse(null);
   }
 
 }

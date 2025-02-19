@@ -24,42 +24,38 @@
 
 package com.backpackcloud.sherlogholmes.domain;
 
-import com.backpackcloud.spectaculous.Backstage;
 import org.junit.jupiter.api.Test;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 public class EnumAttributeTypeTest {
-  private final AttributeType<String> enumType = AttributeType.enumOf("debug", "info", "warn", "error");
+  private final AttributeType<String> type = AttributeType.enumOf("debug", "info", "warn", "error");
 
   @Test
   public void testValidValues() {
-    Backstage.describe(AttributeType.class)
-      .given(enumType)
-
-      .from(type -> type.isValid("debug")).expect(true)
-      .from(type -> type.isValid("info")).expect(true)
-      .from(type -> type.isValid("warn")).expect(true)
-      .from(type -> type.isValid("error")).expect(true)
-      .from(type -> type.isValid("fatal")).expect(false)
-      .from(type -> type.isValid("DEBUG")).expect(false);
+    assertTrue(type.isValid("debug"));
+    assertTrue(type.isValid("info"));
+    assertTrue(type.isValid("warn"));
+    assertTrue(type.isValid("error"));
+    assertFalse(type.isValid("fatal"));
+    assertFalse(type.isValid("DEBUG"));
   }
 
   @Test
   public void testOrder() {
-    Backstage.describe(AttributeType.class)
-      .given(enumType)
+    assertEquals(-1, type.compare("debug", "info"));
+    assertEquals(-1, type.compare("debug", "warn"));
+    assertEquals(-1, type.compare("debug", "error"));
 
-      .from(type -> type.compare("debug", "info")).expect(-1)
-      .from(type -> type.compare("debug", "warn")).expect(-1)
-      .from(type -> type.compare("debug", "error")).expect(-1)
+    assertEquals(1, type.compare("error", "info"));
+    assertEquals(1, type.compare("error", "warn"));
+    assertEquals(1, type.compare("error", "debug"));
 
-      .from(type -> type.compare("error", "info")).expect(1)
-      .from(type -> type.compare("error", "warn")).expect(1)
-      .from(type -> type.compare("error", "debug")).expect(1)
-
-      .from(type -> type.compare("debug", "debug")).expect(0)
-      .from(type -> type.compare("warn", "warn")).expect(0)
-      .from(type -> type.compare("error", "error")).expect(0);
-    ;
+    assertEquals(0, type.compare("debug", "debug"));
+    assertEquals(0, type.compare("warn", "warn"));
+    assertEquals(0, type.compare("error", "error"));
   }
 
 }

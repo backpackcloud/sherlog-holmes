@@ -24,12 +24,13 @@
 
 package com.backpackcloud.sherlogholmes.domain;
 
+import com.backpackcloud.UnbelievableException;
 import com.backpackcloud.sherlogholmes.impl.AttributeImpl;
 import com.backpackcloud.sherlogholmes.impl.AttributeSpecImpl;
-import com.backpackcloud.spectaculous.Backstage;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
@@ -52,11 +53,10 @@ public class AttributeTest {
     AttributeType type = mock(AttributeType.class);
     when(type.isValid("bar")).thenReturn(true);
 
-    Backstage.describe(Attribute.class)
-      .given(new AttributeImpl("test", new AttributeSpecImpl(type, false)))
-      .then(attr -> attr.assign("bar"))
+    Attribute attr = new AttributeImpl("test", new AttributeSpecImpl(type, false));
+    attr.assign("bar");
 
-      .from(attr -> attr.value().orElse(null)).expect("bar");
+    assertEquals("bar", attr.value().orElse(null));
 
     verify(type).isValid("bar");
   }
@@ -67,12 +67,10 @@ public class AttributeTest {
     when(type.isValid("foo")).thenReturn(true);
     when(type.isValid("bar")).thenReturn(false);
 
-    Backstage.describe(Attribute.class)
-      .given(new AttributeImpl("test", new AttributeSpecImpl(type, false)).assign("foo"))
+    Attribute attr = new AttributeImpl("test", new AttributeSpecImpl(type, false)).assign("foo");
 
-      .when(attr -> attr.assign("bar")).expectFailure()
-
-      .from(attr -> (String) attr.value().orElse(null)).expect("foo");
+    assertThrows(UnbelievableException.class, () -> attr.assign("bar"));
+    assertEquals("foo", attr.value().orElse(null));
 
     verify(type).isValid("bar");
   }

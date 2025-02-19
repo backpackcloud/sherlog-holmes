@@ -25,42 +25,39 @@
 package com.backpackcloud.sherlogholmes.domain;
 
 import com.backpackcloud.sherlogholmes.impl.DataEntryImpl;
-import com.backpackcloud.spectaculous.Backstage;
 import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class DataEntryTest {
 
-  private DataEntry dataEntry() {
-    return new DataEntryImpl();
-  }
-
   @Test
   public void testInstance() {
-    Backstage.describe(DataEntry.class)
-      .given(dataEntry())
-      .from(entry -> entry.attributes().isEmpty()).expect(true);
+    DataEntry entry = new DataEntryImpl();
+
+    assertTrue(entry.attributes().isEmpty());
   }
 
   @Test
   public void testTimestampAttribute() {
-    Backstage.describe(DataEntry.class)
-      .given(dataEntry())
+    DataEntry entry = new DataEntryImpl();
 
-      .then(entry -> entry.addAttribute("timestamp").ofType(AttributeType.DATE))
+    entry.addAttribute("timestamp").ofType(AttributeType.DATE);
 
-      .from(entry -> entry.attributes().size()).expect(1);
+    assertEquals(1, entry.attributes().size());
   }
 
   @Test
   public void testAddAndRemoveAttribute() {
-    Backstage.describe(DataEntry.class)
-      .given(dataEntry())
-      .then(entry -> entry.addAttribute("foo"))
+    DataEntry entry = new DataEntryImpl();
 
-      .from(entry -> entry.hasAttribute("foo")).expect(true)
+    entry.addAttribute("foo");
+    assertTrue(entry.hasAttribute("foo"));
 
-      .then(entry -> entry.remove("foo"))
-      .from(entry -> entry.hasAttribute("foo")).expect(false);
+    entry.remove("foo");
+    assertFalse(entry.hasAttribute("foo"));
   }
 
 }

@@ -26,18 +26,17 @@ package com.backpackcloud.sherlogholmes.domain;
 
 import com.backpackcloud.sherlogholmes.impl.DataEntryImpl;
 import com.backpackcloud.sherlogholmes.impl.DataRegistryImpl;
-import com.backpackcloud.spectaculous.Backstage;
-import com.backpackcloud.spectaculous.TargetedAction;
 import org.junit.jupiter.api.Test;
 
 import java.time.LocalDateTime;
-import java.util.Set;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class DataRegistryTest {
 
   private final AttributeType<String> fooBarType = AttributeType.enumOf("foo", "bar");
-  private final TargetedAction<DataRegistry> addEntry = registry -> registry.add(newEntry());
-
   private int count = 0;
 
   private DataEntry newEntry() {
@@ -53,36 +52,41 @@ public class DataRegistryTest {
 
   @Test
   public void testAdd() {
-    Backstage.describe(DataRegistry.class)
-      .given(new DataRegistryImpl())
+    DataRegistry registry = new DataRegistryImpl();
 
-      .from(DataRegistry::size).expect(0)
-      .from(DataRegistry::isEmpty).expect(true)
+    assertEquals(0, registry.size());
+    assertTrue(registry.isEmpty());
 
-      .then(addEntry.repeat(100))
+    for (int i = 0; i < 100; i++) {
+      registry.add(newEntry());
+    }
 
-      .from(DataRegistry::size).expect(100)
-      .from(DataRegistry::isEmpty).expect(false);
+    assertEquals(100, registry.size());
+    assertFalse(registry.isEmpty());
   }
 
   @Test
   public void testIndex() {
-    Backstage.describe(DataRegistry.class)
-      .given(new DataRegistryImpl())
+    DataRegistry registry = new DataRegistryImpl();
 
-      .then(registry -> registry.addIndex("fooBar"))
-      .then(addEntry.repeat(100))
+    registry.addIndex("fooBar");
 
-      .from(registry -> registry.valuesFor("fooBar")).expect(set -> set.size() == 2)
+    for (int i = 0; i < 100; i++) {
+      registry.add(newEntry());
+    }
 
-      .then(registry -> registry.removeIndex("fooBar"))
+    assertEquals(2, registry.valuesFor("fooBar").size());
 
-      .from(registry -> registry.valuesFor("fooBar")).expect(Set::isEmpty)
+    registry.removeIndex("fooBar");
 
-      .then(addEntry.repeat(100))
+    assertEquals(0, registry.valuesFor("fooBar").size());
 
-      .then(registry -> registry.addIndex("fooBar"))
-      .from(registry -> registry.valuesFor("fooBar")).expect(Set::isEmpty);
+    for (int i = 0; i < 100; i++) {
+      registry.add(newEntry());
+    }
+
+    registry.addIndex("fooBar");
+    assertEquals(0, registry.valuesFor("fooBar").size());
   }
 
 }
