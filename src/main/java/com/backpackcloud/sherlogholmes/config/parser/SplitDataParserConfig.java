@@ -58,7 +58,7 @@ public class SplitDataParserConfig implements DataParserConfig {
       patterns::get
     ).eval(patternString.get()).orElseThrow();
 
-    return new SplitDataParser(Pattern.compile(result, Pattern.DOTALL), limit.integer().orElse(0));
+    return new SplitDataParser(Pattern.compile(result, Pattern.DOTALL), limit.asInteger().orElse(0));
   }
 
 }

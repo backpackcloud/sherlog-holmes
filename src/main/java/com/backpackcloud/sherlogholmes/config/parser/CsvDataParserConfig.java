@@ -44,7 +44,7 @@ public class CsvDataParserConfig implements DataParserConfig {
 
   @Override
   public DataParser<String[]> get(Config config) {
-    return new CsvDataParser(skipFirstLine.bool().orElse(false));
+    return new CsvDataParser(skipFirstLine.asBoolean().orElse(false));
   }
 
 }
