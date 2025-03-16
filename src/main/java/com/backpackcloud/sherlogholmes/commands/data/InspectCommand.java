@@ -31,13 +31,13 @@ import com.backpackcloud.cli.PreferenceValue;
 import com.backpackcloud.cli.Suggestions;
 import com.backpackcloud.cli.Writer;
 import com.backpackcloud.cli.ui.Suggestion;
-import com.backpackcloud.cli.ui.impl.FileSuggester;
-import com.backpackcloud.cli.ui.impl.PromptSuggestion;
+import com.backpackcloud.cli.ui.components.FileSuggester;
+import com.backpackcloud.cli.ui.components.PromptSuggestion;
 import com.backpackcloud.sherlogholmes.config.Config;
-import com.backpackcloud.sherlogholmes.domain.DataReader;
-import com.backpackcloud.sherlogholmes.domain.DataRegistry;
-import com.backpackcloud.sherlogholmes.domain.Pipeline;
-import com.backpackcloud.sherlogholmes.domain.readers.FileLineReader;
+import com.backpackcloud.sherlogholmes.model.DataReader;
+import com.backpackcloud.sherlogholmes.model.DataRegistry;
+import com.backpackcloud.sherlogholmes.model.Pipeline;
+import com.backpackcloud.sherlogholmes.model.readers.FileLineReader;
 import io.quarkus.runtime.annotations.RegisterForReflection;
 import jakarta.enterprise.context.ApplicationScoped;
 
@@ -67,10 +67,11 @@ public class InspectCommand implements AnnotatedCommand {
   @Action
   public void execute(@PreferenceValue("show-added-entries") boolean showEntries,
                       @PreferenceValue("input-charset") String inputCharset,
+                      @PreferenceValue("file-reader-skip-lines") Integer skipLines,
                       Writer writer,
                       String pipelineId,
                       String location) {
-    DataReader dataReader = new FileLineReader(Charset.forName(inputCharset));
+    DataReader dataReader = new FileLineReader(Charset.forName(inputCharset), skipLines);
     Pipeline pipeline = config.pipelineFor(pipelineId);
 
     pipeline.run(dataReader, location, entry -> {

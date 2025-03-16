@@ -30,14 +30,14 @@ import com.backpackcloud.cli.CommandContext;
 import com.backpackcloud.cli.CommandDefinition;
 import com.backpackcloud.cli.ParameterCount;
 import com.backpackcloud.cli.Suggestions;
-import com.backpackcloud.cli.preferences.UserPreferences;
+import com.backpackcloud.preferences.UserPreferences;
 import com.backpackcloud.cli.ui.Paginator;
 import com.backpackcloud.cli.ui.Suggestion;
 import com.backpackcloud.sherlogholmes.Preferences;
-import com.backpackcloud.sherlogholmes.domain.Attribute;
-import com.backpackcloud.sherlogholmes.domain.Count;
-import com.backpackcloud.sherlogholmes.domain.DataEntry;
-import com.backpackcloud.sherlogholmes.domain.DataRegistry;
+import com.backpackcloud.sherlogholmes.model.Attribute;
+import com.backpackcloud.sherlogholmes.model.Count;
+import com.backpackcloud.sherlogholmes.model.DataEntry;
+import com.backpackcloud.sherlogholmes.model.DataRegistry;
 import com.backpackcloud.sherlogholmes.ui.suggestions.AttributeSuggester;
 import io.quarkus.runtime.annotations.RegisterForReflection;
 import jakarta.enterprise.context.ApplicationScoped;
@@ -96,7 +96,7 @@ public class CountCommand implements AnnotatedCommand {
                       String attribute,
                       String counter) {
     Map<?, NavigableSet<DataEntry>> valuesMap = registry.index(attribute);
-    String countAttribute = counter != null ? counter : preferences.text(Preferences.COUNT_ATTRIBUTE).get();
+    String countAttribute = counter != null ? counter : preferences.get(Preferences.COUNT_ATTRIBUTE).value();
 
     Map<String, Count<?>> countMap = new HashMap<>();
     AtomicInteger total = new AtomicInteger();

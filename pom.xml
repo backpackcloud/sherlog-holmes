@@ -39,8 +39,10 @@
   <packaging>jar</packaging>
 
   <properties>
-    <quarkus.version>3.9.4</quarkus.version>
-    <quarkus.package.type>uber-jar</quarkus.package.type>
+    <quarkus.package.jar.type>uber-jar</quarkus.package.jar.type>
+    <quarkus.package.jar.add-runner-suffix>false</quarkus.package.jar.add-runner-suffix>
+    <quarkus.version>3.19.2</quarkus.version>
+    <quarkus.package.jar.enabled>true</quarkus.package.jar.enabled>
 
     <zipper.version>1.0.0-SNAPSHOT</zipper.version>
     <version-tm.version>1.1.0</version-tm.version>

@@ -25,8 +25,8 @@
 package com.backpackcloud.sherlogholmes.config.mapper;
 
 import com.backpackcloud.sherlogholmes.config.Config;
-import com.backpackcloud.sherlogholmes.domain.DataMapper;
-import com.backpackcloud.sherlogholmes.domain.mappers.FunctionDataMapper;
+import com.backpackcloud.sherlogholmes.model.DataMapper;
+import com.backpackcloud.sherlogholmes.model.mappers.FunctionDataMapper;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.quarkus.runtime.annotations.RegisterForReflection;
@@ -51,7 +51,6 @@ public class FunctionDataMapperConfig implements DataMapperConfig {
       List.of(attributeCopies.split("\\s*,\\s*")) :
       null;
   }
-
 
   @Override
   public DataMapper<Function<String, String>> get(Config config) {

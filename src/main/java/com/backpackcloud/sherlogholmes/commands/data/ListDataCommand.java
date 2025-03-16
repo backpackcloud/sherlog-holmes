@@ -28,8 +28,8 @@ import com.backpackcloud.cli.Action;
 import com.backpackcloud.cli.AnnotatedCommand;
 import com.backpackcloud.cli.CommandDefinition;
 import com.backpackcloud.cli.Paginate;
-import com.backpackcloud.sherlogholmes.domain.DataEntry;
-import com.backpackcloud.sherlogholmes.domain.DataRegistry;
+import com.backpackcloud.sherlogholmes.model.DataEntry;
+import com.backpackcloud.sherlogholmes.model.DataRegistry;
 import io.quarkus.runtime.annotations.RegisterForReflection;
 import jakarta.enterprise.context.ApplicationScoped;
 

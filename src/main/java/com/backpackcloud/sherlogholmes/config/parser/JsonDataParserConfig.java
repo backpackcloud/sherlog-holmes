@@ -24,20 +24,18 @@
 
 package com.backpackcloud.sherlogholmes.config.parser;
 
-import com.backpackcloud.serializer.Serializer;
+import com.backpackcloud.io.SerialBitter;
 import com.backpackcloud.sherlogholmes.config.Config;
-import com.backpackcloud.sherlogholmes.domain.DataParser;
-import com.backpackcloud.sherlogholmes.domain.parsers.JsonDataParser;
-import io.quarkus.runtime.annotations.RegisterForReflection;
+import com.backpackcloud.sherlogholmes.model.DataParser;
+import com.backpackcloud.sherlogholmes.model.parsers.JsonDataParser;
 
 import java.util.function.Function;
 
-@RegisterForReflection
 public class JsonDataParserConfig implements DataParserConfig {
 
   @Override
   public DataParser<Function<String, String>> get(Config config) {
-    return new JsonDataParser(Serializer.json());
+    return new JsonDataParser(SerialBitter.JSON());
   }
 
 }

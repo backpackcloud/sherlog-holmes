@@ -25,7 +25,7 @@
 package com.backpackcloud.sherlogholmes.config.mapper;
 
 import com.backpackcloud.sherlogholmes.config.ConfigObject;
-import com.backpackcloud.sherlogholmes.domain.DataMapper;
+import com.backpackcloud.sherlogholmes.model.DataMapper;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 

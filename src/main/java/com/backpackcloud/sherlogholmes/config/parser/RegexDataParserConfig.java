@@ -26,19 +26,21 @@ package com.backpackcloud.sherlogholmes.config.parser;
 
 import com.backpackcloud.configuration.Configuration;
 import com.backpackcloud.sherlogholmes.config.Config;
-import com.backpackcloud.sherlogholmes.domain.DataParser;
-import com.backpackcloud.sherlogholmes.domain.parsers.RegexDataParser;
-import com.backpackcloud.text.Interpolator;
+import com.backpackcloud.sherlogholmes.model.DataParser;
+import com.backpackcloud.sherlogholmes.model.parsers.RegexDataParser;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.quarkus.runtime.annotations.RegisterForReflection;
 
 import java.util.Map;
 import java.util.function.Function;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 @RegisterForReflection
 public class RegexDataParserConfig implements DataParserConfig {
+
+  private static final Pattern INTERPOLATION_PATTERN = Pattern.compile("\\{\\{\\s*(?<pattern>[^}]+)\\s*}}");
 
   private final Configuration patternString;
 
@@ -51,10 +53,11 @@ public class RegexDataParserConfig implements DataParserConfig {
   public DataParser<Function<String, String>> get(Config config) {
     Map<String, String> patterns = config.patterns();
 
-    String result = new Interpolator(
-      Interpolator.DOUBLE_BRACKET_INTERPOLATION_PATTERN,
-      patterns::get
-    ).eval(patternString.get()).orElseThrow();
+    Matcher matcher = INTERPOLATION_PATTERN.matcher(patternString.get());
+
+    String result = matcher.replaceAll(
+      matchResult -> patterns.getOrDefault(matchResult.group("pattern"), "")
+    );
 
     return new RegexDataParser(Pattern.compile(result, Pattern.DOTALL));
   }

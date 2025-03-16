@@ -25,8 +25,8 @@
 package com.backpackcloud.sherlogholmes.ui.suggestions;
 
 import com.backpackcloud.cli.ui.Suggestion;
-import com.backpackcloud.cli.ui.impl.PromptSuggestion;
-import com.backpackcloud.sherlogholmes.domain.TimeUnit;
+import com.backpackcloud.cli.ui.components.PromptSuggestion;
+import com.backpackcloud.sherlogholmes.model.TimeUnit;
 
 import java.util.List;
 import java.util.stream.Collectors;

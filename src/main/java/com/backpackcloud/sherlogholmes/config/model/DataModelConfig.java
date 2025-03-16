@@ -27,8 +27,7 @@ package com.backpackcloud.sherlogholmes.config.model;
 import com.backpackcloud.configuration.Configuration;
 import com.backpackcloud.sherlogholmes.config.Config;
 import com.backpackcloud.sherlogholmes.config.ConfigObject;
-import com.backpackcloud.sherlogholmes.domain.DataModel;
-import com.backpackcloud.sherlogholmes.impl.DataModelImpl;
+import com.backpackcloud.sherlogholmes.model.DataModel;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.quarkus.runtime.annotations.RegisterForReflection;
@@ -54,7 +53,7 @@ public class DataModelConfig implements ConfigObject<DataModel> {
   }
 
   public DataModel get(Config config) {
-    DataModel model = new DataModelImpl(format.get());
+    DataModel model = new DataModel(format.get());
     attributes.forEach((name, attrConfig) -> {
       model.add(name, attrConfig.get(config));
     });

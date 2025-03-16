@@ -25,8 +25,8 @@
 package com.backpackcloud.sherlogholmes.config.mapper;
 
 import com.backpackcloud.sherlogholmes.config.Config;
-import com.backpackcloud.sherlogholmes.domain.DataMapper;
-import com.backpackcloud.sherlogholmes.domain.mappers.ColumnDataMapper;
+import com.backpackcloud.sherlogholmes.model.DataMapper;
+import com.backpackcloud.sherlogholmes.model.mappers.ColumnDataMapper;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.quarkus.runtime.annotations.RegisterForReflection;
 
@@ -38,7 +38,6 @@ public class ColumnDataMapperConfig implements DataMapperConfig {
   public ColumnDataMapperConfig(@JsonProperty("attributes") String attributes) {
     this.attributes = attributes.split("\\s*,\\s*");
   }
-
 
   @Override
   public DataMapper<String[]> get(Config config) {

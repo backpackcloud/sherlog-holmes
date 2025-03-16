@@ -27,7 +27,7 @@ package com.backpackcloud.sherlogholmes.commands.stack;
 import com.backpackcloud.cli.Action;
 import com.backpackcloud.cli.AnnotatedCommand;
 import com.backpackcloud.cli.CommandDefinition;
-import com.backpackcloud.sherlogholmes.domain.FilterStack;
+import com.backpackcloud.sherlogholmes.model.FilterStack;
 import io.quarkus.runtime.annotations.RegisterForReflection;
 
 import jakarta.enterprise.context.ApplicationScoped;

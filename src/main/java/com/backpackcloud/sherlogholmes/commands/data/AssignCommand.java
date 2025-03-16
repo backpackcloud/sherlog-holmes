@@ -4,9 +4,9 @@ import com.backpackcloud.cli.Action;
 import com.backpackcloud.cli.AnnotatedCommand;
 import com.backpackcloud.cli.CommandDefinition;
 import com.backpackcloud.cli.RawInput;
-import com.backpackcloud.sherlogholmes.domain.DataRegistry;
-import com.backpackcloud.sherlogholmes.domain.PipelineStep;
-import com.backpackcloud.sherlogholmes.domain.steps.AttributeSetStep;
+import com.backpackcloud.sherlogholmes.model.DataRegistry;
+import com.backpackcloud.sherlogholmes.model.PipelineStep;
+import com.backpackcloud.sherlogholmes.model.steps.AttributeSetStep;
 import io.quarkus.runtime.annotations.RegisterForReflection;
 import jakarta.enterprise.context.ApplicationScoped;
 

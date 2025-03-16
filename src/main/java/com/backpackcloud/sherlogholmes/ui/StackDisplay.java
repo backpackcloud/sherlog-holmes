@@ -1,7 +1,7 @@
 package com.backpackcloud.sherlogholmes.ui;
 
 import com.backpackcloud.cli.CommandContext;
-import com.backpackcloud.sherlogholmes.domain.FilterStack;
+import com.backpackcloud.sherlogholmes.model.FilterStack;
 import io.quarkus.vertx.ConsumeEvent;
 import jakarta.enterprise.context.ApplicationScoped;
 

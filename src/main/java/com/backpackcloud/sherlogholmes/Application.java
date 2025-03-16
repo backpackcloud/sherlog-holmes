@@ -52,7 +52,7 @@ public class Application implements QuarkusApplication {
   @Override
   public int run(String... args) {
     config.macros().forEach(cli::registerMacro);
-    cli.execute(config.commands().toArray(new String[0]));
+    cli.execute(config.commands().toArray(String[]::new));
     cli.start();
     return 0;
   }

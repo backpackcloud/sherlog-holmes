@@ -24,10 +24,10 @@
 
 package com.backpackcloud.sherlogholmes.config;
 
-import com.backpackcloud.cli.preferences.UserPreferences;
+import com.backpackcloud.preferences.UserPreferences;
 import com.backpackcloud.sherlogholmes.Preferences;
-import com.backpackcloud.sherlogholmes.domain.FallbackMode;
-import com.backpackcloud.sherlogholmes.domain.Pipeline;
+import com.backpackcloud.sherlogholmes.model.FallbackMode;
+import com.backpackcloud.sherlogholmes.model.Pipeline;
 import com.fasterxml.jackson.annotation.JacksonInject;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -90,7 +90,7 @@ public class PipelineConfig implements ConfigObject<Pipeline> {
         .flatMap(List::stream)
         .collect(Collectors.toList()),
       FallbackMode.valueOf(
-        (fallbackMode != null ? fallbackMode : preferences.text(Preferences.DEFAULT_FALLBACK_MODE).get())
+        (fallbackMode != null ? fallbackMode : preferences.get(Preferences.DEFAULT_FALLBACK_MODE).value())
           .toUpperCase()
       ),
       preferences

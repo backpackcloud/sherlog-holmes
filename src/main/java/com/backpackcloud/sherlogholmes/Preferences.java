@@ -24,82 +24,68 @@
 
 package com.backpackcloud.sherlogholmes;
 
-import com.backpackcloud.cli.preferences.PreferenceSpec;
+import com.backpackcloud.preferences.PreferenceSpec;
+import com.backpackcloud.preferences.PreferenceType;
 
-public enum Preferences implements PreferenceSpec {
+public final class Preferences {
 
-  TIMESTAMP_ATTRIBUTE(
+  public static final PreferenceSpec<String> TIMESTAMP_ATTRIBUTE = new PreferenceSpec<>(
+    "timestamp-attribute",
     "which attribute holds a timestamp for time bound calculations",
-    Type.TEXT,
+    PreferenceType.TEXT,
     "timestamp"
-  ),
+  );
 
-  COUNT_ATTRIBUTE(
+  public static final PreferenceSpec<String> COUNT_ATTRIBUTE = new PreferenceSpec<>(
+    "count-attribute",
     "which attribute should be used for counting entries",
-    Type.TEXT,
+    PreferenceType.TEXT,
     ""
-  ),
+  );
 
-  INPUT_CHARSET(
+  public static final PreferenceSpec<String> INPUT_CHARSET = new PreferenceSpec<>(
+    "input-charset",
     "sets the charset to use for reading input files",
-    Type.TEXT,
+    PreferenceType.TEXT,
     "UTF-8"
-  ),
+  );
 
-  DEFAULT_FALLBACK_MODE(
+  public static final PreferenceSpec<Integer> FILE_READER_SKIP_LINES = new PreferenceSpec<>(
+    "file-reader-skip-lines",
+    "sets how many lines should be skipped when reading files (useful for CSVs with headers)",
+    PreferenceType.NUMBER,
+    "0"
+  );
+
+  public static final PreferenceSpec<String> DEFAULT_FALLBACK_MODE = new PreferenceSpec<>(
+    "default-fallback-mode",
     "sets the default fallback behavior to use when parsing content fails",
-    Type.TEXT,
+    PreferenceType.TEXT,
     "ignore"
-  ),
+  );
 
-  SHOW_ADDED_ENTRIES(
+  public static final PreferenceSpec<Boolean> SHOW_ADDED_ENTRIES = new PreferenceSpec<>(
+    "show-added-entries",
     "shows entries as they are added in the registry",
-    Type.FLAG,
+    PreferenceType.FLAG,
     "false"
-  ),
+  );
 
-  STACK_OPERATION(
+  public static final PreferenceSpec<String> STACK_OPERATION = new PreferenceSpec<>(
+    "stack-operation",
     "sets the stack operation for creating the filter (and/or)",
-    Type.TEXT,
+    PreferenceType.TEXT,
     "and"
-  ),
+  );
 
-  REMOVE_ANSI_COLORS(
+  public static final PreferenceSpec<Boolean> REMOVE_ANSI_COLORS = new PreferenceSpec<>(
+    "remove-ansi-colors",
     "removes the ansi colors from the readed content",
-    Type.FLAG,
+    PreferenceType.FLAG,
     "true"
   );
 
-  private final String id;
-  private final String description;
-  private final Type type;
-  private final String defaultValue;
+  private Preferences() {
 
-  Preferences(String description, Type type, String defaultValue) {
-    this.id = name().toLowerCase().replaceAll("_", "-");
-    this.description = description;
-    this.type = type;
-    this.defaultValue = defaultValue;
   }
-
-  @Override
-  public String id() {
-    return id;
-  }
-
-  @Override
-  public String description() {
-    return description;
-  }
-
-  @Override
-  public Type type() {
-    return type;
-  }
-
-  @Override
-  public String defaultValue() {
-    return defaultValue;
-  }
-
 }

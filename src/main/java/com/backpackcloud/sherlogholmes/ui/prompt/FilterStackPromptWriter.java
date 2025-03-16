@@ -26,7 +26,7 @@ package com.backpackcloud.sherlogholmes.ui.prompt;
 
 import com.backpackcloud.cli.ui.Prompt;
 import com.backpackcloud.cli.ui.PromptWriter;
-import com.backpackcloud.sherlogholmes.domain.FilterStack;
+import com.backpackcloud.sherlogholmes.model.FilterStack;
 
 import jakarta.enterprise.context.ApplicationScoped;
 

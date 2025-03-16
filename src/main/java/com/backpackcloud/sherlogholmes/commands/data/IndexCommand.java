@@ -30,12 +30,12 @@ import com.backpackcloud.cli.CommandDefinition;
 import com.backpackcloud.cli.Suggestions;
 import com.backpackcloud.cli.Writer;
 import com.backpackcloud.cli.ui.Suggestion;
-import com.backpackcloud.cli.ui.impl.PromptSuggestion;
-import com.backpackcloud.sherlogholmes.domain.AttributeType;
-import com.backpackcloud.sherlogholmes.domain.DataRegistry;
+import com.backpackcloud.cli.ui.components.PromptSuggestion;
+import com.backpackcloud.sherlogholmes.model.AttributeType;
+import com.backpackcloud.sherlogholmes.model.DataRegistry;
 import io.quarkus.runtime.annotations.RegisterForReflection;
-
 import jakarta.enterprise.context.ApplicationScoped;
+
 import java.util.List;
 import java.util.stream.Collectors;
 

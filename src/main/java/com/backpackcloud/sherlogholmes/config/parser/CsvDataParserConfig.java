@@ -26,8 +26,8 @@ package com.backpackcloud.sherlogholmes.config.parser;
 
 import com.backpackcloud.configuration.Configuration;
 import com.backpackcloud.sherlogholmes.config.Config;
-import com.backpackcloud.sherlogholmes.domain.DataParser;
-import com.backpackcloud.sherlogholmes.domain.parsers.CsvDataParser;
+import com.backpackcloud.sherlogholmes.model.DataParser;
+import com.backpackcloud.sherlogholmes.model.parsers.CsvDataParser;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.quarkus.runtime.annotations.RegisterForReflection;

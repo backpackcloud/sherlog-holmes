@@ -25,7 +25,7 @@
 package com.backpackcloud.sherlogholmes.config;
 
 import com.backpackcloud.UnbelievableException;
-import com.backpackcloud.cli.preferences.UserPreferences;
+import com.backpackcloud.preferences.UserPreferences;
 import com.backpackcloud.cli.ui.ColorMap;
 import com.backpackcloud.cli.ui.IconMap;
 import com.backpackcloud.cli.ui.StyleMap;
@@ -35,12 +35,12 @@ import com.backpackcloud.sherlogholmes.Preferences;
 import com.backpackcloud.sherlogholmes.config.mapper.DataMapperConfig;
 import com.backpackcloud.sherlogholmes.config.model.DataModelConfig;
 import com.backpackcloud.sherlogholmes.config.parser.DataParserConfig;
-import com.backpackcloud.sherlogholmes.domain.DataMapper;
-import com.backpackcloud.sherlogholmes.domain.DataModel;
-import com.backpackcloud.sherlogholmes.domain.DataParser;
-import com.backpackcloud.sherlogholmes.domain.DataRegistry;
-import com.backpackcloud.sherlogholmes.domain.Pipeline;
-import com.backpackcloud.sherlogholmes.domain.PipelineStep;
+import com.backpackcloud.sherlogholmes.model.DataMapper;
+import com.backpackcloud.sherlogholmes.model.DataModel;
+import com.backpackcloud.sherlogholmes.model.DataParser;
+import com.backpackcloud.sherlogholmes.model.DataRegistry;
+import com.backpackcloud.sherlogholmes.model.Pipeline;
+import com.backpackcloud.sherlogholmes.model.PipelineStep;
 import com.fasterxml.jackson.annotation.JacksonInject;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -101,10 +101,13 @@ public class Config {
       index.forEach(registry::addIndex);
     }
 
-    userPreferences.register(Preferences.values());
+    userPreferences.register(Preferences.class);
 
     if (preferences != null) {
-      userPreferences.load(preferences);
+      preferences.forEach((id, configuration) ->
+        userPreferences
+          .find(id)
+          .ifPresent(preference -> preference.set(configuration.read())));
     }
 
     if (models != null) {

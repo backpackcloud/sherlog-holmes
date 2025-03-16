@@ -7,12 +7,12 @@ import com.backpackcloud.cli.PreferenceValue;
 import com.backpackcloud.cli.Suggestions;
 import com.backpackcloud.cli.Writer;
 import com.backpackcloud.cli.ui.Suggestion;
-import com.backpackcloud.cli.ui.impl.PromptSuggestion;
+import com.backpackcloud.cli.ui.components.PromptSuggestion;
 import com.backpackcloud.sherlogholmes.config.Config;
-import com.backpackcloud.sherlogholmes.domain.DataReader;
-import com.backpackcloud.sherlogholmes.domain.DataRegistry;
-import com.backpackcloud.sherlogholmes.domain.Pipeline;
-import com.backpackcloud.sherlogholmes.domain.readers.SocketDataReader;
+import com.backpackcloud.sherlogholmes.model.DataReader;
+import com.backpackcloud.sherlogholmes.model.DataRegistry;
+import com.backpackcloud.sherlogholmes.model.Pipeline;
+import com.backpackcloud.sherlogholmes.model.readers.SocketDataReader;
 import io.quarkus.runtime.annotations.RegisterForReflection;
 import jakarta.enterprise.context.ApplicationScoped;
 

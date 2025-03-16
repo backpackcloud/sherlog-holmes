@@ -25,10 +25,10 @@
 package com.backpackcloud.sherlogholmes.ui.suggestions;
 
 import com.backpackcloud.cli.ui.Suggestion;
-import com.backpackcloud.cli.ui.impl.PromptSuggestion;
-import com.backpackcloud.sherlogholmes.domain.AttributeType;
-import com.backpackcloud.sherlogholmes.domain.DataRegistry;
-import com.backpackcloud.sherlogholmes.domain.Operand;
+import com.backpackcloud.cli.ui.components.PromptSuggestion;
+import com.backpackcloud.sherlogholmes.model.AttributeType;
+import com.backpackcloud.sherlogholmes.model.DataRegistry;
+import com.backpackcloud.sherlogholmes.model.Operand;
 
 import java.util.ArrayList;
 import java.util.List;

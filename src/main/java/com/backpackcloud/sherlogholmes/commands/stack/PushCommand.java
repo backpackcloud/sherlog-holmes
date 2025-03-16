@@ -32,9 +32,9 @@ import com.backpackcloud.cli.ParameterCount;
 import com.backpackcloud.cli.RawInput;
 import com.backpackcloud.cli.Suggestions;
 import com.backpackcloud.cli.ui.Suggestion;
-import com.backpackcloud.sherlogholmes.domain.DataRegistry;
-import com.backpackcloud.sherlogholmes.domain.FilterFactory;
-import com.backpackcloud.sherlogholmes.domain.FilterStack;
+import com.backpackcloud.sherlogholmes.model.DataRegistry;
+import com.backpackcloud.sherlogholmes.model.FilterFactory;
+import com.backpackcloud.sherlogholmes.model.FilterStack;
 import com.backpackcloud.sherlogholmes.ui.suggestions.AttributeSuggester;
 import io.quarkus.runtime.annotations.RegisterForReflection;
 
