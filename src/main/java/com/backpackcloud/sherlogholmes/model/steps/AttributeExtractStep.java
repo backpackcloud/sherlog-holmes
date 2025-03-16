@@ -28,11 +28,9 @@ import com.backpackcloud.sherlogholmes.model.DataEntry;
 import com.backpackcloud.sherlogholmes.model.PipelineStep;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import io.quarkus.runtime.annotations.RegisterForReflection;
 
 import java.util.List;
 
-@RegisterForReflection
 public class AttributeExtractStep implements PipelineStep {
 
   private final String sourceAttribute;

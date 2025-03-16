@@ -25,12 +25,12 @@
 package com.backpackcloud.sherlogholmes.config;
 
 import com.backpackcloud.UnbelievableException;
-import com.backpackcloud.preferences.UserPreferences;
 import com.backpackcloud.cli.ui.ColorMap;
 import com.backpackcloud.cli.ui.IconMap;
 import com.backpackcloud.cli.ui.StyleMap;
 import com.backpackcloud.cli.ui.Theme;
 import com.backpackcloud.configuration.Configuration;
+import com.backpackcloud.preferences.UserPreferences;
 import com.backpackcloud.sherlogholmes.Preferences;
 import com.backpackcloud.sherlogholmes.config.mapper.DataMapperConfig;
 import com.backpackcloud.sherlogholmes.config.model.DataModelConfig;
@@ -44,7 +44,6 @@ import com.backpackcloud.sherlogholmes.model.PipelineStep;
 import com.fasterxml.jackson.annotation.JacksonInject;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import io.quarkus.runtime.annotations.RegisterForReflection;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -52,11 +51,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-@RegisterForReflection
 public class Config {
   private final Map<String, String> patterns;
   private final List<String> commands;
-  private final Map<String, List<String>> macros;
   private final Map<String, DataModelConfig> models;
   private final Map<String, DataParserConfig> parsers;
   private final Map<String, DataMapperConfig> mappers;
@@ -73,14 +70,13 @@ public class Config {
                 @JsonProperty("colors") Map<String, String> colors,
                 @JsonProperty("styles") Map<String, String> styles,
                 @JsonProperty("commands") List<String> commands,
-                @JsonProperty("macros") Map<String, List<String>> macros,
                 @JsonProperty("models") Map<String, DataModelConfig> models,
                 @JsonProperty("parsers") Map<String, DataParserConfig> parsers,
                 @JsonProperty("mappers") Map<String, DataMapperConfig> mappers,
                 @JsonProperty("steps") Map<String, List<PipelineStep>> steps,
                 @JsonProperty("pipelines") Map<String, PipelineConfig> pipelines,
                 @JsonProperty("index") List<String> index) {
-    this(patterns, commands, macros, models, parsers, mappers, steps, pipelines);
+    this(patterns, commands, models, parsers, mappers, steps, pipelines);
 
     if (icons != null) {
       IconMap iconMap = theme.iconMap();
@@ -121,14 +117,12 @@ public class Config {
 
   private Config(Map<String, Configuration> patterns,
                  List<String> commands,
-                 Map<String, List<String>> macros,
                  Map<String, DataModelConfig> models,
                  Map<String, DataParserConfig> parsers,
                  Map<String, DataMapperConfig> mappers,
                  Map<String, List<PipelineStep>> steps,
                  Map<String, PipelineConfig> pipelines) {
     this.commands = commands != null ? commands : new ArrayList<>();
-    this.macros = macros != null ? macros : new HashMap<>();
     this.models = models != null ? models : new HashMap<>();
     this.parsers = parsers != null ? parsers : new HashMap<>();
     this.mappers = mappers != null ? mappers : new HashMap<>();
@@ -147,10 +141,6 @@ public class Config {
 
   public Map<String, String> patterns() {
     return patterns;
-  }
-
-  public Map<String, List<String>> macros() {
-    return macros;
   }
 
   private <E, T extends ConfigObject<E>> E getObject(Map<String, T> map, String key) {
@@ -193,7 +183,6 @@ public class Config {
   public void mergeWith(Config other) {
     this.patterns.putAll(other.patterns);
     this.commands.addAll(other.commands);
-    this.macros.putAll(other.macros);
     this.models.putAll(other.models);
     this.parsers.putAll(other.parsers);
     this.mappers.putAll(other.mappers);

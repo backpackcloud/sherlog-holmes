@@ -33,7 +33,6 @@ import com.backpackcloud.sherlogholmes.model.steps.RegexMapperStep;
 import com.fasterxml.jackson.annotation.JacksonInject;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import io.quarkus.runtime.annotations.RegisterForReflection;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -41,7 +40,6 @@ import java.util.Objects;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
 
-@RegisterForReflection
 public interface PipelineStep {
 
   void analyze(DataEntry dataEntry);

@@ -25,22 +25,19 @@
 package com.backpackcloud.sherlogholmes.commands.data;
 
 import com.backpackcloud.cli.Action;
-import com.backpackcloud.cli.AnnotatedCommand;
 import com.backpackcloud.cli.CommandContext;
 import com.backpackcloud.cli.CommandDefinition;
 import com.backpackcloud.cli.ParameterCount;
 import com.backpackcloud.cli.Suggestions;
-import com.backpackcloud.preferences.UserPreferences;
 import com.backpackcloud.cli.ui.Paginator;
 import com.backpackcloud.cli.ui.Suggestion;
+import com.backpackcloud.preferences.UserPreferences;
 import com.backpackcloud.sherlogholmes.Preferences;
 import com.backpackcloud.sherlogholmes.model.Attribute;
 import com.backpackcloud.sherlogholmes.model.Count;
 import com.backpackcloud.sherlogholmes.model.DataEntry;
 import com.backpackcloud.sherlogholmes.model.DataRegistry;
 import com.backpackcloud.sherlogholmes.ui.suggestions.AttributeSuggester;
-import io.quarkus.runtime.annotations.RegisterForReflection;
-import jakarta.enterprise.context.ApplicationScoped;
 
 import java.util.Collections;
 import java.util.Comparator;
@@ -50,14 +47,12 @@ import java.util.Map;
 import java.util.NavigableSet;
 import java.util.concurrent.atomic.AtomicInteger;
 
-@ApplicationScoped
 @CommandDefinition(
   name = "count",
   type = "Data Visualization",
   description = "Counts the entries in the registry"
 )
-@RegisterForReflection
-public class CountCommand implements AnnotatedCommand {
+public class CountCommand {
 
   private final DataRegistry registry;
   private final AttributeSuggester attributeSuggester;

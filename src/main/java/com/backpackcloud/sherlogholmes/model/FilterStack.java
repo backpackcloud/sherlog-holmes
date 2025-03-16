@@ -30,7 +30,6 @@ import com.backpackcloud.cli.Registry;
 import com.backpackcloud.cli.Writer;
 import com.backpackcloud.preferences.UserPreferences;
 import com.backpackcloud.sherlogholmes.Preferences;
-import jakarta.enterprise.context.ApplicationScoped;
 
 import java.util.ArrayDeque;
 import java.util.Deque;
@@ -38,7 +37,6 @@ import java.util.Iterator;
 import java.util.function.BinaryOperator;
 import java.util.stream.Stream;
 
-@ApplicationScoped
 public class FilterStack implements Registry, Displayable {
 
   private final Deque<DataFilter> stack;

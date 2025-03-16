@@ -25,7 +25,6 @@
 package com.backpackcloud.sherlogholmes.commands.data;
 
 import com.backpackcloud.cli.Action;
-import com.backpackcloud.cli.AnnotatedCommand;
 import com.backpackcloud.cli.CommandDefinition;
 import com.backpackcloud.cli.PreferenceValue;
 import com.backpackcloud.cli.Suggestions;
@@ -38,8 +37,6 @@ import com.backpackcloud.sherlogholmes.model.DataReader;
 import com.backpackcloud.sherlogholmes.model.DataRegistry;
 import com.backpackcloud.sherlogholmes.model.Pipeline;
 import com.backpackcloud.sherlogholmes.model.readers.FileLineReader;
-import io.quarkus.runtime.annotations.RegisterForReflection;
-import jakarta.enterprise.context.ApplicationScoped;
 
 import java.nio.charset.Charset;
 import java.util.List;
@@ -50,18 +47,16 @@ import java.util.stream.Collectors;
   description = "Inspects data inside the given file",
   type = "Data"
 )
-@ApplicationScoped
-@RegisterForReflection
-public class InspectCommand implements AnnotatedCommand {
+public class InspectCommand {
 
   private final DataRegistry registry;
   private final Config config;
   private final FileSuggester suggester;
 
-  public InspectCommand(DataRegistry registry, Config config) {
+  public InspectCommand(DataRegistry registry, Config config, FileSuggester suggester) {
     this.registry = registry;
     this.config = config;
-    this.suggester = new FileSuggester();
+    this.suggester = suggester;
   }
 
   @Action

@@ -25,25 +25,19 @@
 package com.backpackcloud.sherlogholmes.commands.data;
 
 import com.backpackcloud.cli.Action;
-import com.backpackcloud.cli.AnnotatedCommand;
 import com.backpackcloud.cli.CommandDefinition;
 import com.backpackcloud.cli.Paginate;
 import com.backpackcloud.sherlogholmes.model.DataEntry;
 import com.backpackcloud.sherlogholmes.model.DataRegistry;
-import io.quarkus.runtime.annotations.RegisterForReflection;
-import jakarta.enterprise.context.ApplicationScoped;
 
 import java.util.stream.Stream;
 
-@ApplicationScoped
 @CommandDefinition(
-  name = "list",
-  aliases = {"ls", "show"},
+  name = "ls",
   type = "Data Visualization",
   description = "Shows the current entries"
 )
-@RegisterForReflection
-public class ListDataCommand implements AnnotatedCommand {
+public class ListDataCommand {
 
   private final DataRegistry registry;
 

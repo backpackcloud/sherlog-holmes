@@ -29,14 +29,12 @@ import com.backpackcloud.sherlogholmes.model.Attribute;
 import com.backpackcloud.sherlogholmes.model.DataEntry;
 import com.backpackcloud.sherlogholmes.model.PipelineStep;
 import com.fasterxml.jackson.annotation.JsonCreator;
-import io.quarkus.runtime.annotations.RegisterForReflection;
 
 import java.util.Map;
 import java.util.function.BiConsumer;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-@RegisterForReflection
 public class AttributeSetStep implements PipelineStep {
 
   private static final Pattern INTERPOLATION_PATTERN = Pattern.compile("\\{\\s*(?<name>[^}]+)\\s*}");

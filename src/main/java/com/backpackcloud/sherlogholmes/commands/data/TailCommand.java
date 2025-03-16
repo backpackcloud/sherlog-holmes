@@ -25,35 +25,25 @@
 package com.backpackcloud.sherlogholmes.commands.data;
 
 import com.backpackcloud.cli.Action;
-import com.backpackcloud.cli.AnnotatedCommand;
 import com.backpackcloud.cli.CommandDefinition;
 import com.backpackcloud.cli.Paginate;
-import com.backpackcloud.cli.PreferenceValue;
 import com.backpackcloud.cli.Suggestions;
 import com.backpackcloud.cli.ui.Suggestion;
-import com.backpackcloud.sherlogholmes.model.Attribute;
 import com.backpackcloud.sherlogholmes.model.DataEntry;
 import com.backpackcloud.sherlogholmes.model.DataRegistry;
 import com.backpackcloud.sherlogholmes.ui.suggestions.ChronoUnitSuggestions;
-import io.quarkus.runtime.annotations.RegisterForReflection;
-import jakarta.enterprise.context.ApplicationScoped;
 
 import java.time.temporal.ChronoUnit;
-import java.time.temporal.Temporal;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Stream;
 
-@ApplicationScoped
 @CommandDefinition(
   name = "tail",
   description = "Shows the last N entries",
-  type = "Data Visualization",
-  aliases = "last"
+  type = "Data Visualization"
 )
-@RegisterForReflection
-public class TailCommand implements AnnotatedCommand {
+public class TailCommand {
 
   private final DataRegistry registry;
 
@@ -63,37 +53,14 @@ public class TailCommand implements AnnotatedCommand {
 
   @Paginate
   @Action
-  public Stream<DataEntry> execute(Integer amount, ChronoUnit unit,
-                                   @PreferenceValue("timestamp-attribute") String timestampAttribute) {
+  public Stream<DataEntry> execute(Integer amount, ChronoUnit unit) {
     if (registry.isEmpty()) {
       return Stream.empty();
     }
-
     if (unit == null) {
-      List<DataEntry> entries = new ArrayList<>(registry.entries()
-        .descendingSet()
-        .stream()
-        .limit(amount)
-        .toList());
-
-      Collections.reverse(entries);
-
-      return entries.stream();
+      return registry.tail(amount);
     } else {
-      Temporal reference = registry.entries().first()
-        .attribute(timestampAttribute, Temporal.class)
-        .flatMap(Attribute::value)
-        .map(temporal -> temporal.minus(amount, unit))
-        .orElseThrow();
-      return registry.entries()
-        .stream()
-        .filter(entry ->
-          entry.attribute(timestampAttribute, Temporal.class)
-            .flatMap(Attribute::value)
-            .map(timestamp -> registry.typeOf("timestamp")
-              .orElseThrow()
-              .compare(timestamp, reference) >= 0)
-            .orElse(false));
+      return registry.tail(amount, unit);
     }
   }
 

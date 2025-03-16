@@ -25,35 +25,25 @@
 package com.backpackcloud.sherlogholmes.commands.data;
 
 import com.backpackcloud.cli.Action;
-import com.backpackcloud.cli.AnnotatedCommand;
 import com.backpackcloud.cli.CommandDefinition;
 import com.backpackcloud.cli.Paginate;
-import com.backpackcloud.cli.PreferenceValue;
 import com.backpackcloud.cli.Suggestions;
 import com.backpackcloud.cli.ui.Suggestion;
-import com.backpackcloud.sherlogholmes.model.Attribute;
 import com.backpackcloud.sherlogholmes.model.DataEntry;
 import com.backpackcloud.sherlogholmes.model.DataRegistry;
 import com.backpackcloud.sherlogholmes.ui.suggestions.ChronoUnitSuggestions;
-import io.quarkus.runtime.annotations.RegisterForReflection;
-import jakarta.enterprise.context.ApplicationScoped;
 
 import java.time.temporal.ChronoUnit;
-import java.time.temporal.Temporal;
 import java.util.Collections;
 import java.util.List;
-import java.util.NavigableSet;
 import java.util.stream.Stream;
 
-@ApplicationScoped
 @CommandDefinition(
   name = "head",
   description = "Shows the first N entries",
-  type = "Data Visualization",
-  aliases = "first"
+  type = "Data Visualization"
 )
-@RegisterForReflection
-public class HeadCommand implements AnnotatedCommand {
+public class HeadCommand {
 
   private final DataRegistry registry;
 
@@ -63,29 +53,15 @@ public class HeadCommand implements AnnotatedCommand {
 
   @Action
   @Paginate
-  public Stream<DataEntry> execute(Integer amount, ChronoUnit unit,
-                                   @PreferenceValue("timestamp-attribute") String timestampAttribute) {
+  public Stream<DataEntry> execute(Integer amount, ChronoUnit unit) {
     if (registry.isEmpty()) {
       return Stream.empty();
     }
 
     if (unit == null) {
-      return registry.stream().limit(amount);
+      return registry.head(amount);
     } else {
-      NavigableSet<DataEntry> entries = registry.entries();
-      Temporal reference = entries.first()
-        .attribute(timestampAttribute, Temporal.class)
-        .flatMap(Attribute::value)
-        .map(temporal -> temporal.plus(amount, unit))
-        .orElseThrow();
-      return entries.stream()
-        .filter(entry ->
-          entry.attribute(timestampAttribute, Temporal.class)
-            .flatMap(Attribute::value)
-            .map(timestamp -> registry.typeOf("timestamp")
-              .orElseThrow()
-              .compare(timestamp, reference) <= 0)
-            .orElse(false));
+      return registry.head(amount, unit);
     }
   }
 

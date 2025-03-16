@@ -28,11 +28,9 @@ import com.backpackcloud.cli.ui.Prompt;
 import com.backpackcloud.cli.ui.PromptWriter;
 import com.backpackcloud.cli.ui.Theme;
 import com.backpackcloud.sherlogholmes.model.DataRegistry;
-import jakarta.enterprise.context.ApplicationScoped;
 
 import java.util.Set;
 
-@ApplicationScoped
 public class DataCountPromptWriter implements PromptWriter {
 
   private final DataRegistry registry;
@@ -41,11 +39,6 @@ public class DataCountPromptWriter implements PromptWriter {
   public DataCountPromptWriter(DataRegistry registry, Theme theme) {
     this.registry = registry;
     this.theme = theme;
-  }
-
-  @Override
-  public String name() {
-    return "data-count";
   }
 
   @Override

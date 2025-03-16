@@ -26,7 +26,6 @@ package com.backpackcloud.sherlogholmes.commands.stack;
 
 import com.backpackcloud.UnbelievableException;
 import com.backpackcloud.cli.Action;
-import com.backpackcloud.cli.AnnotatedCommand;
 import com.backpackcloud.cli.CommandDefinition;
 import com.backpackcloud.cli.ParameterCount;
 import com.backpackcloud.cli.RawInput;
@@ -36,19 +35,16 @@ import com.backpackcloud.sherlogholmes.model.DataRegistry;
 import com.backpackcloud.sherlogholmes.model.FilterFactory;
 import com.backpackcloud.sherlogholmes.model.FilterStack;
 import com.backpackcloud.sherlogholmes.ui.suggestions.AttributeSuggester;
-import io.quarkus.runtime.annotations.RegisterForReflection;
 
-import jakarta.enterprise.context.ApplicationScoped;
 import java.util.List;
-@ApplicationScoped
+
 @CommandDefinition(
   name = "push",
   event = "stack",
   type = "Stack Manipulation",
   description = "Adds the given filter to the stack."
 )
-@RegisterForReflection
-public class PushCommand implements AnnotatedCommand {
+public class PushCommand {
 
   private final FilterFactory filterFactory;
   private final FilterStack stack;

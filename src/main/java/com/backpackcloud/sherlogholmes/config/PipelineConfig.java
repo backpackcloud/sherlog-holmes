@@ -31,13 +31,11 @@ import com.backpackcloud.sherlogholmes.model.Pipeline;
 import com.fasterxml.jackson.annotation.JacksonInject;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import io.quarkus.runtime.annotations.RegisterForReflection;
 
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
-@RegisterForReflection
 public class PipelineConfig implements ConfigObject<Pipeline> {
 
 

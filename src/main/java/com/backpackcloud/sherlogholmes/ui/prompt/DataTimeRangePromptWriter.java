@@ -24,16 +24,14 @@
 
 package com.backpackcloud.sherlogholmes.ui.prompt;
 
-import com.backpackcloud.preferences.UserPreferences;
 import com.backpackcloud.cli.ui.Prompt;
 import com.backpackcloud.cli.ui.PromptWriter;
+import com.backpackcloud.preferences.UserPreferences;
 import com.backpackcloud.sherlogholmes.Preferences;
 import com.backpackcloud.sherlogholmes.model.DataRegistry;
-import jakarta.enterprise.context.ApplicationScoped;
 
 import java.time.Duration;
 
-@ApplicationScoped
 public class DataTimeRangePromptWriter implements PromptWriter {
 
   private final DataRegistry registry;
@@ -42,11 +40,6 @@ public class DataTimeRangePromptWriter implements PromptWriter {
   public DataTimeRangePromptWriter(DataRegistry registry, UserPreferences preferences) {
     this.registry = registry;
     this.preferences = preferences;
-  }
-
-  @Override
-  public String name() {
-    return "data-range";
   }
 
   @Override

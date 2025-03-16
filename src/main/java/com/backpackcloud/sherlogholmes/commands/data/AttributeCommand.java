@@ -1,22 +1,17 @@
 package com.backpackcloud.sherlogholmes.commands.data;
 
 import com.backpackcloud.cli.Action;
-import com.backpackcloud.cli.AnnotatedCommand;
 import com.backpackcloud.cli.CommandDefinition;
 import com.backpackcloud.cli.RawInput;
 import com.backpackcloud.sherlogholmes.model.AttributeSpec;
 import com.backpackcloud.sherlogholmes.model.DataRegistry;
-import io.quarkus.runtime.annotations.RegisterForReflection;
-import jakarta.enterprise.context.ApplicationScoped;
 
 @CommandDefinition(
   name = "attr",
   description = "Creates or remove entry attributes",
   type = "Data Manipulation"
 )
-@RegisterForReflection
-@ApplicationScoped
-public class AttributeCommand implements AnnotatedCommand {
+public class AttributeCommand {
 
   private final DataRegistry registry;
 

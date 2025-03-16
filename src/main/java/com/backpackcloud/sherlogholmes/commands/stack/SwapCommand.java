@@ -26,23 +26,17 @@ package com.backpackcloud.sherlogholmes.commands.stack;
 
 import com.backpackcloud.UnbelievableException;
 import com.backpackcloud.cli.Action;
-import com.backpackcloud.cli.AnnotatedCommand;
 import com.backpackcloud.cli.CommandDefinition;
 import com.backpackcloud.sherlogholmes.model.DataFilter;
 import com.backpackcloud.sherlogholmes.model.FilterStack;
-import io.quarkus.runtime.annotations.RegisterForReflection;
 
-import jakarta.enterprise.context.ApplicationScoped;
-
-@ApplicationScoped
 @CommandDefinition(
   name = "swap",
   event = "stack",
   type = "Stack Manipulation",
-  description ="Swaps the current and second filters at the top of the stack"
+  description = "Swaps the current and second filters at the top of the stack"
 )
-@RegisterForReflection
-public class SwapCommand implements AnnotatedCommand {
+public class SwapCommand {
 
   private final FilterStack stack;
 

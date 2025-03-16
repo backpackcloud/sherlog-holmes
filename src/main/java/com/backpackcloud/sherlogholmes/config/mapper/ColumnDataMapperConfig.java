@@ -28,9 +28,7 @@ import com.backpackcloud.sherlogholmes.config.Config;
 import com.backpackcloud.sherlogholmes.model.DataMapper;
 import com.backpackcloud.sherlogholmes.model.mappers.ColumnDataMapper;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import io.quarkus.runtime.annotations.RegisterForReflection;
 
-@RegisterForReflection
 public class ColumnDataMapperConfig implements DataMapperConfig {
 
   private final String[] attributes;

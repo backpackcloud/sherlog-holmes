@@ -24,23 +24,14 @@
 
 package com.backpackcloud.sherlogholmes;
 
-import io.quarkus.runtime.Quarkus;
-import io.quarkus.runtime.annotations.QuarkusMain;
-
 import java.io.IOException;
 
-@QuarkusMain
 public class Main {
 
   public static void main(String[] args) throws IOException {
-    if (args.length > 0) {
-      System.setProperty("sherlog.config.file", args[0]);
-    }
-
     System.out.println(new String(Main.class.getResourceAsStream("/META-INF/banner.txt").readAllBytes()));
 
-    Quarkus.run(Application.class);
-    Quarkus.waitForExit();
+    new Application().run();
   }
 
 }

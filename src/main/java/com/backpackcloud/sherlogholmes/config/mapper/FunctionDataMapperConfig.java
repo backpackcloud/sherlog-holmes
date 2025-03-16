@@ -29,14 +29,12 @@ import com.backpackcloud.sherlogholmes.model.DataMapper;
 import com.backpackcloud.sherlogholmes.model.mappers.FunctionDataMapper;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import io.quarkus.runtime.annotations.RegisterForReflection;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
 
-@RegisterForReflection
 public class FunctionDataMapperConfig implements DataMapperConfig {
 
   private final Map<String, String> attributeMappings;

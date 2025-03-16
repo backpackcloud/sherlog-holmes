@@ -25,11 +25,9 @@
 package com.backpackcloud.sherlogholmes.model;
 
 import com.backpackcloud.UnbelievableException;
-import jakarta.enterprise.context.ApplicationScoped;
 
 import java.util.StringTokenizer;
 
-@ApplicationScoped
 public class FilterFactory {
 
   public DataFilter create(String expression) {

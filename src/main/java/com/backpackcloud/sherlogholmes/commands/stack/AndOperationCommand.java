@@ -25,22 +25,16 @@
 package com.backpackcloud.sherlogholmes.commands.stack;
 
 import com.backpackcloud.cli.Action;
-import com.backpackcloud.cli.AnnotatedCommand;
 import com.backpackcloud.cli.CommandDefinition;
 import com.backpackcloud.sherlogholmes.model.FilterStack;
-import io.quarkus.runtime.annotations.RegisterForReflection;
 
-import jakarta.enterprise.context.ApplicationScoped;
-
-@ApplicationScoped
 @CommandDefinition(
   name = "and",
   event = "stack",
   type = "Stack Manipulation",
   description = "Applies the boolean AND operation with the first filters at the top of the stack"
 )
-@RegisterForReflection
-public class AndOperationCommand implements AnnotatedCommand {
+public class AndOperationCommand {
 
   private final FilterStack stack;
 

@@ -30,9 +30,7 @@ import com.backpackcloud.sherlogholmes.model.DataParser;
 import com.backpackcloud.sherlogholmes.model.parsers.CsvDataParser;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import io.quarkus.runtime.annotations.RegisterForReflection;
 
-@RegisterForReflection
 public class CsvDataParserConfig implements DataParserConfig {
 
   private final Configuration skipFirstLine;

@@ -4,11 +4,9 @@ import com.backpackcloud.sherlogholmes.model.Attribute;
 import com.backpackcloud.sherlogholmes.model.DataEntry;
 import com.backpackcloud.sherlogholmes.model.PipelineStep;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import io.quarkus.runtime.annotations.RegisterForReflection;
 
 import java.util.Map;
 
-@RegisterForReflection
 public class AttributeRelationStep implements PipelineStep {
 
   private final String sourceAttribute;

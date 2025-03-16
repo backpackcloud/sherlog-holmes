@@ -25,22 +25,16 @@
 package com.backpackcloud.sherlogholmes.commands.stack;
 
 import com.backpackcloud.cli.Action;
-import com.backpackcloud.cli.AnnotatedCommand;
 import com.backpackcloud.cli.CommandDefinition;
 import com.backpackcloud.sherlogholmes.model.FilterStack;
-import io.quarkus.runtime.annotations.RegisterForReflection;
 
-import jakarta.enterprise.context.ApplicationScoped;
-
-@ApplicationScoped
 @CommandDefinition(
   name = "dup",
   event = "stack",
   type = "Stack Manipulation",
   description = "Duplicates the current filter"
 )
-@RegisterForReflection
-public class DupCommand implements AnnotatedCommand {
+public class DupCommand {
 
   private final FilterStack stack;
 

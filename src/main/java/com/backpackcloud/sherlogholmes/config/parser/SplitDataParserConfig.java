@@ -30,13 +30,11 @@ import com.backpackcloud.sherlogholmes.model.DataParser;
 import com.backpackcloud.sherlogholmes.model.parsers.SplitDataParser;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import io.quarkus.runtime.annotations.RegisterForReflection;
 
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-@RegisterForReflection
 public class SplitDataParserConfig implements DataParserConfig {
 
   private static final Pattern PATTERN = Pattern.compile("\\{\\{(?<key>[^}]+)}}");

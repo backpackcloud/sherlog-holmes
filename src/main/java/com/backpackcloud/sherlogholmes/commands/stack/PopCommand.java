@@ -25,22 +25,16 @@
 package com.backpackcloud.sherlogholmes.commands.stack;
 
 import com.backpackcloud.cli.Action;
-import com.backpackcloud.cli.AnnotatedCommand;
 import com.backpackcloud.cli.CommandDefinition;
 import com.backpackcloud.sherlogholmes.model.FilterStack;
-import io.quarkus.runtime.annotations.RegisterForReflection;
 
-import jakarta.enterprise.context.ApplicationScoped;
-
-@ApplicationScoped
 @CommandDefinition(
   name = "pop",
   event = "stack",
   type = "Stack Manipulation",
-  description ="Removes the current filter from the top of the stack"
+  description = "Removes the current filter from the top of the stack"
 )
-@RegisterForReflection
-public class PopCommand implements AnnotatedCommand {
+public class PopCommand {
 
   private final FilterStack stack;
 

@@ -28,9 +28,7 @@ import com.backpackcloud.configuration.Configuration;
 import com.backpackcloud.sherlogholmes.config.ConfigObject;
 import com.backpackcloud.sherlogholmes.model.AttributeSpec;
 import com.fasterxml.jackson.annotation.JsonCreator;
-import io.quarkus.runtime.annotations.RegisterForReflection;
 
-@RegisterForReflection
 public interface DataAttributeConfig extends ConfigObject<AttributeSpec> {
 
   @JsonCreator

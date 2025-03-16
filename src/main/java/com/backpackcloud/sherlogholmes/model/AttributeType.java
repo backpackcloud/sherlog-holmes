@@ -27,7 +27,6 @@ package com.backpackcloud.sherlogholmes.model;
 import com.backpackcloud.sherlogholmes.model.types.EnumType;
 import com.backpackcloud.sherlogholmes.model.types.TemporalType;
 import com.fasterxml.jackson.annotation.JsonValue;
-import io.quarkus.runtime.annotations.RegisterForReflection;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -35,7 +34,6 @@ import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Comparator;
 
-@RegisterForReflection
 public interface AttributeType<E> extends Converter<E>, Formatter<E>, Validator<E>, Comparator<E> {
 
   @JsonValue

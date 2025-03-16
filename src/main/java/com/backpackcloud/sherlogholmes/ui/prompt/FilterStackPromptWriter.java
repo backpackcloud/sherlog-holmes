@@ -28,20 +28,12 @@ import com.backpackcloud.cli.ui.Prompt;
 import com.backpackcloud.cli.ui.PromptWriter;
 import com.backpackcloud.sherlogholmes.model.FilterStack;
 
-import jakarta.enterprise.context.ApplicationScoped;
-
-@ApplicationScoped
 public class FilterStackPromptWriter implements PromptWriter {
 
   private final FilterStack stack;
 
   public FilterStackPromptWriter(FilterStack stack) {
     this.stack = stack;
-  }
-
-  @Override
-  public String name() {
-    return "filter-stack";
   }
 
   @Override

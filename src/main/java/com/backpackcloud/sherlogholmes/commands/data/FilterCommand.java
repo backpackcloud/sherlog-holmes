@@ -25,21 +25,16 @@
 package com.backpackcloud.sherlogholmes.commands.data;
 
 import com.backpackcloud.cli.Action;
-import com.backpackcloud.cli.AnnotatedCommand;
 import com.backpackcloud.cli.CommandDefinition;
 import com.backpackcloud.sherlogholmes.model.DataRegistry;
 import com.backpackcloud.sherlogholmes.model.FilterStack;
-import io.quarkus.runtime.annotations.RegisterForReflection;
-import jakarta.enterprise.context.ApplicationScoped;
 
-@ApplicationScoped
 @CommandDefinition(
   name = "filter",
   description = "Applies the stack filters to the log entries.",
   type = "Data Manipulation"
 )
-@RegisterForReflection
-public class FilterCommand implements AnnotatedCommand {
+public class FilterCommand {
 
   private final DataRegistry registry;
   private final FilterStack filterStack;

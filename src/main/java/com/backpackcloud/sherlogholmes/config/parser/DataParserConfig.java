@@ -28,7 +28,6 @@ import com.backpackcloud.sherlogholmes.config.ConfigObject;
 import com.backpackcloud.sherlogholmes.model.DataParser;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
-import io.quarkus.runtime.annotations.RegisterForReflection;
 
 @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, property = "type")
 @JsonSubTypes({
@@ -37,7 +36,6 @@ import io.quarkus.runtime.annotations.RegisterForReflection;
   @JsonSubTypes.Type(name = "json", value = JsonDataParserConfig.class),
   @JsonSubTypes.Type(name = "split", value = SplitDataParserConfig.class),
 })
-@RegisterForReflection
 public interface DataParserConfig extends ConfigObject<DataParser<?>> {
 
 }

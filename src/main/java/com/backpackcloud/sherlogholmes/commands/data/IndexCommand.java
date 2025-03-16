@@ -25,7 +25,6 @@
 package com.backpackcloud.sherlogholmes.commands.data;
 
 import com.backpackcloud.cli.Action;
-import com.backpackcloud.cli.AnnotatedCommand;
 import com.backpackcloud.cli.CommandDefinition;
 import com.backpackcloud.cli.Suggestions;
 import com.backpackcloud.cli.Writer;
@@ -33,8 +32,6 @@ import com.backpackcloud.cli.ui.Suggestion;
 import com.backpackcloud.cli.ui.components.PromptSuggestion;
 import com.backpackcloud.sherlogholmes.model.AttributeType;
 import com.backpackcloud.sherlogholmes.model.DataRegistry;
-import io.quarkus.runtime.annotations.RegisterForReflection;
-import jakarta.enterprise.context.ApplicationScoped;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -44,9 +41,7 @@ import java.util.stream.Collectors;
   description = "shows index information",
   type = "Data Visualization"
 )
-@ApplicationScoped
-@RegisterForReflection
-public class IndexCommand implements AnnotatedCommand {
+public class IndexCommand {
 
   private final DataRegistry registry;
 

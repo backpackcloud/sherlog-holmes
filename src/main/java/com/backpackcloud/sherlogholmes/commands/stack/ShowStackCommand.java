@@ -25,22 +25,16 @@
 package com.backpackcloud.sherlogholmes.commands.stack;
 
 import com.backpackcloud.cli.Action;
-import com.backpackcloud.cli.AnnotatedCommand;
 import com.backpackcloud.cli.CommandDefinition;
 import com.backpackcloud.sherlogholmes.model.FilterStack;
-import io.quarkus.runtime.annotations.RegisterForReflection;
 
-import jakarta.enterprise.context.ApplicationScoped;
-
-@ApplicationScoped
 @CommandDefinition(
   name = "stack",
   event = "print-stack",
   type = "Stack Manipulation",
   description = "Shows the stacked filters"
 )
-@RegisterForReflection
-public class ShowStackCommand implements AnnotatedCommand {
+public class ShowStackCommand {
 
   private final FilterStack stack;
 

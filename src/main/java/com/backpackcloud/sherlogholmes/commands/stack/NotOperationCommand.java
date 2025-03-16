@@ -25,22 +25,16 @@
 package com.backpackcloud.sherlogholmes.commands.stack;
 
 import com.backpackcloud.cli.Action;
-import com.backpackcloud.cli.AnnotatedCommand;
 import com.backpackcloud.cli.CommandDefinition;
 import com.backpackcloud.sherlogholmes.model.FilterStack;
-import io.quarkus.runtime.annotations.RegisterForReflection;
 
-import jakarta.enterprise.context.ApplicationScoped;
-
-@ApplicationScoped
 @CommandDefinition(
   name = "not",
   event = "stack",
   type = "Stack Manipulation",
   description = "Applies the boolean NOT operation to the current filter"
 )
-@RegisterForReflection
-public class NotOperationCommand implements AnnotatedCommand {
+public class NotOperationCommand {
 
   private final FilterStack stack;
 

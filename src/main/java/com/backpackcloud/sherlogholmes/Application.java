@@ -25,33 +25,88 @@
 package com.backpackcloud.sherlogholmes;
 
 import com.backpackcloud.cli.CLI;
-import com.backpackcloud.cli.Segments;
+import com.backpackcloud.cli.builder.CLIBuilder;
+import com.backpackcloud.cli.ui.components.FileSuggester;
+import com.backpackcloud.cli.ui.prompt.CloseSegmentsWriter;
+import com.backpackcloud.cli.ui.prompt.NewLineWriter;
+import com.backpackcloud.cli.ui.prompt.PromptCharWriter;
+import com.backpackcloud.configuration.Configuration;
+import com.backpackcloud.configuration.ConfigurationSupplier;
+import com.backpackcloud.io.SerialBitter;
+import com.backpackcloud.sherlogholmes.commands.data.*;
+import com.backpackcloud.sherlogholmes.commands.stack.AndOperationCommand;
+import com.backpackcloud.sherlogholmes.commands.stack.DupCommand;
+import com.backpackcloud.sherlogholmes.commands.stack.NotOperationCommand;
+import com.backpackcloud.sherlogholmes.commands.stack.OrOperationCommand;
+import com.backpackcloud.sherlogholmes.commands.stack.PopCommand;
+import com.backpackcloud.sherlogholmes.commands.stack.PushCommand;
+import com.backpackcloud.sherlogholmes.commands.stack.ShowStackCommand;
+import com.backpackcloud.sherlogholmes.commands.stack.SwapCommand;
 import com.backpackcloud.sherlogholmes.config.Config;
-import io.quarkus.runtime.QuarkusApplication;
-import jakarta.enterprise.context.ApplicationScoped;
-import jakarta.inject.Inject;
+import com.backpackcloud.sherlogholmes.model.DataRegistry;
+import com.backpackcloud.sherlogholmes.model.FilterFactory;
+import com.backpackcloud.sherlogholmes.model.FilterStack;
+import com.backpackcloud.sherlogholmes.ui.prompt.DataCountPromptWriter;
+import com.backpackcloud.sherlogholmes.ui.prompt.DataTimeRangePromptWriter;
+import com.backpackcloud.sherlogholmes.ui.prompt.FilterStackPromptWriter;
 
-@ApplicationScoped
-public class Application implements QuarkusApplication {
+import java.util.function.Consumer;
 
-  @Inject
-  @Segments(left = {
-    "data-count",
-    "data-range",
-    "filter-stack",
-    "chart-count",
-    "close",
-    "new-line",
-    "prompt"
-  })
-  CLI cli;
+public class Application {
 
-  @Inject
-  Config config;
+  public int run() {
+    SerialBitter serialBitter = SerialBitter.YAML();
 
-  @Override
-  public int run(String... args) {
-    config.macros().forEach(cli::registerMacro);
+    CLIBuilder builder = new CLIBuilder(serialBitter)
+      .addComponent(FilterStack.class)
+      .addComponent(DataRegistry.class)
+      .addComponent(FilterFactory.class)
+      .addComponent(FileSuggester.class)
+      .registerPreferences(Preferences.class);
+
+    ConfigurationSupplier configSupplier = new ConfigurationSupplier("sherlog");
+
+    Config config = serialBitter.deserialize(configSupplier.getDefault().read(), Config.class);
+
+    Consumer<Configuration> merge = configuration -> config.mergeWith(
+      serialBitter.deserialize(configuration.read(), Config.class)
+    );
+
+    configSupplier.fromUserHome().ifSet(merge);
+    configSupplier.fromWorkingDir().ifSet(merge);
+
+    builder.addComponent(config, Config.class);
+
+    builder.addCommands(
+      AssignCommand.class,
+      AttributeCommand.class,
+      CountCommand.class,
+      FilterCommand.class,
+      HeadCommand.class,
+      IndexCommand.class,
+      InspectCommand.class,
+      ListDataCommand.class,
+      ListenCommand.class,
+      TailCommand.class,
+      AndOperationCommand.class,
+      DupCommand.class,
+      NotOperationCommand.class,
+      OrOperationCommand.class,
+      PopCommand.class,
+      PushCommand.class,
+      ShowStackCommand.class,
+      SwapCommand.class
+    );
+
+    builder.addLeftPrompt(DataCountPromptWriter.class);
+    builder.addLeftPrompt(DataTimeRangePromptWriter.class);
+    builder.addLeftPrompt(FilterStackPromptWriter.class);
+    builder.addLeftPrompt(CloseSegmentsWriter.class);
+    builder.addLeftPrompt(NewLineWriter.class);
+    builder.addLeftPrompt(PromptCharWriter.class);
+
+    CLI cli = builder.build();
+
     cli.execute(config.commands().toArray(String[]::new));
     cli.start();
     return 0;

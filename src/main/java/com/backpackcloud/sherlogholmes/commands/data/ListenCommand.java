@@ -1,7 +1,6 @@
 package com.backpackcloud.sherlogholmes.commands.data;
 
 import com.backpackcloud.cli.Action;
-import com.backpackcloud.cli.AnnotatedCommand;
 import com.backpackcloud.cli.CommandDefinition;
 import com.backpackcloud.cli.PreferenceValue;
 import com.backpackcloud.cli.Suggestions;
@@ -13,8 +12,6 @@ import com.backpackcloud.sherlogholmes.model.DataReader;
 import com.backpackcloud.sherlogholmes.model.DataRegistry;
 import com.backpackcloud.sherlogholmes.model.Pipeline;
 import com.backpackcloud.sherlogholmes.model.readers.SocketDataReader;
-import io.quarkus.runtime.annotations.RegisterForReflection;
-import jakarta.enterprise.context.ApplicationScoped;
 
 import java.nio.charset.Charset;
 import java.util.ArrayList;
@@ -29,9 +26,7 @@ import java.util.stream.Collectors;
   description = "Listen for log entries arriving on a given port",
   type = "Data"
 )
-@ApplicationScoped
-@RegisterForReflection
-public class ListenCommand implements AnnotatedCommand {
+public class ListenCommand {
 
   private final ExecutorService executorService;
 

@@ -30,13 +30,11 @@ import com.backpackcloud.sherlogholmes.config.ConfigObject;
 import com.backpackcloud.sherlogholmes.model.DataModel;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import io.quarkus.runtime.annotations.RegisterForReflection;
 
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
-@RegisterForReflection
 public class DataModelConfig implements ConfigObject<DataModel> {
 
   private final Configuration format;
