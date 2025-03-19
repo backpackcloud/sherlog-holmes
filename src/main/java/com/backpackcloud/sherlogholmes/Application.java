@@ -62,6 +62,7 @@ public class Application {
       .addComponent(DataRegistry.class)
       .addComponent(FilterFactory.class)
       .addComponent(FileSuggester.class)
+
       .registerPreferences(Preferences.class);
 
     ConfigurationSupplier configSupplier = new ConfigurationSupplier("sherlog");
@@ -75,40 +76,46 @@ public class Application {
     configSupplier.fromUserHome().ifSet(merge);
     configSupplier.fromWorkingDir().ifSet(merge);
 
-    builder.addComponent(config, Config.class);
+    builder
+      .addComponent(config, Config.class)
 
-    builder.addCommands(
-      AssignCommand.class,
-      AttributeCommand.class,
-      CountCommand.class,
-      FilterCommand.class,
-      HeadCommand.class,
-      IndexCommand.class,
-      InspectCommand.class,
-      ListDataCommand.class,
-      ListenCommand.class,
-      TailCommand.class,
-      AndOperationCommand.class,
-      DupCommand.class,
-      NotOperationCommand.class,
-      OrOperationCommand.class,
-      PopCommand.class,
-      PushCommand.class,
-      ShowStackCommand.class,
-      SwapCommand.class
-    );
+      .addCommands(
+        AssignCommand.class,
+        AttributeCommand.class,
+        CountCommand.class,
+        FilterCommand.class,
+        HeadCommand.class,
+        IndexCommand.class,
+        InspectCommand.class,
+        ListDataCommand.class,
+        ListenCommand.class,
+        TailCommand.class,
+        AndOperationCommand.class,
+        DupCommand.class,
+        NotOperationCommand.class,
+        OrOperationCommand.class,
+        PopCommand.class,
+        PushCommand.class,
+        ShowStackCommand.class,
+        SwapCommand.class
+      )
 
-    builder.addLeftPrompt(DataCountPromptWriter.class);
-    builder.addLeftPrompt(DataTimeRangePromptWriter.class);
-    builder.addLeftPrompt(FilterStackPromptWriter.class);
-    builder.addLeftPrompt(CloseSegmentsWriter.class);
-    builder.addLeftPrompt(NewLineWriter.class);
-    builder.addLeftPrompt(PromptCharWriter.class);
+      .addMacros(config.macros())
+
+      .addLeftPrompt(
+        DataCountPromptWriter.class,
+        DataTimeRangePromptWriter.class,
+        FilterStackPromptWriter.class,
+        CloseSegmentsWriter.class,
+        NewLineWriter.class,
+        PromptCharWriter.class
+      );
 
     CLI cli = builder.build();
 
     cli.execute(config.commands().toArray(String[]::new));
     cli.start();
+
     return 0;
   }
 

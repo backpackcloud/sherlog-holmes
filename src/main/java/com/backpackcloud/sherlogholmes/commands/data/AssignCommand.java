@@ -1,8 +1,8 @@
 package com.backpackcloud.sherlogholmes.commands.data;
 
-import com.backpackcloud.cli.Action;
-import com.backpackcloud.cli.CommandDefinition;
-import com.backpackcloud.cli.RawInput;
+import com.backpackcloud.cli.annotations.Action;
+import com.backpackcloud.cli.annotations.CommandDefinition;
+import com.backpackcloud.cli.annotations.Line;
 import com.backpackcloud.sherlogholmes.model.DataRegistry;
 import com.backpackcloud.sherlogholmes.model.PipelineStep;
 import com.backpackcloud.sherlogholmes.model.steps.AttributeSetStep;
@@ -24,7 +24,7 @@ public class AssignCommand {
   }
 
   @Action
-  public void execute(String name, @RawInput String value) {
+  public void execute(String name, @Line String value) {
     Map<String, String> assignMap = new HashMap<>();
     assignMap.put(name, value);
 

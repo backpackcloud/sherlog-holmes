@@ -1,8 +1,8 @@
 package com.backpackcloud.sherlogholmes.commands.data;
 
-import com.backpackcloud.cli.Action;
-import com.backpackcloud.cli.CommandDefinition;
-import com.backpackcloud.cli.RawInput;
+import com.backpackcloud.cli.annotations.Action;
+import com.backpackcloud.cli.annotations.CommandDefinition;
+import com.backpackcloud.cli.annotations.Line;
 import com.backpackcloud.sherlogholmes.model.AttributeSpec;
 import com.backpackcloud.sherlogholmes.model.DataRegistry;
 
@@ -20,7 +20,7 @@ public class AttributeCommand {
   }
 
   @Action
-  public void add(String name, @RawInput String specExpression) {
+  public void add(String name, @Line String specExpression) {
     AttributeSpec spec = AttributeSpec.create(specExpression);
 
     registry.stream().forEach(entry -> {

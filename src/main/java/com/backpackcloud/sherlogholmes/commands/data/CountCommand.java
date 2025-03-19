@@ -24,11 +24,11 @@
 
 package com.backpackcloud.sherlogholmes.commands.data;
 
-import com.backpackcloud.cli.Action;
+import com.backpackcloud.cli.annotations.Action;
 import com.backpackcloud.cli.CommandContext;
-import com.backpackcloud.cli.CommandDefinition;
-import com.backpackcloud.cli.ParameterCount;
-import com.backpackcloud.cli.Suggestions;
+import com.backpackcloud.cli.annotations.CommandDefinition;
+import com.backpackcloud.cli.annotations.ParameterCount;
+import com.backpackcloud.cli.annotations.Suggestions;
 import com.backpackcloud.cli.ui.Paginator;
 import com.backpackcloud.cli.ui.Suggestion;
 import com.backpackcloud.preferences.UserPreferences;

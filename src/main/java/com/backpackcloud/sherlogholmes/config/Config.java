@@ -25,6 +25,7 @@
 package com.backpackcloud.sherlogholmes.config;
 
 import com.backpackcloud.UnbelievableException;
+import com.backpackcloud.cli.Macro;
 import com.backpackcloud.cli.ui.ColorMap;
 import com.backpackcloud.cli.ui.IconMap;
 import com.backpackcloud.cli.ui.StyleMap;
@@ -59,6 +60,7 @@ public class Config {
   private final Map<String, DataMapperConfig> mappers;
   private final Map<String, List<PipelineStep>> steps;
   private final Map<String, PipelineConfig> pipelines;
+  private final List<Macro> macros;
 
   @JsonCreator
   public Config(@JacksonInject UserPreferences userPreferences,
@@ -70,13 +72,14 @@ public class Config {
                 @JsonProperty("colors") Map<String, String> colors,
                 @JsonProperty("styles") Map<String, String> styles,
                 @JsonProperty("commands") List<String> commands,
+                @JsonProperty("macros") List<Macro> macros,
                 @JsonProperty("models") Map<String, DataModelConfig> models,
                 @JsonProperty("parsers") Map<String, DataParserConfig> parsers,
                 @JsonProperty("mappers") Map<String, DataMapperConfig> mappers,
                 @JsonProperty("steps") Map<String, List<PipelineStep>> steps,
                 @JsonProperty("pipelines") Map<String, PipelineConfig> pipelines,
                 @JsonProperty("index") List<String> index) {
-    this(patterns, commands, models, parsers, mappers, steps, pipelines);
+    this(patterns, commands, macros, models, parsers, mappers, steps, pipelines);
 
     if (icons != null) {
       IconMap iconMap = theme.iconMap();
@@ -117,12 +120,14 @@ public class Config {
 
   private Config(Map<String, Configuration> patterns,
                  List<String> commands,
+                 List<Macro> macros,
                  Map<String, DataModelConfig> models,
                  Map<String, DataParserConfig> parsers,
                  Map<String, DataMapperConfig> mappers,
                  Map<String, List<PipelineStep>> steps,
                  Map<String, PipelineConfig> pipelines) {
     this.commands = commands != null ? commands : new ArrayList<>();
+    this.macros = macros != null ? macros : new ArrayList<>();
     this.models = models != null ? models : new HashMap<>();
     this.parsers = parsers != null ? parsers : new HashMap<>();
     this.mappers = mappers != null ? mappers : new HashMap<>();
@@ -174,6 +179,10 @@ public class Config {
     return pipelines;
   }
 
+  public List<Macro> macros() {
+    return macros;
+  }
+
   /**
    * Combines this configuration with the given one. The given configuration takes
    * precedence.
@@ -183,6 +192,7 @@ public class Config {
   public void mergeWith(Config other) {
     this.patterns.putAll(other.patterns);
     this.commands.addAll(other.commands);
+    this.macros.addAll(other.macros);
     this.models.putAll(other.models);
     this.parsers.putAll(other.parsers);
     this.mappers.putAll(other.mappers);

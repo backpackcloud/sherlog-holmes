@@ -24,8 +24,8 @@
 
 package com.backpackcloud.sherlogholmes.commands.stack;
 
-import com.backpackcloud.cli.Action;
-import com.backpackcloud.cli.CommandDefinition;
+import com.backpackcloud.cli.annotations.Action;
+import com.backpackcloud.cli.annotations.CommandDefinition;
 import com.backpackcloud.sherlogholmes.model.FilterStack;
 
 @CommandDefinition(

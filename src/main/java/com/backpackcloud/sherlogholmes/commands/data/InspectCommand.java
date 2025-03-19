@@ -24,11 +24,11 @@
 
 package com.backpackcloud.sherlogholmes.commands.data;
 
-import com.backpackcloud.cli.Action;
-import com.backpackcloud.cli.CommandDefinition;
-import com.backpackcloud.cli.PreferenceValue;
-import com.backpackcloud.cli.Suggestions;
 import com.backpackcloud.cli.Writer;
+import com.backpackcloud.cli.annotations.Action;
+import com.backpackcloud.cli.annotations.CommandDefinition;
+import com.backpackcloud.cli.annotations.PreferenceValue;
+import com.backpackcloud.cli.annotations.Suggestions;
 import com.backpackcloud.cli.ui.Suggestion;
 import com.backpackcloud.cli.ui.components.FileSuggester;
 import com.backpackcloud.cli.ui.components.PromptSuggestion;

@@ -24,9 +24,9 @@
 
 package com.backpackcloud.sherlogholmes.commands.data;
 
-import com.backpackcloud.cli.Action;
-import com.backpackcloud.cli.CommandDefinition;
-import com.backpackcloud.cli.Paginate;
+import com.backpackcloud.cli.annotations.Action;
+import com.backpackcloud.cli.annotations.CommandDefinition;
+import com.backpackcloud.cli.annotations.Paginate;
 import com.backpackcloud.sherlogholmes.model.DataEntry;
 import com.backpackcloud.sherlogholmes.model.DataRegistry;
 

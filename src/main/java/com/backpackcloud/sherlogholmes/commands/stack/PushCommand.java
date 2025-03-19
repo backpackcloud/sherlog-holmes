@@ -25,11 +25,11 @@
 package com.backpackcloud.sherlogholmes.commands.stack;
 
 import com.backpackcloud.UnbelievableException;
-import com.backpackcloud.cli.Action;
-import com.backpackcloud.cli.CommandDefinition;
-import com.backpackcloud.cli.ParameterCount;
-import com.backpackcloud.cli.RawInput;
-import com.backpackcloud.cli.Suggestions;
+import com.backpackcloud.cli.annotations.Action;
+import com.backpackcloud.cli.annotations.CommandDefinition;
+import com.backpackcloud.cli.annotations.Line;
+import com.backpackcloud.cli.annotations.ParameterCount;
+import com.backpackcloud.cli.annotations.Suggestions;
 import com.backpackcloud.cli.ui.Suggestion;
 import com.backpackcloud.sherlogholmes.model.DataRegistry;
 import com.backpackcloud.sherlogholmes.model.FilterFactory;
@@ -58,7 +58,7 @@ public class PushCommand {
   }
 
   @Action
-  public void execute(@RawInput String expression) {
+  public void execute(@Line String expression) {
     if (expression == null) {
       throw new UnbelievableException("No filter expression given");
     }
