@@ -2,7 +2,7 @@
 <!--
   ~ The MIT License (MIT)
   ~
-  ~ Copyright (c) 2022 Marcelo Guimarães
+  ~ Copyright (c) 2025 Marcelo "Ataxexe" Guimarães
   ~
   ~ Permission is hereby granted, free of charge, to any person obtaining a copy
   ~ of this software and associated documentation files (the "Software"), to deal
@@ -30,8 +30,12 @@
 
   <groupId>com.backpackcloud</groupId>
   <artifactId>sherlog-holmes</artifactId>
-  <version>1.0.0-SNAPSHOT</version>
+  <version>1.0.0</version>
   <packaging>jar</packaging>
+
+  <name>sherlog-holmes</name>
+  <description>The best companion of a log detective!</description>
+  <url>https://github.com/backpackcloud/sherlog-holmes</url>
 
   <properties>
     <maven.compiler.source>21</maven.compiler.source>
@@ -53,7 +57,7 @@
 
     <maven-deploy-plugin.version>3.1.1</maven-deploy-plugin.version>
 
-    <zipper.version>1.0.0-SNAPSHOT</zipper.version>
+    <zipper.version>1.0.1</zipper.version>
     <version-tm.version>1.1.0</version-tm.version>
 
     <picocli.version>4.7.6</picocli.version>
@@ -63,6 +67,29 @@
 
     <maven-assembly-plugin.version>3.7.0</maven-assembly-plugin.version>
   </properties>
+
+  <licenses>
+    <license>
+      <name>The MIT License</name>
+      <url>https://opensource.org/licenses/MIT</url>
+      <distribution>repo</distribution>
+    </license>
+  </licenses>
+
+  <developers>
+    <developer>
+      <id>ataxexe</id>
+      <name>Marcelo "Ataxexe" Guimarães</name>
+      <email>ataxexe@backpackcloud.com</email>
+      <url>https://www.backpackcloud.com</url>
+      <organizationUrl>https://github.com/backpackcloud</organizationUrl>
+    </developer>
+  </developers>
+
+  <scm>
+    <connection>scm:git:git@github.com:backpackcloud/sherlog-holmes.git</connection>
+    <url>https://github.com/backpackcloud/sherlog-holmes</url>
+  </scm>
 
   <dependencies>
     <dependency>
