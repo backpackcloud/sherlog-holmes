@@ -24,16 +24,20 @@
 
 package com.backpackcloud.sherlogholmes.config.model;
 
-import com.backpackcloud.configuration.Configuration;
+import com.backpackcloud.sherlogholmes.config.Config;
 import com.backpackcloud.sherlogholmes.config.ConfigObject;
 import com.backpackcloud.sherlogholmes.model.AttributeSpec;
-import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonValue;
 
-public interface DataAttributeConfig extends ConfigObject<AttributeSpec> {
+public record DataAttributeConfig(@JsonValue String spec) implements ConfigObject<AttributeSpec> {
 
-  @JsonCreator
-  static DataAttributeConfig create(Configuration spec) {
-    return config -> AttributeSpec.create(spec.get());
+  public String spec() {
+    return spec;
+  }
+
+  @Override
+  public AttributeSpec get(Config config) {
+    return AttributeSpec.create(spec);
   }
 
 }

@@ -30,36 +30,56 @@ import com.backpackcloud.sherlogholmes.model.mappers.FunctionDataMapper;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
 
-public class FunctionDataMapperConfig implements DataMapperConfig {
-
-  private final Map<String, String> attributeMappings;
-  private final List<String> attributeCopies;
+public record FunctionDataMapperConfig(Map<String, String> attributesToMap,
+                                       List<String> attributesToCopy) implements DataMapperConfig {
 
   @JsonCreator
   public FunctionDataMapperConfig(@JsonProperty("map") Map<String, String> attributeMappings,
                                   @JsonProperty("copy") String attributeCopies) {
 
-    this.attributeMappings = attributeMappings;
-    this.attributeCopies = attributeCopies != null ?
-      List.of(attributeCopies.split("\\s*,\\s*")) :
-      null;
+    this(
+      attributeMappings != null ? new HashMap<>(attributeMappings) : Collections.emptyMap(),
+      attributeCopies != null ? List.of(attributeCopies.split("\\s*,\\s*")) : Collections.emptyList()
+    );
   }
 
   @Override
   public DataMapper<Function<String, String>> get(Config config) {
-    Map<String, String> attributesMap = new HashMap<>();
-    if (attributeMappings != null) {
-      attributesMap.putAll(attributeMappings);
-    }
-    if (attributeCopies != null) {
-      attributeCopies.forEach(attr -> attributesMap.put(attr, attr));
-    }
+    Map<String, String> attributesMap = new HashMap<>(attributesToMap);
+    attributesToCopy.forEach(attr -> attributesMap.put(attr, attr));
     return new FunctionDataMapper(attributesMap);
+  }
+
+  public static FunctionDataMapperConfig from(String spec) {
+    List<String> attributesToCopy = new ArrayList<>();
+    Map<String, String> attributesToMap = new HashMap<>();
+    if (spec != null) {
+      String[] split = spec.trim().split(",");
+      for (String attr : split) {
+        if (attr.contains("=>")) {
+          String[] map = attr.split("=>", 2);
+          attributesToMap.put(map[0], map[1]);
+        } else {
+          attributesToCopy.add(attr);
+        }
+      }
+    }
+    return new FunctionDataMapperConfig(attributesToMap, attributesToCopy);
+  }
+
+  @Override
+  public String toString() {
+    StringBuilder builder = new StringBuilder();
+    attributesToMap.forEach((key, value) -> builder.append(key).append("=>").append(value).append(" "));
+    attributesToCopy.forEach(attr -> builder.append(attr).append(" "));
+    return builder.toString().trim();
   }
 
 }

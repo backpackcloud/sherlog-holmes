@@ -26,6 +26,6 @@ package com.backpackcloud.sherlogholmes.model;
 
 public enum FallbackMode {
 
-  IGNORE, APPEND
+  IGNORE, APPEND, USER_DEFAULT
 
 }

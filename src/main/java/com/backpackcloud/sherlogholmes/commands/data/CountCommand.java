@@ -24,11 +24,11 @@
 
 package com.backpackcloud.sherlogholmes.commands.data;
 
-import com.backpackcloud.cli.annotations.Action;
 import com.backpackcloud.cli.CommandContext;
+import com.backpackcloud.cli.annotations.Action;
 import com.backpackcloud.cli.annotations.CommandDefinition;
-import com.backpackcloud.cli.annotations.ParameterCount;
-import com.backpackcloud.cli.annotations.Suggestions;
+import com.backpackcloud.cli.annotations.InputParameter;
+import com.backpackcloud.cli.annotations.ParameterSuggestion;
 import com.backpackcloud.cli.ui.Paginator;
 import com.backpackcloud.cli.ui.Suggestion;
 import com.backpackcloud.preferences.UserPreferences;
@@ -39,7 +39,6 @@ import com.backpackcloud.sherlogholmes.model.DataEntry;
 import com.backpackcloud.sherlogholmes.model.DataRegistry;
 import com.backpackcloud.sherlogholmes.ui.suggestions.AttributeSuggester;
 
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
@@ -88,8 +87,8 @@ public class CountCommand {
   @Action
   public void execute(CommandContext context,
                       Paginator paginator,
-                      String attribute,
-                      String counter) {
+                      @InputParameter String attribute,
+                      @InputParameter String counter) {
     Map<?, NavigableSet<DataEntry>> valuesMap = registry.index(attribute);
     String countAttribute = counter != null ? counter : preferences.get(Preferences.COUNT_ATTRIBUTE).value();
 
@@ -158,12 +157,9 @@ public class CountCommand {
     }
   }
 
-  @Suggestions
-  public List<Suggestion> execute(@ParameterCount int paramCount) {
-    if (paramCount == 1) {
-      return attributeSuggester.suggestIndexedAttributes();
-    }
-    return Collections.emptyList();
+  @ParameterSuggestion(parameter = "attribute")
+  public List<Suggestion> execute() {
+    return attributeSuggester.suggestIndexedAttributes();
   }
 
 }

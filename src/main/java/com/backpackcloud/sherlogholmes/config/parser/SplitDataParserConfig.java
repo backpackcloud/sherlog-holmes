@@ -24,43 +24,36 @@
 
 package com.backpackcloud.sherlogholmes.config.parser;
 
-import com.backpackcloud.configuration.Configuration;
 import com.backpackcloud.sherlogholmes.config.Config;
 import com.backpackcloud.sherlogholmes.model.DataParser;
 import com.backpackcloud.sherlogholmes.model.parsers.SplitDataParser;
-import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class SplitDataParserConfig implements DataParserConfig {
+public record SplitDataParserConfig(@JsonProperty("pattern") String pattern,
+                                    @JsonProperty("limit") int limit) implements DataParserConfig {
 
   private static final Pattern PATTERN = Pattern.compile("\\{\\{(?<key>[^}]+)}}");
-
-  private final Configuration patternString;
-  private final Configuration limit;
-
-  @JsonCreator
-  public SplitDataParserConfig(@JsonProperty("pattern") Configuration patternString,
-                               @JsonProperty("limit") Configuration limit) {
-    this.patternString = patternString;
-    this.limit = limit;
-  }
 
   @Override
   public DataParser<String[]> get(Config config) {
     Map<String, String> patterns = config.patterns();
 
-    Matcher matcher = PATTERN.matcher(patternString.get());
+    Matcher matcher = PATTERN.matcher(pattern);
 
     String result = matcher.replaceAll(matchResult -> {
       String key = matchResult.group("key");
       return patterns.get(key);
     });
 
-    return new SplitDataParser(Pattern.compile(result, Pattern.DOTALL), limit.asInteger().orElse(0));
+    return new SplitDataParser(Pattern.compile(result, Pattern.DOTALL), limit);
   }
 
+  @Override
+  public String toString() {
+    return String.format("split %s limit=%d", pattern, limit);
+  }
 }

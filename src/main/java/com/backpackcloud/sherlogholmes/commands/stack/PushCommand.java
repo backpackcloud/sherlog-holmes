@@ -24,12 +24,11 @@
 
 package com.backpackcloud.sherlogholmes.commands.stack;
 
-import com.backpackcloud.UnbelievableException;
 import com.backpackcloud.cli.annotations.Action;
 import com.backpackcloud.cli.annotations.CommandDefinition;
+import com.backpackcloud.cli.annotations.InputParameter;
 import com.backpackcloud.cli.annotations.Line;
-import com.backpackcloud.cli.annotations.ParameterCount;
-import com.backpackcloud.cli.annotations.Suggestions;
+import com.backpackcloud.cli.annotations.ParameterSuggestion;
 import com.backpackcloud.cli.ui.Suggestion;
 import com.backpackcloud.sherlogholmes.model.DataRegistry;
 import com.backpackcloud.sherlogholmes.model.FilterFactory;
@@ -37,6 +36,9 @@ import com.backpackcloud.sherlogholmes.model.FilterStack;
 import com.backpackcloud.sherlogholmes.ui.suggestions.AttributeSuggester;
 
 import java.util.List;
+import java.util.Objects;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @CommandDefinition(
   name = "push",
@@ -58,22 +60,29 @@ public class PushCommand {
   }
 
   @Action
-  public void execute(@Line String expression) {
-    if (expression == null) {
-      throw new UnbelievableException("No filter expression given");
-    }
+  public void execute(@InputParameter String attribute,
+                      @InputParameter String operation,
+                      @InputParameter @Line String value) {
+    String expression = Stream.of(attribute, operation, value)
+      // not all operations require a value
+      .filter(Objects::nonNull)
+      .collect(Collectors.joining(" "));
     stack.push(filterFactory.create(expression));
   }
 
-  @Suggestions
-  public List<? extends Suggestion> execute(@ParameterCount int paramCount, String attribute) {
-    if (paramCount == 1) {
-      return attributeSuggester.suggestAttributeNames();
-    } else if (paramCount == 2) {
-      return attributeSuggester.suggestOperands();
-    } else {
-      return attributeSuggester.suggestRegistryAttributeValues(attribute);
-    }
+  @ParameterSuggestion(parameter = "attribute")
+  public List<? extends Suggestion> execute() {
+    return attributeSuggester.suggestAttributeNames();
+  }
+
+  @ParameterSuggestion(parameter = "operation")
+  public List<? extends Suggestion> suggestOperands() {
+    return attributeSuggester.suggestOperands();
+  }
+
+  @ParameterSuggestion(parameter = "value")
+  public List<? extends Suggestion> suggestValue(@InputParameter String attribute) {
+    return attributeSuggester.suggestRegistryAttributeValues(attribute);
   }
 
 }

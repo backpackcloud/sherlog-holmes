@@ -33,7 +33,6 @@ import java.time.temporal.ChronoUnit;
 import java.time.temporal.Temporal;
 import java.util.*;
 import java.util.function.Consumer;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class DataRegistry implements Registry {
@@ -164,6 +163,10 @@ public class DataRegistry implements Registry {
     return registry().stream();
   }
 
+  public boolean hasIndex(String attributeName) {
+    return registry().indexedAttributes().contains(attributeName);
+  }
+
   public <E> Map<E, NavigableSet<DataEntry>> index(String attributeName) {
     return registry().index(attributeName);
   }
@@ -251,10 +254,7 @@ public class DataRegistry implements Registry {
     }
 
     public Set<String> indexedAttributes() {
-      return this.index.entrySet().stream()
-        .filter(entry -> !entry.getValue().isEmpty())
-        .map(Map.Entry::getKey)
-        .collect(Collectors.toSet());
+      return this.index.keySet();
     }
 
     public Optional<AttributeType> typeOf(String name) {

@@ -24,11 +24,9 @@
 
 package com.backpackcloud.sherlogholmes.config;
 
-import com.backpackcloud.preferences.UserPreferences;
-import com.backpackcloud.sherlogholmes.Preferences;
 import com.backpackcloud.sherlogholmes.model.FallbackMode;
 import com.backpackcloud.sherlogholmes.model.Pipeline;
-import com.fasterxml.jackson.annotation.JacksonInject;
+import com.backpackcloud.text.InputValue;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
@@ -36,45 +34,25 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class PipelineConfig implements ConfigObject<Pipeline> {
-
-
-  private final UserPreferences preferences;
-  private final String modelId;
-  private final String parserId;
-  private final String mapperId;
-  private final String[] stepsIds;
-  private final String fallbackMode;
+public record PipelineConfig(String modelId,
+                             String parserId,
+                             String mapperId,
+                             String[] stepsIds,
+                             FallbackMode fallbackMode) implements ConfigObject<Pipeline> {
 
   @JsonCreator
-  public PipelineConfig(@JacksonInject UserPreferences preferences,
-                        @JsonProperty("model") String modelId,
+  public PipelineConfig(@JsonProperty("model") String modelId,
                         @JsonProperty("parser") String parserId,
                         @JsonProperty("mapper") String mapperId,
                         @JsonProperty("steps") String stepsIds,
-                        @JsonProperty("fallback") String fallbackMode) {
-    this.preferences = preferences;
-    this.modelId = modelId;
-    this.parserId = parserId;
-    this.mapperId = mapperId;
-    this.stepsIds = stepsIds.split("\\s*,\\s*");
-    this.fallbackMode = fallbackMode;
-  }
-
-  public String modelId() {
-    return modelId;
-  }
-
-  public String parserId() {
-    return parserId;
-  }
-
-  public String mapperId() {
-    return mapperId;
-  }
-
-  public String fallbackMode() {
-    return fallbackMode;
+                        @JsonProperty("fallback") InputValue fallbackMode) {
+    this(
+      modelId,
+      parserId,
+      mapperId,
+      stepsIds == null ? new String[0] : stepsIds.split("\\s*,\\s*"),
+      fallbackMode == null ? FallbackMode.USER_DEFAULT : fallbackMode.asEnum(FallbackMode.class).orElseThrow()
+    );
   }
 
   @Override
@@ -87,11 +65,8 @@ public class PipelineConfig implements ConfigObject<Pipeline> {
         .map(config::stepsFor)
         .flatMap(List::stream)
         .collect(Collectors.toList()),
-      FallbackMode.valueOf(
-        (fallbackMode != null ? fallbackMode : preferences.get(Preferences.DEFAULT_FALLBACK_MODE).value())
-          .toUpperCase()
-      ),
-      preferences
+      fallbackMode,
+      config.userPreferences()
     );
   }
 

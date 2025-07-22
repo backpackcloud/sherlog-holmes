@@ -27,8 +27,9 @@ package com.backpackcloud.sherlogholmes.commands.data;
 import com.backpackcloud.cli.Writer;
 import com.backpackcloud.cli.annotations.Action;
 import com.backpackcloud.cli.annotations.CommandDefinition;
+import com.backpackcloud.cli.annotations.InputParameter;
+import com.backpackcloud.cli.annotations.ParameterSuggestion;
 import com.backpackcloud.cli.annotations.PreferenceValue;
-import com.backpackcloud.cli.annotations.Suggestions;
 import com.backpackcloud.cli.ui.Suggestion;
 import com.backpackcloud.cli.ui.components.FileSuggester;
 import com.backpackcloud.cli.ui.components.PromptSuggestion;
@@ -64,8 +65,8 @@ public class InspectCommand {
                       @PreferenceValue("input-charset") String inputCharset,
                       @PreferenceValue("file-reader-skip-lines") Integer skipLines,
                       Writer writer,
-                      String pipelineId,
-                      String location) {
+                      @InputParameter String pipelineId,
+                      @InputParameter String location) {
     DataReader dataReader = new FileLineReader(Charset.forName(inputCharset), skipLines);
     Pipeline pipeline = config.pipelineFor(pipelineId);
 
@@ -77,14 +78,16 @@ public class InspectCommand {
     });
   }
 
-  @Suggestions
-  public List<Suggestion> execute(String pipelineId, String location) {
-    if (location == null) {
-      return config.pipelines().keySet()
-        .stream().map(PromptSuggestion::suggest)
-        .collect(Collectors.toList());
-    }
+  @ParameterSuggestion(parameter = "location")
+  public List<Suggestion> suggestLocation(@InputParameter String location) {
     return suggester.suggest(location);
+  }
+
+  @ParameterSuggestion(parameter = "pipelineId")
+  public List<Suggestion> suggestPipeline() {
+    return config.pipelines().keySet()
+      .stream().map(PromptSuggestion::suggest)
+      .collect(Collectors.toList());
   }
 
 }

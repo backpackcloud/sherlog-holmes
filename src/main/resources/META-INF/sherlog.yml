@@ -3,7 +3,7 @@
 # Preferences can also be adjusted from the command line using the "preferences" command.
 preferences:
   # Defines how the content that wasn't parsed will be handled
-  # append: appends the content to the last parsed content (useful for log stacktraces)
+  # append: appends the content to the last parsed content (useful for logging stacktrace)
   # ignore: ignores the content
   #
   # This preference is used when the fallback mode is not explicitly set
@@ -49,15 +49,13 @@ models:
     # where you need a collection of values like exceptions that are shown in a stacktrace.
     #
     # For attributes requiring configuration, it's passed with an '|' after the type, followed by the configuration
+    #
+    # Attributes of a "datetime" variant may have an "*" at the end to add a fallback "time" attribute. Sometimes, the
+    # log only contains the time information (when it's a console log, for example). So you add a datetime pattern, but
+    # enclose part of it with "()" and that part will be used as a time pattern for fallback.
     attributes:
-      timestamp:
-        env:      SHERLOG_MODEL_JAVA_TIMESTAMP
-        property: sherlog.model.java.timestamp
-        value:    datetime | yyyy-MM-dd HH:mm:ss,SSS
-      level:
-        env:      SHERLOG_MODEL_JAVA_LEVEL
-        property: sherlog.model.java.level
-        value:    enum | TRACE,DEBUG,FINE,INFO,WARN,WARNING,ERROR,SEVERE,FATAL
+      timestamp: datetime* | yyyy-MM-dd (HH:mm:ss,SSS)
+      level:     enum | TRACE,DEBUG,FINE,INFO,WARN,WARNING,ERROR,SEVERE,FATAL
       category:  text
       thread:    text
       exception: text[]
@@ -82,13 +80,10 @@ index:
 parsers:
   java:
     # A regex parser exposes the named groups found in the pattern
-    type: regex
+    type:    regex
     # You can reuse patterns across the configuration by enclosing the names with '{{ }}'
     # the names enclosed must be defined in the 'patterns' section
-    pattern:
-      env:      SHERLOG_PARSER_JAVA_PATTERN
-      property: sherlog.parser.java.pattern
-      value:    '{{timestamp}} {{level}}\s+{{category}} {{thread}} {{message}}'
+    pattern: '{{timestamp}} {{level}}\s+{{category}} {{thread}} {{message}}'
   infinispan:
     type:    regex
     pattern: '{{timestamp}} {{level}}\s+{{thread}} {{category}} {{message}}'
@@ -110,26 +105,11 @@ mappers:
     copy: timestamp,level,category,thread,message
 
 patterns:
-  timestamp:
-    env:      SHERLOG_PATTERN_TIMESTAMP
-    property: sherlog.pattern.timestamp
-    value:    '(?<timestamp>\\d{2,4}-\\d{2}-\\d{2,4} \\d{2}:\\d{2}:\\d{2},\\d{3})'
-  level:
-    env:      SHERLOG_PATTERN_LEVEL
-    property: sherlog.pattern.level
-    value:    '(?<level>\\w+)'
-  category:
-    env:      SHERLOG_PATTERN_CATEGORY
-    property: sherlog.pattern.category
-    value:    '\\[(?<category>[^]]+]*)]'
-  thread:
-    env:      SHERLOG_PATTERN_THREAD
-    property: sherlog.pattern.thread
-    value:    '\\((?<thread>[^)]+\\)*)\\)'
-  message:
-    env:      SHERLOG_PATTERN_MESSAGE
-    property: sherlog.pattern.message
-    value:    '(?<message>.+)'
+  timestamp: '(?<timestamp>(\\d{2,4}-\\d{2}-\\d{2,4} )?\\d{2}:\\d{2}:\\d{2},\\d{3})'
+  level:     '(?<level>\\w+)'
+  category:  '\\[(?<category>[^]]+]*)]'
+  thread:    '\\((?<thread>[^)]+\\)*)\\)'
+  message:   '(?<message>.+)'
 
 # After the model is populated, it's possible to run a series of steps to
 # refine the data as needed. The steps are identified, so you can apply
@@ -163,7 +143,7 @@ patterns:
 # replace : replaces any occurrences of a given text with another text for a defined
 #           attribute
 steps:
-  java:
+  java-find-exceptions:
     - when: level >= WARN
       map:
         from:  message
@@ -182,7 +162,12 @@ pipelines:
     model:  java
     parser: infinispan
     mapper: java
-    steps:  java
+    steps:  java-find-exceptions
+  java:
+    model:  java
+    parser: java
+    mapper: java
+    steps:  java-find-exceptions
 
 # If you define an icon with a prefix of "attribute-" and an attribute name, the icon
 # will be used as a graphical representation of that attribute, so you can use it for
@@ -223,17 +208,37 @@ colors:
 # k - blink
 # c - crossedOut
 styles:
-  attribute-timestamp:   grey//i
+  attribute-timestamp:           grey//i
 
-  attribute-level-TRACE: cyan
-  attribute-level-DEBUG: cyan
-  attribute-level-FINE:  cyan
-  attribute-level-INFO:  orange
-  attribute-level-WARN:  yellow
-  attribute-level-ERROR: red//b
-  attribute-level-FATAL: red//b
+  attribute-level-TRACE:         cyan
+  attribute-level-DEBUG:         cyan
+  attribute-level-FINE:          cyan
+  attribute-level-INFO:          orange
+  attribute-level-WARN:          yellow
+  attribute-level-ERROR:         red//b
+  attribute-level-SEVERE:        red//b
+  attribute-level-FATAL:         red//b
 
-  attribute-category:    blue
-  attribute-thread:      grey
-  attribute-message:     white
-  attribute-exception:   red
+  attribute-category:            blue
+  attribute-thread:              grey
+  attribute-message:             white
+  attribute-exception:           red
+
+  model-property:                white//b
+  model-name:                    blue//b
+  model-attribute-name:          yellow//b
+
+  model-attribute-type-text:     purple
+  model-attribute-type-number:   blue
+  model-attribute-type-decimal:  blue
+  model-attribute-type-enum:     orange
+  model-attribute-type-temporal: teal
+  model-attribute-type-fallback: teal
+  model-attribute-type-flag:     green
+  model-attribute-type-version:  red
+  model-attribute-type-url:      cyan
+  model-attribute-type-uri:      cyan
+
+  pipeline-name:                 blue//b
+  pipeline-property-name:        yellow//b
+  pipeline-property-value:       orange

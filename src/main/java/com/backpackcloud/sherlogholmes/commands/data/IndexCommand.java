@@ -27,14 +27,13 @@ package com.backpackcloud.sherlogholmes.commands.data;
 import com.backpackcloud.cli.Writer;
 import com.backpackcloud.cli.annotations.Action;
 import com.backpackcloud.cli.annotations.CommandDefinition;
-import com.backpackcloud.cli.annotations.Suggestions;
+import com.backpackcloud.cli.annotations.InputParameter;
+import com.backpackcloud.cli.annotations.ParameterSuggestion;
 import com.backpackcloud.cli.ui.Suggestion;
-import com.backpackcloud.cli.ui.components.PromptSuggestion;
-import com.backpackcloud.sherlogholmes.model.AttributeType;
 import com.backpackcloud.sherlogholmes.model.DataRegistry;
+import com.backpackcloud.sherlogholmes.ui.suggestions.AttributeSuggester;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @CommandDefinition(
   name = "index",
@@ -44,29 +43,36 @@ import java.util.stream.Collectors;
 public class IndexCommand {
 
   private final DataRegistry registry;
+  private final AttributeSuggester suggester;
 
   public IndexCommand(DataRegistry registry) {
     this.registry = registry;
+    this.suggester = new AttributeSuggester(registry);
   }
 
-  @Action
-  public void execute(Writer writer, String attribute) {
-    if (attribute == null) {
-      registry.indexedAttributes().stream()
-        .map(registry::index);
-    } else {
-      registry.index(attribute).forEach((value, entries) ->
-        writer.write(registry.typeOf(attribute).orElse(AttributeType.TEXT).format(value))
-          .writeln(String.format(" -> %d", entries.size()))
-      );
-    }
+  @Action("add")
+  public void add(@InputParameter String attribute) {
+    this.registry.addIndex(attribute);
   }
 
-  @Suggestions
-  public List<Suggestion> execute() {
-    return registry.indexedAttributes().stream()
-      .map(PromptSuggestion::suggest)
-      .collect(Collectors.toList());
+  @Action("remove")
+  public void remove(@InputParameter String attribute) {
+    this.registry.removeIndex(attribute);
+  }
+
+  @Action("list")
+  public void execute(Writer writer) {
+    registry.indexedAttributes().forEach(writer::writeln);
+  }
+
+  @ParameterSuggestion(action = "remove")
+  public List<Suggestion> suggestAttributesToRemove() {
+    return suggester.suggestAllIndexedAttributes();
+  }
+
+  @ParameterSuggestion(action = "add")
+  public List<Suggestion> suggestAttributesToAdd() {
+    return suggester.suggestNonIndexedAttributeNames();
   }
 
 }

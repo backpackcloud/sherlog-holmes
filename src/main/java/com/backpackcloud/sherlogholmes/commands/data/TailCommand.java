@@ -26,15 +26,15 @@ package com.backpackcloud.sherlogholmes.commands.data;
 
 import com.backpackcloud.cli.annotations.Action;
 import com.backpackcloud.cli.annotations.CommandDefinition;
+import com.backpackcloud.cli.annotations.InputParameter;
 import com.backpackcloud.cli.annotations.Paginate;
-import com.backpackcloud.cli.annotations.Suggestions;
+import com.backpackcloud.cli.annotations.ParameterSuggestion;
 import com.backpackcloud.cli.ui.Suggestion;
 import com.backpackcloud.sherlogholmes.model.DataEntry;
 import com.backpackcloud.sherlogholmes.model.DataRegistry;
 import com.backpackcloud.sherlogholmes.ui.suggestions.ChronoUnitSuggestions;
 
 import java.time.temporal.ChronoUnit;
-import java.util.Collections;
 import java.util.List;
 import java.util.stream.Stream;
 
@@ -53,7 +53,7 @@ public class TailCommand {
 
   @Paginate
   @Action
-  public Stream<DataEntry> execute(Integer amount, ChronoUnit unit) {
+  public Stream<DataEntry> execute(@InputParameter Integer amount, @InputParameter ChronoUnit unit) {
     if (registry.isEmpty()) {
       return Stream.empty();
     }
@@ -64,12 +64,9 @@ public class TailCommand {
     }
   }
 
-  @Suggestions
-  public List<Suggestion> execute(String amount, String unit) {
-    if (unit != null) {
-      return ChronoUnitSuggestions.suggestUnits();
-    }
-    return Collections.emptyList();
+  @ParameterSuggestion(parameter = "unit")
+  public List<Suggestion> suggestUnits() {
+    return ChronoUnitSuggestions.suggestUnits();
   }
 
 }

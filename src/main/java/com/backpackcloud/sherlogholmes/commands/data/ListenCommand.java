@@ -27,8 +27,9 @@ package com.backpackcloud.sherlogholmes.commands.data;
 import com.backpackcloud.cli.Writer;
 import com.backpackcloud.cli.annotations.Action;
 import com.backpackcloud.cli.annotations.CommandDefinition;
+import com.backpackcloud.cli.annotations.InputParameter;
+import com.backpackcloud.cli.annotations.ParameterSuggestion;
 import com.backpackcloud.cli.annotations.PreferenceValue;
-import com.backpackcloud.cli.annotations.Suggestions;
 import com.backpackcloud.cli.ui.Suggestion;
 import com.backpackcloud.cli.ui.components.PromptSuggestion;
 import com.backpackcloud.sherlogholmes.config.Config;
@@ -39,7 +40,6 @@ import com.backpackcloud.sherlogholmes.model.readers.SocketDataReader;
 
 import java.nio.charset.Charset;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -66,8 +66,8 @@ public class ListenCommand {
   @Action
   public void execute(@PreferenceValue("input-charset") String inputCharset,
                       Writer writer,
-                      String pipelineId,
-                      String portsInput) {
+                      @InputParameter String pipelineId,
+                      @InputParameter String portsInput) {
     List<Integer> ports = new ArrayList<>();
 
     String[] split = portsInput.split(",");
@@ -76,7 +76,7 @@ public class ListenCommand {
       int from = Integer.parseInt(range[0]);
       int to = range.length == 1 ? from : Integer.parseInt(range[1]);
 
-      while(from <= to) {
+      while (from <= to) {
         ports.add(from++);
       }
     }
@@ -92,14 +92,11 @@ public class ListenCommand {
       .forEach(this.executorService::submit);
   }
 
-  @Suggestions
-  public List<Suggestion> execute(String pipelineId, String location) {
-    if (location == null) {
-      return config.pipelines().keySet()
-        .stream().map(PromptSuggestion::suggest)
-        .collect(Collectors.toList());
-    }
-    return Collections.emptyList();
+  @ParameterSuggestion(parameter = "pipelineId")
+  public List<Suggestion> suggestPipeline() {
+    return config.pipelines().keySet()
+      .stream().map(PromptSuggestion::suggest)
+      .collect(Collectors.toList());
   }
 
 }

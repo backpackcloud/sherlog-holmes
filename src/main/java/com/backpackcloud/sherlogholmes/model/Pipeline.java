@@ -52,7 +52,9 @@ public class Pipeline {
     this.dataParser = dataParser;
     this.dataMapper = dataMapper;
     this.analysisSteps = analysisSteps;
-    this.fallbackMode = fallbackMode;
+    this.fallbackMode = fallbackMode == FallbackMode.USER_DEFAULT ?
+      preferences.get(Preferences.DEFAULT_FALLBACK_MODE).inputValue().asEnum(FallbackMode.class).orElseThrow() :
+      fallbackMode;
     this.preferences = preferences;
   }
 
@@ -101,7 +103,7 @@ public class Pipeline {
       this.consumer = consumer;
       this.pushChecker = Executors.newSingleThreadExecutor();
       this.pushChecker.submit(() -> {
-        while(!closed) {
+        while (!closed) {
           if (System.currentTimeMillis() - lastPush >= 1000) {
             push();
           }
@@ -135,7 +137,7 @@ public class Pipeline {
       this.structure = null;
       this.lastPush = System.currentTimeMillis();
       if (this.content == null) {
-        if (metadata.line() > 1){
+        if (metadata.line() > 1) {
           this.content = new StringBuilder(content);
           this.metadata = metadata;
         }

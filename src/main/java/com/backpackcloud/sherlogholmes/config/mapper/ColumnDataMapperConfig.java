@@ -29,9 +29,15 @@ import com.backpackcloud.sherlogholmes.model.DataMapper;
 import com.backpackcloud.sherlogholmes.model.mappers.ColumnDataMapper;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import java.util.Arrays;
+
 public class ColumnDataMapperConfig implements DataMapperConfig {
 
   private final String[] attributes;
+
+  public ColumnDataMapperConfig(String... attributes) {
+    this.attributes = attributes;
+  }
 
   public ColumnDataMapperConfig(@JsonProperty("attributes") String attributes) {
     this.attributes = attributes.split("\\s*,\\s*");
@@ -42,4 +48,9 @@ public class ColumnDataMapperConfig implements DataMapperConfig {
     return new ColumnDataMapper(attributes);
   }
 
+  @Override
+  public String toString() {
+    return "column " + Arrays.toString(attributes);
+  }
+  
 }

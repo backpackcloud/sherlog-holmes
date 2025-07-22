@@ -30,7 +30,7 @@
 
   <groupId>com.backpackcloud</groupId>
   <artifactId>sherlog-holmes</artifactId>
-  <version>1.0.0</version>
+  <version>1.1.0</version>
   <packaging>jar</packaging>
 
   <name>sherlog-holmes</name>
@@ -52,12 +52,11 @@
     <maven-surefire-plugin.version>3.2.5</maven-surefire-plugin.version>
     <maven-source-plugin.version>3.3.1</maven-source-plugin.version>
     <maven-javadoc-plugin.version>3.6.3</maven-javadoc-plugin.version>
-    <nexus-staging-maven-plugin.version>1.6.13</nexus-staging-maven-plugin.version>
+    <central-publishing-maven-plugin.version>0.8.0</central-publishing-maven-plugin.version>
     <maven-release-plugin.version>3.0.1</maven-release-plugin.version>
-
     <maven-deploy-plugin.version>3.1.1</maven-deploy-plugin.version>
 
-    <zipper.version>1.0.1</zipper.version>
+    <zipper.version>1.1.0</zipper.version>
     <version-tm.version>1.1.0</version-tm.version>
 
     <picocli.version>4.7.6</picocli.version>
@@ -66,6 +65,7 @@
     <opencsv.version>5.9</opencsv.version>
 
     <maven-assembly-plugin.version>3.7.0</maven-assembly-plugin.version>
+    <exec-maven-plugin.version>3.4.1</exec-maven-plugin.version>
   </properties>
 
   <licenses>
@@ -163,6 +163,15 @@
     <finalName>sherlog-holmes</finalName>
     <plugins>
       <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>exec-maven-plugin</artifactId>
+        <version>${exec-maven-plugin.version}</version>
+
+        <configuration>
+          <mainClass>com.backpackcloud.sherlogholmes.Main</mainClass>
+        </configuration>
+      </plugin>
+      <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-assembly-plugin</artifactId>
         <version>${maven-assembly-plugin.version}</version>
@@ -229,14 +238,13 @@
         </executions>
       </plugin>
       <plugin>
-        <groupId>org.sonatype.plugins</groupId>
-        <artifactId>nexus-staging-maven-plugin</artifactId>
-        <version>${nexus-staging-maven-plugin.version}</version>
+        <groupId>org.sonatype.central</groupId>
+        <artifactId>central-publishing-maven-plugin</artifactId>
+        <version>${central-publishing-maven-plugin.version}</version>
         <extensions>true</extensions>
         <configuration>
-          <serverId>${distribution.id}</serverId>
-          <nexusUrl>${distribution.url}</nexusUrl>
-          <autoReleaseAfterClose>true</autoReleaseAfterClose>
+          <publishingServerId>central</publishingServerId>
+          <autoPublish>true</autoPublish>
         </configuration>
       </plugin>
       <plugin>

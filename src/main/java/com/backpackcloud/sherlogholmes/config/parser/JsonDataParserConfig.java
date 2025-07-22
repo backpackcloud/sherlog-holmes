@@ -38,4 +38,8 @@ public class JsonDataParserConfig implements DataParserConfig {
     return new JsonDataParser(SerialBitter.JSON());
   }
 
+  @Override
+  public String toString() {
+    return "json";
+  }
 }

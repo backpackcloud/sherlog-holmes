@@ -40,6 +40,7 @@ import com.backpackcloud.sherlogholmes.model.DataMapper;
 import com.backpackcloud.sherlogholmes.model.DataModel;
 import com.backpackcloud.sherlogholmes.model.DataParser;
 import com.backpackcloud.sherlogholmes.model.DataRegistry;
+import com.backpackcloud.sherlogholmes.model.FallbackMode;
 import com.backpackcloud.sherlogholmes.model.Pipeline;
 import com.backpackcloud.sherlogholmes.model.PipelineStep;
 import com.fasterxml.jackson.annotation.JacksonInject;
@@ -53,7 +54,9 @@ import java.util.List;
 import java.util.Map;
 
 public class Config {
+
   private final Map<String, String> patterns;
+  private final UserPreferences userPreferences;
   private final List<String> commands;
   private final Map<String, DataModelConfig> models;
   private final Map<String, DataParserConfig> parsers;
@@ -67,7 +70,7 @@ public class Config {
                 @JacksonInject Theme theme,
                 @JacksonInject DataRegistry registry,
                 @JsonProperty("preferences") Map<String, Configuration> preferences,
-                @JsonProperty("patterns") Map<String, Configuration> patterns,
+                @JsonProperty("patterns") Map<String, String> patterns,
                 @JsonProperty("icons") Map<String, String> icons,
                 @JsonProperty("colors") Map<String, String> colors,
                 @JsonProperty("styles") Map<String, String> styles,
@@ -79,7 +82,7 @@ public class Config {
                 @JsonProperty("steps") Map<String, List<PipelineStep>> steps,
                 @JsonProperty("pipelines") Map<String, PipelineConfig> pipelines,
                 @JsonProperty("index") List<String> index) {
-    this(patterns, commands, macros, models, parsers, mappers, steps, pipelines);
+    this(userPreferences, patterns, commands, macros, models, parsers, mappers, steps, pipelines);
 
     if (icons != null) {
       IconMap iconMap = theme.iconMap();
@@ -111,14 +114,15 @@ public class Config {
 
     if (models != null) {
       models.forEach((id, map) -> {
-        if (this.parsers.containsKey(id) && this.mappers.containsKey(id)) {
-          this.pipelines.put(id, new PipelineConfig(userPreferences, id, id, id, id, null));
+        if (this.parsers.containsKey(id) && this.mappers.containsKey(id) && !this.pipelines.containsKey(id)) {
+          this.pipelines.put(id, new PipelineConfig(id, id, id, new String[]{id}, FallbackMode.USER_DEFAULT));
         }
       });
     }
   }
 
-  private Config(Map<String, Configuration> patterns,
+  private Config(UserPreferences userPreferences,
+                 Map<String, String> patterns,
                  List<String> commands,
                  List<Macro> macros,
                  Map<String, DataModelConfig> models,
@@ -126,6 +130,7 @@ public class Config {
                  Map<String, DataMapperConfig> mappers,
                  Map<String, List<PipelineStep>> steps,
                  Map<String, PipelineConfig> pipelines) {
+    this.userPreferences = userPreferences;
     this.commands = commands != null ? commands : new ArrayList<>();
     this.macros = macros != null ? macros : new ArrayList<>();
     this.models = models != null ? models : new HashMap<>();
@@ -133,11 +138,7 @@ public class Config {
     this.mappers = mappers != null ? mappers : new HashMap<>();
     this.steps = steps != null ? steps : new HashMap<>();
     this.pipelines = pipelines != null ? pipelines : new HashMap<>();
-    this.patterns = new HashMap<>();
-
-    if (patterns != null) {
-      patterns.forEach((pattern, config) -> this.patterns.put(pattern, config.get()));
-    }
+    this.patterns = patterns == null ? new HashMap<>() : patterns;
   }
 
   public List<String> commands() {
@@ -159,6 +160,14 @@ public class Config {
     return getObject(models, id);
   }
 
+  public DataModelConfig modelConfig(String name) {
+    return models.get(name);
+  }
+
+  public UserPreferences userPreferences() {
+    return userPreferences;
+  }
+
   public DataParser dataParserFor(String id) {
     return getObject(parsers, id);
   }
@@ -173,6 +182,22 @@ public class Config {
 
   public Pipeline pipelineFor(String id) {
     return getObject(pipelines, id);
+  }
+
+  public Map<String, DataModelConfig> models() {
+    return models;
+  }
+
+  public Map<String, DataParserConfig> parsers() {
+    return parsers;
+  }
+
+  public Map<String, DataMapperConfig> mappers() {
+    return mappers;
+  }
+
+  public Map<String, List<PipelineStep>> steps() {
+    return steps;
   }
 
   public Map<String, PipelineConfig> pipelines() {

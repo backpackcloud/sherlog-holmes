@@ -33,7 +33,19 @@ import com.backpackcloud.cli.ui.prompt.PromptCharWriter;
 import com.backpackcloud.configuration.Configuration;
 import com.backpackcloud.configuration.ConfigurationSupplier;
 import com.backpackcloud.io.SerialBitter;
-import com.backpackcloud.sherlogholmes.commands.data.*;
+import com.backpackcloud.sherlogholmes.commands.config.MapperCommand;
+import com.backpackcloud.sherlogholmes.commands.config.ModelCommand;
+import com.backpackcloud.sherlogholmes.commands.config.ParserCommand;
+import com.backpackcloud.sherlogholmes.commands.config.PipelineCommand;
+import com.backpackcloud.sherlogholmes.commands.data.AssignCommand;
+import com.backpackcloud.sherlogholmes.commands.data.CountCommand;
+import com.backpackcloud.sherlogholmes.commands.data.FilterCommand;
+import com.backpackcloud.sherlogholmes.commands.data.HeadCommand;
+import com.backpackcloud.sherlogholmes.commands.data.IndexCommand;
+import com.backpackcloud.sherlogholmes.commands.data.InspectCommand;
+import com.backpackcloud.sherlogholmes.commands.data.ListDataCommand;
+import com.backpackcloud.sherlogholmes.commands.data.ListenCommand;
+import com.backpackcloud.sherlogholmes.commands.data.TailCommand;
 import com.backpackcloud.sherlogholmes.commands.stack.AndOperationCommand;
 import com.backpackcloud.sherlogholmes.commands.stack.DupCommand;
 import com.backpackcloud.sherlogholmes.commands.stack.NotOperationCommand;
@@ -81,7 +93,6 @@ public class Application {
 
       .addCommands(
         AssignCommand.class,
-        AttributeCommand.class,
         CountCommand.class,
         FilterCommand.class,
         HeadCommand.class,
@@ -97,7 +108,11 @@ public class Application {
         PopCommand.class,
         PushCommand.class,
         ShowStackCommand.class,
-        SwapCommand.class
+        SwapCommand.class,
+        ModelCommand.class,
+        ParserCommand.class,
+        MapperCommand.class,
+        PipelineCommand.class
       )
 
       .addMacros(config.macros())

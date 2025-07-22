@@ -24,7 +24,6 @@
 
 package com.backpackcloud.sherlogholmes.config.model;
 
-import com.backpackcloud.configuration.Configuration;
 import com.backpackcloud.sherlogholmes.config.Config;
 import com.backpackcloud.sherlogholmes.config.ConfigObject;
 import com.backpackcloud.sherlogholmes.model.DataModel;
@@ -35,14 +34,12 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
-public class DataModelConfig implements ConfigObject<DataModel> {
-
-  private final Configuration format;
-  private final String modelsToInclude;
-  private final Map<String, DataAttributeConfig> attributes;
+public record DataModelConfig(String format,
+                              String modelsToInclude,
+                              Map<String, DataAttributeConfig> attributes) implements ConfigObject<DataModel> {
 
   @JsonCreator
-  public DataModelConfig(@JsonProperty("format") Configuration format,
+  public DataModelConfig(@JsonProperty("format") String format,
                          @JsonProperty("include") String modelsToInclude,
                          @JsonProperty("attributes") Map<String, DataAttributeConfig> attributes) {
     this.format = format;
@@ -51,7 +48,7 @@ public class DataModelConfig implements ConfigObject<DataModel> {
   }
 
   public DataModel get(Config config) {
-    DataModel model = new DataModel(format.get());
+    DataModel model = new DataModel(format);
     attributes.forEach((name, attrConfig) -> {
       model.add(name, attrConfig.get(config));
     });
