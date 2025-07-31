@@ -155,7 +155,7 @@ public class ModelCommand {
   }
 
   @ParameterSuggestion(action = "from-csv", parameter = "location")
-  public List<Suggestion> suggestLocations(String location) {
+  public List<Suggestion> suggestLocations(@InputParameter String location) {
     return new FileSuggester().suggest(location);
   }
 
