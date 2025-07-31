@@ -30,7 +30,7 @@
 
   <groupId>com.backpackcloud</groupId>
   <artifactId>sherlog-holmes</artifactId>
-  <version>1.1.0</version>
+  <version>1.1.1</version>
   <packaging>jar</packaging>
 
   <name>sherlog-holmes</name>
@@ -57,7 +57,7 @@
     <maven-deploy-plugin.version>3.1.1</maven-deploy-plugin.version>
 
     <zipper.version>1.1.0</zipper.version>
-    <version-tm.version>1.1.0</version-tm.version>
+    <version-tm.version>1.2.0</version-tm.version>
 
     <picocli.version>4.7.6</picocli.version>
     <junit.version>5.10.5</junit.version>
@@ -257,15 +257,4 @@
       </plugin>
     </plugins>
   </build>
-
-  <distributionManagement>
-    <snapshotRepository>
-      <id>${distribution.id}</id>
-      <url>${distribution.url.snapshot}</url>
-    </snapshotRepository>
-    <repository>
-      <id>${distribution.id}</id>
-      <url>${distribution.url.release}</url>
-    </repository>
-  </distributionManagement>
 </project>
