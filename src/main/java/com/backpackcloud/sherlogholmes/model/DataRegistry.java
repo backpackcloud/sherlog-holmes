@@ -109,7 +109,7 @@ public class DataRegistry implements Registry {
     String timestampAttribute = preferences.get(Preferences.TIMESTAMP_ATTRIBUTE).value();
 
     NavigableSet<DataEntry> entries = entries();
-    Temporal reference = entries.first()
+    Temporal reference = entries.getFirst()
       .attribute(timestampAttribute, Temporal.class)
       .flatMap(Attribute::value)
       .map(temporal -> temporal.plus(amount, unit))
@@ -126,7 +126,7 @@ public class DataRegistry implements Registry {
 
   public Stream<DataEntry> tail(int count) {
     List<DataEntry> result = new ArrayList<>(entries()
-      .descendingSet()
+      .reversed()
       .stream()
       .limit(count)
       .toList());
@@ -139,7 +139,7 @@ public class DataRegistry implements Registry {
   public Stream<DataEntry> tail(int amount, ChronoUnit unit) {
     String timestampAttribute = preferences.get(Preferences.TIMESTAMP_ATTRIBUTE).value();
 
-    Temporal reference = entries().last()
+    Temporal reference = entries().getLast()
       .attribute(timestampAttribute, Temporal.class)
       .flatMap(Attribute::value)
       .map(temporal -> temporal.minus(amount, unit))
@@ -302,8 +302,8 @@ public class DataRegistry implements Registry {
 
     public Duration durationOf(String attributeName) {
       if (entries.size() >= 2) {
-        DataEntry first = entries.first();
-        DataEntry last = entries.last();
+        DataEntry first = entries.getFirst();
+        DataEntry last = entries.getLast();
 
         return first.attribute(attributeName, Temporal.class)
           .flatMap(Attribute::value)
