@@ -182,7 +182,7 @@ patterns:
 # replace : replaces any occurrences of a given text with another text for a defined
 #           attribute
 steps:
-  java-find-exceptions:
+  java-analyze-messages:
     - when: level >= WARN
       map:
         from:  message
@@ -201,12 +201,12 @@ pipelines:
     model:  java
     parser: infinispan
     mapper: java
-    steps:  java-find-exceptions
+    steps:  java-analyze-messages
   java:
     model:  java
     parser: java
     mapper: java
-    steps:  java-find-exceptions
+    steps:  java-analyze-messages
 
 # If you define an icon with a prefix of "attribute-" and an attribute name, the icon
 # will be used as a graphical representation of that attribute, so you can use it for
