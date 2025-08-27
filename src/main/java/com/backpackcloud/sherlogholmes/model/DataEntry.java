@@ -27,7 +27,6 @@ package com.backpackcloud.sherlogholmes.model;
 import com.backpackcloud.cli.Displayable;
 import com.backpackcloud.cli.Writer;
 import com.backpackcloud.sherlogholmes.util.StringWalker;
-import com.fasterxml.jackson.annotation.JsonValue;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -40,7 +39,6 @@ import java.util.stream.Stream;
 
 public class DataEntry implements Comparable<DataEntry>, Displayable {
 
-  @JsonValue
   private final Map<String, Attribute> attributes;
   private final String displayFormat;
 
@@ -146,7 +144,7 @@ public class DataEntry implements Comparable<DataEntry>, Displayable {
         .ifPresent(value -> {
           Writer styledWriter = writer.withStyle("attribute-" + name + "-" + value, "attribute-" + name);
           if (showIcon) {
-            styledWriter.writeIcon("attribute-" + name).write(" ");
+            styledWriter.writeIcon("attribute-" + name + "-" + value, "attribute-" + name).write(" ");
           }
           if (showValue) {
             styledWriter.write(format != null ? String.format(format, value) : value);
