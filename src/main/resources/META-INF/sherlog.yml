@@ -2,24 +2,16 @@
 #
 # Preferences can also be adjusted from the command line using the "preferences" command.
 preferences:
-  # Defines how the content that wasn't parsed will be handled
-  # append: appends the content to the last parsed content (useful for logging stacktrace)
-  # ignore: ignores the content
-  #
-  # This preference is used when the fallback mode is not explicitly set
-  default-fallback-mode: append
-  # Displays all entries that are parsed and added to the registry
-  show-added-entries:    false
   # Removes the ANSI colors from the content before parsing it
-  remove-ansi-colors:    true
+  remove-ansi-colors: true
   # The charset to use for reading the inputs
-  input-charset:         UTF-8
+  input-charset:      UTF-8
   # Enables data paging for commands that displays data
-  result-paging:         true
+  result-paging:      true
   # Sets the number of entries shown on each page
-  results-per-page:      15
+  results-per-page:   15
   # Clears the console before changing pages
-  clear-on-paging:       true
+  clear-on-paging:    true
 
 # Data models are the structure Sherlog Holmes uses to work
 models:
