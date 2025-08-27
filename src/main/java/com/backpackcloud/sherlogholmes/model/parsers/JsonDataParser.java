@@ -42,6 +42,9 @@ public class JsonDataParser implements DataParser<Function<String, String>> {
 
   @Override
   public Optional<Function<String, String>> parse(Metadata metadata, String content) {
+    if (content == null || content.isBlank()) {
+      return Optional.empty();
+    }
     JsonNode jsonNode = deserializer.deserialize(content.trim(), JsonNode.class);
     return Optional.of(pointer -> jsonNode.at(pointer).asText());
   }
