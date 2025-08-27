@@ -15,7 +15,6 @@ import com.backpackcloud.sherlogholmes.config.model.DataAttributeConfig;
 import com.backpackcloud.sherlogholmes.config.model.DataModelConfig;
 import com.backpackcloud.sherlogholmes.config.parser.CsvDataParserConfig;
 import com.backpackcloud.sherlogholmes.model.AttributeSpec;
-import com.backpackcloud.sherlogholmes.model.FallbackMode;
 import com.opencsv.CSVReader;
 import com.opencsv.exceptions.CsvValidationException;
 
@@ -98,7 +97,7 @@ public class ModelCommand {
           // Since we parsed the header, let's skip the first line
           config.parsers().putIfAbsent(name, new CsvDataParserConfig(true));
           config.mappers().putIfAbsent(name, new ColumnDataMapperConfig(attributes));
-          config.pipelines().putIfAbsent(name, new PipelineConfig(name, name, name, new String[0], FallbackMode.IGNORE));
+          config.pipelines().putIfAbsent(name, new PipelineConfig(name, name, name, new String[0]));
         });
       }
     }

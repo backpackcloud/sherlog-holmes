@@ -24,9 +24,7 @@
 
 package com.backpackcloud.sherlogholmes.config;
 
-import com.backpackcloud.sherlogholmes.model.FallbackMode;
 import com.backpackcloud.sherlogholmes.model.Pipeline;
-import com.backpackcloud.text.InputValue;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
@@ -37,21 +35,18 @@ import java.util.stream.Collectors;
 public record PipelineConfig(String modelId,
                              String parserId,
                              String mapperId,
-                             String[] stepsIds,
-                             FallbackMode fallbackMode) implements ConfigObject<Pipeline> {
+                             String[] stepsIds) implements ConfigObject<Pipeline> {
 
   @JsonCreator
   public PipelineConfig(@JsonProperty("model") String modelId,
                         @JsonProperty("parser") String parserId,
                         @JsonProperty("mapper") String mapperId,
-                        @JsonProperty("steps") String stepsIds,
-                        @JsonProperty("fallback") InputValue fallbackMode) {
+                        @JsonProperty("steps") String stepsIds) {
     this(
       modelId,
       parserId,
       mapperId,
-      stepsIds == null ? new String[0] : stepsIds.split("\\s*,\\s*"),
-      fallbackMode == null ? FallbackMode.USER_DEFAULT : fallbackMode.asEnum(FallbackMode.class).orElseThrow()
+      stepsIds == null ? new String[0] : stepsIds.split("\\s*,\\s*")
     );
   }
 
@@ -65,7 +60,6 @@ public record PipelineConfig(String modelId,
         .map(config::stepsFor)
         .flatMap(List::stream)
         .collect(Collectors.toList()),
-      fallbackMode,
       config.userPreferences()
     );
   }

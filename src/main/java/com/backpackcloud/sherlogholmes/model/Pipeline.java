@@ -39,22 +39,17 @@ public class Pipeline {
   private final DataParser<Object> dataParser;
   private final DataMapper<Object> dataMapper;
   private final List<PipelineStep> analysisSteps;
-  private final FallbackMode fallbackMode;
   private final UserPreferences preferences;
 
   public Pipeline(DataModel dataModel,
                   DataParser dataParser,
                   DataMapper dataMapper,
                   List<PipelineStep> analysisSteps,
-                  FallbackMode fallbackMode,
                   UserPreferences preferences) {
     this.dataModel = dataModel;
     this.dataParser = dataParser;
     this.dataMapper = dataMapper;
     this.analysisSteps = analysisSteps;
-    this.fallbackMode = fallbackMode == FallbackMode.USER_DEFAULT ?
-      preferences.get(Preferences.DEFAULT_FALLBACK_MODE).inputValue().asEnum(FallbackMode.class).orElseThrow() :
-      fallbackMode;
     this.preferences = preferences;
   }
 

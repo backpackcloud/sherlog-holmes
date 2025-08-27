@@ -40,7 +40,6 @@ import com.backpackcloud.sherlogholmes.model.DataMapper;
 import com.backpackcloud.sherlogholmes.model.DataModel;
 import com.backpackcloud.sherlogholmes.model.DataParser;
 import com.backpackcloud.sherlogholmes.model.DataRegistry;
-import com.backpackcloud.sherlogholmes.model.FallbackMode;
 import com.backpackcloud.sherlogholmes.model.Pipeline;
 import com.backpackcloud.sherlogholmes.model.PipelineStep;
 import com.fasterxml.jackson.annotation.JacksonInject;
@@ -115,7 +114,7 @@ public class Config {
     if (models != null) {
       models.forEach((id, map) -> {
         if (this.parsers.containsKey(id) && this.mappers.containsKey(id) && !this.pipelines.containsKey(id)) {
-          this.pipelines.put(id, new PipelineConfig(id, id, id, new String[]{id}, FallbackMode.USER_DEFAULT));
+          this.pipelines.put(id, new PipelineConfig(id, id, id, new String[]{id}));
         }
       });
     }

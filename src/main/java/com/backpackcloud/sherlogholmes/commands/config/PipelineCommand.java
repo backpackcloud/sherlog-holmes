@@ -9,12 +9,10 @@ import com.backpackcloud.cli.ui.Suggestion;
 import com.backpackcloud.cli.ui.components.PromptSuggestion;
 import com.backpackcloud.sherlogholmes.config.Config;
 import com.backpackcloud.sherlogholmes.config.PipelineConfig;
-import com.backpackcloud.sherlogholmes.model.FallbackMode;
 
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 @CommandDefinition(
   name = "pipeline",
@@ -34,7 +32,6 @@ public class PipelineCommand {
                      @InputParameter String modelName,
                      @InputParameter String parserName,
                      @InputParameter String mapperName,
-                     @InputParameter FallbackMode fallbackMode,
                      @InputParameter String[] steps) {
     this.config.pipelines().put(
       pipelineName,
@@ -42,8 +39,7 @@ public class PipelineCommand {
         modelName,
         parserName,
         mapperName,
-        steps,
-        fallbackMode
+        steps
       )
     );
   }
@@ -64,9 +60,6 @@ public class PipelineCommand {
 
       writer.withStyle("pipeline-property-name").write("\t").write("steps:\t\t");
       writer.withStyle("pipeline-property-value").writeln(Arrays.toString(pipeline.stepsIds()));
-
-      writer.withStyle("pipeline-property-name").write("\t").write("fallback:\t");
-      writer.withStyle("pipeline-property-value").writeln(pipeline.fallbackMode().name().toLowerCase());
     });
   }
 
@@ -93,15 +86,6 @@ public class PipelineCommand {
     return this.config.mappers()
       .keySet()
       .stream()
-      .map(PromptSuggestion::suggest)
-      .collect(Collectors.toList());
-  }
-
-  @ParameterSuggestion(action = "create", parameter = "fallbackMode")
-  public List<Suggestion> suggestFallbackModes() {
-    return Stream.of(FallbackMode.values())
-      .map(Enum::name)
-      .map(String::toLowerCase)
       .map(PromptSuggestion::suggest)
       .collect(Collectors.toList());
   }
