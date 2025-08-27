@@ -40,10 +40,10 @@ public class FilterFactory {
     String symbol = tokenizer.nextToken().trim();
     String right = expression.substring(expression.indexOf(symbol) + symbol.length()).trim();
 
-    Operand operand = Operand.find(symbol)
+    Operation operation = Operation.find(symbol)
       .orElseThrow(() -> new UnbelievableException("Invalid operand: " + symbol));
 
-    return new BaseDataFilter(left, operand, right);
+    return new BaseDataFilter(left, operation, right);
   }
 
 }

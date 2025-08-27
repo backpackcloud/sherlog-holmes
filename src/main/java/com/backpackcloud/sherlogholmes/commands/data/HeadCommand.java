@@ -30,9 +30,9 @@ import com.backpackcloud.cli.annotations.InputParameter;
 import com.backpackcloud.cli.annotations.Paginate;
 import com.backpackcloud.cli.annotations.ParameterSuggestion;
 import com.backpackcloud.cli.ui.Suggestion;
+import com.backpackcloud.cli.ui.components.PromptSuggestion;
 import com.backpackcloud.sherlogholmes.model.DataEntry;
 import com.backpackcloud.sherlogholmes.model.DataRegistry;
-import com.backpackcloud.sherlogholmes.ui.suggestions.ChronoUnitSuggestions;
 
 import java.time.temporal.ChronoUnit;
 import java.util.List;
@@ -67,7 +67,7 @@ public class HeadCommand {
 
   @ParameterSuggestion(parameter = "unit")
   public List<Suggestion> execute() {
-    return ChronoUnitSuggestions.suggestUnits();
+    return PromptSuggestion.suggest(ChronoUnit.class);
   }
 
 }

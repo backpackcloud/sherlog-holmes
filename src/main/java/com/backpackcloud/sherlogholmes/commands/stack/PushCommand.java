@@ -76,8 +76,8 @@ public class PushCommand {
   }
 
   @ParameterSuggestion(parameter = "operation")
-  public List<? extends Suggestion> suggestOperands() {
-    return attributeSuggester.suggestOperands();
+  public List<? extends Suggestion> suggestOperations() {
+    return attributeSuggester.suggestOperations();
   }
 
   @ParameterSuggestion(parameter = "value")

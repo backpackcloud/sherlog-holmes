@@ -53,7 +53,7 @@ public interface AttributeType<E> extends Converter<E>, Formatter<E>, Validator<
   default int compare(E o1, E o2) {
     return ((Comparable) o1).compareTo(o2);
   }
-
+  
   AttributeType<String> TEXT = create("text", input -> input);
   AttributeType<Integer> NUMBER = create("number", Integer::parseInt);
   AttributeType<Double> DECIMAL = create("decimal", Double::parseDouble);

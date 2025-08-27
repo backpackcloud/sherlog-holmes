@@ -39,11 +39,11 @@ import com.backpackcloud.sherlogholmes.model.DataEntry;
 import com.backpackcloud.sherlogholmes.model.DataRegistry;
 import com.backpackcloud.sherlogholmes.ui.suggestions.AttributeSuggester;
 
+import java.util.Collection;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.NavigableSet;
 import java.util.concurrent.atomic.AtomicInteger;
 
 @CommandDefinition(
@@ -63,7 +63,7 @@ public class CountCommand {
     this.preferences = preferences;
   }
 
-  private int count(NavigableSet<DataEntry> set, String countAttribute) {
+  private int count(Collection<DataEntry> set, String countAttribute) {
     if (countAttribute == null || countAttribute.isEmpty()) {
       return set.size();
     }
@@ -89,7 +89,7 @@ public class CountCommand {
                       Paginator paginator,
                       @InputParameter String attribute,
                       @InputParameter String counter) {
-    Map<?, NavigableSet<DataEntry>> valuesMap = registry.index(attribute);
+    Map<?, List<DataEntry>> valuesMap = registry.index(attribute);
     String countAttribute = counter != null ? counter : preferences.get(Preferences.COUNT_ATTRIBUTE).value();
 
     Map<String, Count<?>> countMap = new HashMap<>();

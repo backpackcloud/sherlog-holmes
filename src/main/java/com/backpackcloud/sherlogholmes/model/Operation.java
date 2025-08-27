@@ -28,40 +28,40 @@ import java.util.Arrays;
 import java.util.Optional;
 import java.util.regex.Pattern;
 
-public enum Operand {
+public enum Operation {
 
-  SET("*") {
+  IS_SET("*") {
     @Override
     public boolean execute(Attribute<?> attribute, Object reference) {
       return attribute.value().isPresent();
     }
 
     @Override
-    public Operand invert() {
-      return UNSET;
+    public Operation invert() {
+      return IS_NOT_SET;
     }
   },
 
-  UNSET("!") {
+  IS_NOT_SET("!*") {
     @Override
     public boolean execute(Attribute<?> attribute, Object reference) {
       return attribute.value().isEmpty();
     }
 
     @Override
-    public Operand invert() {
-      return SET;
+    public Operation invert() {
+      return IS_SET;
     }
   },
 
-  EQUAL("==") {
+  EQUAL("=") {
     @Override
     public boolean execute(Attribute<?> attribute, Object reference) {
       return attribute.values().anyMatch(value -> value.equals(reference));
     }
 
     @Override
-    public Operand invert() {
+    public Operation invert() {
       return DIFFERENT;
     }
 
@@ -74,7 +74,7 @@ public enum Operand {
     }
 
     @Override
-    public Operand invert() {
+    public Operation invert() {
       return EQUAL;
     }
   },
@@ -87,7 +87,7 @@ public enum Operand {
     }
 
     @Override
-    public Operand invert() {
+    public Operation invert() {
       return EXCLUDES;
     }
 
@@ -101,7 +101,7 @@ public enum Operand {
     }
 
     @Override
-    public Operand invert() {
+    public Operation invert() {
       return EQUAL;
     }
   },
@@ -115,7 +115,7 @@ public enum Operand {
     }
 
     @Override
-    public Operand invert() {
+    public Operation invert() {
       return MISMATCHES;
     }
 
@@ -130,12 +130,12 @@ public enum Operand {
     }
 
     @Override
-    public Operand invert() {
+    public Operation invert() {
       return EQUAL;
     }
   },
 
-  LESS("<") {
+  LESS_THAN("<") {
     @Override
     public boolean execute(Attribute attribute, Object reference) {
       return attribute.values()
@@ -143,12 +143,12 @@ public enum Operand {
     }
 
     @Override
-    public Operand invert() {
-      return GREATER_OR_EQUAL;
+    public Operation invert() {
+      return GREATER_THAN_OR_EQUAL;
     }
   },
 
-  LESS_OR_EQUAL("<=") {
+  LESS_THAN_OR_EQUAL("<=") {
     @Override
     public boolean execute(Attribute attribute, Object reference) {
       return attribute.values()
@@ -156,12 +156,12 @@ public enum Operand {
     }
 
     @Override
-    public Operand invert() {
-      return GREATER;
+    public Operation invert() {
+      return GREATER_THAN;
     }
   },
 
-  GREATER(">") {
+  GREATER_THAN(">") {
     @Override
     public boolean execute(Attribute attribute, Object reference) {
       return attribute.values()
@@ -169,12 +169,12 @@ public enum Operand {
     }
 
     @Override
-    public Operand invert() {
-      return LESS_OR_EQUAL;
+    public Operation invert() {
+      return LESS_THAN_OR_EQUAL;
     }
   },
 
-  GREATER_OR_EQUAL(">=") {
+  GREATER_THAN_OR_EQUAL(">=") {
     @Override
     public boolean execute(Attribute attribute, Object reference) {
       return attribute.values()
@@ -182,14 +182,14 @@ public enum Operand {
     }
 
     @Override
-    public Operand invert() {
-      return LESS;
+    public Operation invert() {
+      return LESS_THAN;
     }
   };
 
   private final String symbol;
 
-  Operand(String symbol) {
+  Operation(String symbol) {
     this.symbol = symbol;
   }
 
@@ -199,25 +199,12 @@ public enum Operand {
 
   public abstract boolean execute(Attribute<?> attribute, Object reference);
 
-  public abstract Operand invert();
+  public abstract Operation invert();
 
-  public static Optional<Operand> findBySymbol(String symbol) {
-    return Arrays.stream(Operand.values())
+  public static Optional<Operation> find(String symbol) {
+    return Arrays.stream(Operation.values())
       .filter(operand -> symbol.equals(operand.symbol))
       .findFirst();
-  }
-
-  public static Optional<Operand> findByName(String name) {
-    try {
-      return Optional.of(Operand.valueOf(name.toUpperCase()));
-    } catch (IllegalArgumentException e) {
-      return Optional.empty();
-    }
-  }
-
-  public static Optional<Operand> find(String key) {
-    return findBySymbol(key)
-      .or(() -> findByName(key));
   }
 
 }

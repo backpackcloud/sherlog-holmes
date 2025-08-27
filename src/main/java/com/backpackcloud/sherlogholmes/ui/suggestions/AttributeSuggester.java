@@ -26,13 +26,11 @@ package com.backpackcloud.sherlogholmes.ui.suggestions;
 
 import com.backpackcloud.cli.ui.Suggestion;
 import com.backpackcloud.cli.ui.components.PromptSuggestion;
-import com.backpackcloud.sherlogholmes.model.AttributeType;
 import com.backpackcloud.sherlogholmes.model.DataRegistry;
-import com.backpackcloud.sherlogholmes.model.Operand;
+import com.backpackcloud.sherlogholmes.model.Operation;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 public class AttributeSuggester {
@@ -56,13 +54,6 @@ public class AttributeSuggester {
       .collect(Collectors.toList());
   }
 
-  public List<Suggestion> suggestAttributeNames(Predicate<AttributeType> predicate) {
-    return registry.attributeNames().stream()
-      .filter(name -> predicate.test(registry.typeOf(name).orElse(AttributeType.TEXT)))
-      .map(PromptSuggestion::suggest)
-      .collect(Collectors.toList());
-  }
-
   public List<Suggestion> suggestAllIndexedAttributes() {
     return registry.indexedAttributes().stream()
       .map(PromptSuggestion::suggest)
@@ -76,12 +67,14 @@ public class AttributeSuggester {
       .collect(Collectors.toList());
   }
 
-  public List<? extends Suggestion> suggestOperands() {
+  public List<? extends Suggestion> suggestOperations() {
     List<Suggestion> result = new ArrayList<>();
 
-    for (Operand operand : Operand.values()) {
-      result.add(PromptSuggestion.suggest(operand.symbol()).describedAs(operand.name().toLowerCase()));
-      result.add(PromptSuggestion.suggest(operand.name().toLowerCase()).describedAs(operand.symbol()));
+    for (Operation operation : Operation.values()) {
+      result.add(
+        PromptSuggestion.suggest(operation.symbol())
+          .describedAs(operation.name().toLowerCase().replace("_", " "))
+      );
     }
 
     return result;

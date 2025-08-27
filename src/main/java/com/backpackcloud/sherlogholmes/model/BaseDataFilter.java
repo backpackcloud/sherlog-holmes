@@ -34,12 +34,12 @@ public class BaseDataFilter implements DataFilter {
   private static final Pattern INTERPOLATION_PATTERN = Pattern.compile("\\{\\s*(?<name>[^}]+)\\s*}");
 
   private final String attribute;
-  private final Operand operand;
+  private final Operation operation;
   private final String reference;
 
-  public BaseDataFilter(String attribute, Operand operand, String reference) {
+  public BaseDataFilter(String attribute, Operation operation, String reference) {
     this.attribute = attribute;
-    this.operand = operand;
+    this.operation = operation;
     this.reference = reference;
   }
 
@@ -52,20 +52,20 @@ public class BaseDataFilter implements DataFilter {
         .orElse("")
     );
     return entry.attribute(attribute)
-      .filter(attribute -> operand.execute(attribute, value.isBlank() ? null : attribute.spec().type().convert(value)))
+      .filter(attribute -> operation.execute(attribute, value.isBlank() ? null : attribute.spec().type().convert(value)))
       .isPresent();
   }
 
   @Override
   public DataFilter negate() {
-    return new BaseDataFilter(attribute, operand.invert(), reference);
+    return new BaseDataFilter(attribute, operation.invert(), reference);
   }
 
   @Override
   public void toDisplay(Writer writer) {
     writer
       .write(attribute).write(" ")
-      .write(operand.symbol())
+      .write(operation.symbol())
       .write(" ")
       .write(reference);
   }
