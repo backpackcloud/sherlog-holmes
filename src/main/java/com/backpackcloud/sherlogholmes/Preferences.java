@@ -57,20 +57,6 @@ public final class Preferences {
     "0"
   );
 
-  public static final PreferenceSpec<String> DEFAULT_FALLBACK_MODE = new PreferenceSpec<>(
-    "default-fallback-mode",
-    "sets the default fallback behavior to use when parsing content fails",
-    PreferenceType.TEXT,
-    "ignore"
-  );
-
-  public static final PreferenceSpec<Boolean> SHOW_ADDED_ENTRIES = new PreferenceSpec<>(
-    "show-added-entries",
-    "shows entries as they are added in the registry",
-    PreferenceType.FLAG,
-    "false"
-  );
-
   public static final PreferenceSpec<String> STACK_OPERATION = new PreferenceSpec<>(
     "stack-operation",
     "sets the stack operation for creating the filter (and/or)",
