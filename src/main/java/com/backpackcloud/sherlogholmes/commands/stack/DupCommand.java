@@ -43,8 +43,9 @@ public class DupCommand {
   }
 
   @Action
-  public void execute() {
+  public FilterStack execute() {
     stack.apply(FilterStack.Operation.DUP);
+    return stack;
   }
 
 }

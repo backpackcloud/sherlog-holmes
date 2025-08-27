@@ -60,14 +60,15 @@ public class PushCommand {
   }
 
   @Action
-  public void execute(@InputParameter String attribute,
-                      @InputParameter String operation,
-                      @InputParameter @Line String value) {
+  public FilterStack execute(@InputParameter String attribute,
+                             @InputParameter String operation,
+                             @InputParameter @Line String value) {
     String expression = Stream.of(attribute, operation, value)
       // not all operations require a value
       .filter(Objects::nonNull)
       .collect(Collectors.joining(" "));
     stack.push(filterFactory.create(expression));
+    return stack;
   }
 
   @ParameterSuggestion(parameter = "attribute")

@@ -45,7 +45,7 @@ public class SwapCommand {
   }
 
   @Action
-  public void execute() {
+  public FilterStack execute() {
     if (stack.size() < 2) {
       throw new UnbelievableException("Stack size < 2");
     }
@@ -54,6 +54,7 @@ public class SwapCommand {
 
     stack.push(x);
     stack.push(y);
+    return stack;
   }
 
 }

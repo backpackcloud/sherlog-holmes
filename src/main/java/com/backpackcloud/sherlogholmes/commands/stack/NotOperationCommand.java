@@ -43,8 +43,9 @@ public class NotOperationCommand {
   }
 
   @Action
-  public void execute() {
+  public FilterStack execute() {
     stack.apply(FilterStack.Operation.NOT);
+    return stack;
   }
 
 }
