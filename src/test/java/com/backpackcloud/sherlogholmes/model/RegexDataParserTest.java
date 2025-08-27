@@ -75,7 +75,8 @@ public class RegexDataParserTest {
   DataEntry data;
 
   private void entryFrom(String content) {
-    Function<String, String> function = parser.parse(new Metadata("test", 1), content).orElseThrow();
+    Metadata metadata = new Metadata("test", 1);
+    Function<String, String> function = parser.parse(metadata, content).orElseThrow();
     data = mapper.map(model.dataSupplier(), function).orElseThrow();
   }
 

@@ -31,6 +31,7 @@ import com.backpackcloud.sherlogholmes.Preferences;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
 
 public class Pipeline {
@@ -61,27 +62,17 @@ public class Pipeline {
   }
 
   public <T> void run(DataReader<T> dataReader, T location, Consumer<DataEntry> consumer) {
-    switch (fallbackMode) {
-      case IGNORE -> dataReader.read(location, (metadata, content) -> dataParser.parse(metadata, normalize(content))
-        .ifPresent(struct -> dataMapper.map(dataModel.dataSupplier(), struct)
-          .stream()
-          .peek(metadata::attachTo)
-          .peek(entry -> analysisSteps.forEach(step -> step.analyze(entry)))
-          .forEach(consumer)));
-      case APPEND -> {
-        StagingArea stagingArea = new StagingArea(consumer);
+    StagingArea stagingArea = new StagingArea(consumer);
 
-        dataReader.read(location, (metadata, content) ->
-          dataParser.parse(metadata, normalize(content))
-            .ifPresentOrElse(
-              structure -> stagingArea.push(content, metadata, structure),
-              () -> stagingArea.push(content, metadata)
-            ));
+    dataReader.read(location, (metadata, content) ->
+      dataParser.parse(metadata, normalize(content))
+        .ifPresentOrElse(
+          structure -> stagingArea.push(content, metadata, structure),
+          () -> stagingArea.push(content, metadata)
+        ));
 
-        stagingArea.push();
-        stagingArea.close();
-      }
-    }
+    stagingArea.push();
+    stagingArea.close();
   }
 
   private class StagingArea {
@@ -90,12 +81,14 @@ public class Pipeline {
     private Object structure;
     private Metadata metadata;
     private final Consumer<DataEntry> consumer;
+    private final ExecutorService pusher;
     private final ExecutorService pushChecker;
     private boolean closed = false;
     private long lastPush;
 
     private StagingArea(Consumer<DataEntry> consumer) {
       this.consumer = consumer;
+      this.pusher = Executors.newVirtualThreadPerTaskExecutor();
       this.pushChecker = Executors.newSingleThreadExecutor();
       this.pushChecker.submit(() -> {
         while (!closed) {
@@ -112,17 +105,25 @@ public class Pipeline {
     }
 
     public void close() {
+      this.pusher.shutdown();
+      try {
+        this.pusher.awaitTermination(Long.MAX_VALUE, TimeUnit.MILLISECONDS);
+      } catch (InterruptedException e) {
+        throw new UnbelievableException(e);
+      }
       this.closed = true;
       this.pushChecker.close();
     }
 
     public void push() {
       if (this.structure != null) {
-        dataMapper.map(dataModel.dataSupplier(), this.structure)
+        Object struct = this.structure;
+        Metadata metadata = this.metadata;
+        pusher.execute(() -> dataMapper.map(dataModel.dataSupplier(), struct)
           .stream()
           .peek(metadata::attachTo)
           .peek(entry -> analysisSteps.forEach(step -> step.analyze(entry)))
-          .forEach(consumer);
+          .forEach(consumer));
         this.structure = null;
         this.content = null;
       }

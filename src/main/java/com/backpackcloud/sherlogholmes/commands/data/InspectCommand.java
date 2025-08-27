@@ -24,7 +24,6 @@
 
 package com.backpackcloud.sherlogholmes.commands.data;
 
-import com.backpackcloud.cli.Writer;
 import com.backpackcloud.cli.annotations.Action;
 import com.backpackcloud.cli.annotations.CommandDefinition;
 import com.backpackcloud.cli.annotations.InputParameter;
@@ -39,8 +38,15 @@ import com.backpackcloud.sherlogholmes.model.DataRegistry;
 import com.backpackcloud.sherlogholmes.model.Pipeline;
 import com.backpackcloud.sherlogholmes.model.readers.FileLineReader;
 
+import java.io.File;
 import java.nio.charset.Charset;
+import java.nio.file.FileSystems;
+import java.nio.file.Path;
+import java.nio.file.PathMatcher;
 import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 @CommandDefinition(
@@ -61,21 +67,33 @@ public class InspectCommand {
   }
 
   @Action
-  public void execute(@PreferenceValue("show-added-entries") boolean showEntries,
-                      @PreferenceValue("input-charset") String inputCharset,
+  public void execute(@PreferenceValue("input-charset") String inputCharset,
                       @PreferenceValue("file-reader-skip-lines") Integer skipLines,
-                      Writer writer,
                       @InputParameter String pipelineId,
-                      @InputParameter String location) {
+                      @InputParameter String location) throws InterruptedException {
     DataReader dataReader = new FileLineReader(Charset.forName(inputCharset), skipLines);
     Pipeline pipeline = config.pipelineFor(pipelineId);
 
-    pipeline.run(dataReader, location, entry -> {
-      if (showEntries) {
-        writer.writeln(entry);
+    Path locationPath = Path.of(location);
+
+    if (locationPath.toFile().exists()) {
+      pipeline.run(dataReader, location, registry::add);
+    } else {
+      PathMatcher matcher = FileSystems.getDefault().getPathMatcher("glob:" + location);
+      File directory = new File(location).getParentFile();
+
+      if (directory != null) {
+        ExecutorService executor = Executors.newVirtualThreadPerTaskExecutor();
+        for (File file : directory.listFiles()) {
+          Path path = Path.of(file.getPath());
+          if (matcher.matches(path)) {
+            executor.submit(() -> pipeline.run(dataReader, file.getPath(), registry::add));
+          }
+        }
+        executor.shutdown();
+        executor.awaitTermination(Long.MAX_VALUE, TimeUnit.MILLISECONDS);
       }
-      registry.add(entry);
-    });
+    }
   }
 
   @ParameterSuggestion(parameter = "location")

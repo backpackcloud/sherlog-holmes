@@ -28,14 +28,10 @@ import com.backpackcloud.UnbelievableException;
 import com.backpackcloud.sherlogholmes.model.DataReader;
 import com.backpackcloud.sherlogholmes.model.Metadata;
 
-import java.io.File;
 import java.io.IOException;
 import java.nio.charset.Charset;
-import java.nio.file.FileSystems;
 import java.nio.file.Files;
-import java.nio.file.InvalidPathException;
 import java.nio.file.Path;
-import java.nio.file.PathMatcher;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.BiConsumer;
 
@@ -51,34 +47,7 @@ public class FileLineReader implements DataReader<String> {
 
   @Override
   public void read(String location, BiConsumer<Metadata, String> consumer) {
-    try {
-      Path locationPath = Path.of(location);
-
-      if (locationPath.toFile().exists()) {
-        readLines(locationPath, consumer);
-      } else {
-        glob(location, consumer);
-      }
-    } catch (InvalidPathException e) {
-      glob(location, consumer);
-    }
-  }
-
-  private void glob(String location, BiConsumer<Metadata, String> consumer) {
-    PathMatcher matcher = FileSystems.getDefault().getPathMatcher("glob:" + location);
-    File directory = new File(location).getParentFile();
-
-    if (directory != null) {
-      for (File file : directory.listFiles()) {
-        Path path = Path.of(file.getPath());
-        if (matcher.matches(path)) {
-          readLines(path, consumer);
-        }
-      }
-    }
-  }
-
-  private void readLines(Path path, BiConsumer<Metadata, String> consumer) {
+    Path path = Path.of(location);
     AtomicInteger count = new AtomicInteger(0);
     try {
       Files.lines(path, charset)
