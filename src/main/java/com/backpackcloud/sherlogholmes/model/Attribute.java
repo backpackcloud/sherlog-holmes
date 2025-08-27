@@ -25,7 +25,6 @@
 package com.backpackcloud.sherlogholmes.model;
 
 import com.backpackcloud.UnbelievableException;
-import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.util.HashSet;
 import java.util.Objects;
@@ -36,11 +35,8 @@ import java.util.stream.Stream;
 public class Attribute<E> implements Comparable<Attribute<E>> {
 
   private final String name;
-  @JsonProperty
   private final AttributeSpec<E> spec;
-  @JsonProperty
   private E value;
-  @JsonProperty
   private Set<E> values;
 
   public Attribute(String name, AttributeSpec<E> spec) {
