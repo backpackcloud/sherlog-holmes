@@ -60,7 +60,22 @@ models:
       thread:    text
       message:   text
       exception: text[]
-      message:   text
+
+  ocp-audit:
+    format: |
+            {#timestamp} {#cluster} {#namespace}
+            {#user}
+            {@decision} {#verb} {#object} {#name} {#version}
+    attributes:
+      timestamp: offset-datetime | yyyy-MM-dd'T'HH:mm:ss.SSSSSSX
+      cluster:   text
+      decision:  enum | forbid,allow
+      verb:      text
+      object:    text
+      namespace: text
+      name:      text
+      version:   text
+      user:      text
 
 # The registry will keep track of all assigned values and which entries hold the values. Indexed attributes that also
 # have an icon will appear in the prompt together with a counter for how many different values were indexed.
@@ -70,6 +85,14 @@ index:
   - category
   - thread
   - exception
+  - cluster
+  - object
+  - verb
+  - decision
+  - namespace
+  - name
+  - user
+  - version
 
 # Parsers are the next component in the chain, responsible for getting the contents
 # read by a reader and converting it into a structure
@@ -88,6 +111,8 @@ parsers:
   infinispan:
     type:    regex
     pattern: '{{timestamp}} {{level}}\s+{{thread}} {{category}} {{message}}'
+  ocp-audit:
+    type: json
 
 # Next in the chain are the Mappers, responsible for taking values from the parsed structure
 # to form an entry defined in a data model
@@ -104,6 +129,19 @@ mappers:
     # will be assigned to an attribute with the same name.
     # This is useful to map regex named groups to a data model
     copy: timestamp,level,category,thread,message
+
+  ocp-audit:
+    type: function
+    map:
+      timestamp: /_source/@timestamp
+      cluster:   /_source/openshift/cluster_id
+      decision:  /_source/annotations/authorization.k8s.io~1decision
+      verb:      /_source/verb
+      object:    /_source/objectRef/resource
+      namespace: /_source/objectRef/namespace
+      name:      /_source/objectRef/name
+      version:   /_source/objectRef/apiVersion
+      user:      /_source/user/username
 
 patterns:
   timestamp: '(?<timestamp>(\\d{2,4}-\\d{2}-\\d{2,4} )?\\d{2}:\\d{2}:\\d{2},\\d{3})'
@@ -181,21 +219,22 @@ pipelines:
 # https://www.nerdfonts.com/cheat-sheet
 icons:
   # timestamp is not indexed, so this icon will only appear in the output
-  attribute-timestamp: ""
+  attribute-timestamp:       ""
   # level is indexed, so this icon will appear in the prompt
-  attribute-level:     "󰒢"
-  attribute-category:  "󰓹"
-  attribute-thread:    "󰓁"
-  attribute-message:   "󰍧"
+  attribute-level:           "󰒢"
+  attribute-category:        "󰓹"
+  attribute-thread:          "󰓁"
+  attribute-message:         "󰍧"
+  attribute-namespace:       ""
+  attribute-version:         ""
+  attribute-name:            "󰓹"
+  attribute-user:            ""
+  attribute-verb:            ""
+  attribute-decision-allow:  ""
+  attribute-decision-forbid: ""
+  attribute-cluster:         "󰛳"
   # exception is indexed, so the prompt will show how many exceptions were indexed
-  attribute-exception: ""
-
-colors:
-  attribute-level:     yellow
-  attribute-category:  blue
-  attribute-thread:    grey
-  attribute-message:   white
-  attribute-exception: red
+  attribute-exception:       ""
 
 # Styles defines how the values will appear in the console.
 #
@@ -211,6 +250,7 @@ colors:
 styles:
   attribute-timestamp:           grey//i
 
+  attribute-level:               yellow
   attribute-level-TRACE:         cyan
   attribute-level-DEBUG:         cyan
   attribute-level-FINE:          cyan
@@ -224,6 +264,16 @@ styles:
   attribute-thread:              grey
   attribute-message:             white
   attribute-exception:           red
+
+  attribute-cluster:             yellow
+  attribute-verb:                blue
+  attribute-object:              orange
+  attribute-name:                cyan
+  attribute-namespace:           teal
+  attribute-user:                purple
+  attribute-decision-allow:      green
+  attribute-decision-forbid:     red
+  attribute-version:             gray//i
 
   model-property:                white//b
   model-name:                    blue//b
