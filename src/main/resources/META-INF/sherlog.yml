@@ -45,11 +45,20 @@ models:
     # Attributes of a "datetime" variant may have an "*" at the end to add a fallback "time" attribute. Sometimes, the
     # log only contains the time information (when it's a console log, for example). So you add a datetime pattern, but
     # enclose part of it with "()" and that part will be used as a time pattern for fallback.
+    #
+    # The order in which the attributes are declared is also the order that will be used to sort the entries. Attributes
+    # from the metadata ($line and $source) will always be added, but without declaring, they will fall into the last
+    # positions.
     attributes:
+      # The console log often doesn't have full timestamps
       timestamp: datetime* | yyyy-MM-dd (HH:mm:ss,SSS)
+      # Line and source should come next to timestamp for better sorting
+      $line:     number
+      $source:   text
       level:     enum | TRACE,DEBUG,FINE,INFO,WARN,WARNING,ERROR,SEVERE,FATAL
       category:  text
       thread:    text
+      message:   text
       exception: text[]
       message:   text
 
