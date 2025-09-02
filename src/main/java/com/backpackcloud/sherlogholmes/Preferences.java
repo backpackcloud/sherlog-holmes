@@ -71,6 +71,13 @@ public final class Preferences {
     "true"
   );
 
+  public static final PreferenceSpec<Boolean> AUTO_FILTER = new PreferenceSpec<>(
+    "auto-filter",
+    "applies filter on every stack manipulation",
+    PreferenceType.FLAG,
+    "true"
+  );
+
   private Preferences() {
 
   }

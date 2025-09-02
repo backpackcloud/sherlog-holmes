@@ -26,8 +26,8 @@ package com.backpackcloud.sherlogholmes.commands.stack;
 
 import com.backpackcloud.cli.annotations.Action;
 import com.backpackcloud.cli.annotations.CommandDefinition;
+import com.backpackcloud.cli.annotations.Event;
 import com.backpackcloud.cli.annotations.InputParameter;
-import com.backpackcloud.cli.annotations.Line;
 import com.backpackcloud.cli.annotations.ParameterSuggestion;
 import com.backpackcloud.cli.ui.Suggestion;
 import com.backpackcloud.sherlogholmes.model.DataRegistry;
@@ -42,7 +42,6 @@ import java.util.stream.Stream;
 
 @CommandDefinition(
   name = "push",
-  event = "stack",
   type = "Stack Manipulation",
   description = "Adds the given filter to the stack."
 )
@@ -60,15 +59,15 @@ public class PushCommand {
   }
 
   @Action
+  @Event("stack")
   public FilterStack execute(@InputParameter String attribute,
                              @InputParameter String operation,
-                             @InputParameter @Line String value) {
+                             @InputParameter String value) {
     String expression = Stream.of(attribute, operation, value)
       // not all operations require a value
       .filter(Objects::nonNull)
       .collect(Collectors.joining(" "));
-    stack.push(filterFactory.create(expression));
-    return stack;
+    return stack.push(filterFactory.create(expression));
   }
 
   @ParameterSuggestion(parameter = "attribute")

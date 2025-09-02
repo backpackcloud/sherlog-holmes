@@ -26,11 +26,11 @@ package com.backpackcloud.sherlogholmes.commands.stack;
 
 import com.backpackcloud.cli.annotations.Action;
 import com.backpackcloud.cli.annotations.CommandDefinition;
+import com.backpackcloud.cli.annotations.Event;
 import com.backpackcloud.sherlogholmes.model.FilterStack;
 
 @CommandDefinition(
   name = "pop",
-  event = "stack",
   type = "Stack Manipulation",
   description = "Removes the current filter from the top of the stack"
 )
@@ -43,6 +43,7 @@ public class PopCommand {
   }
 
   @Action
+  @Event("stack")
   public FilterStack execute() {
     if (!stack.isEmpty()) {
       stack.pop();

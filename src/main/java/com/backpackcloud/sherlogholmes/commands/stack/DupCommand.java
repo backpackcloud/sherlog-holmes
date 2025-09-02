@@ -30,7 +30,6 @@ import com.backpackcloud.sherlogholmes.model.FilterStack;
 
 @CommandDefinition(
   name = "dup",
-  event = "stack",
   type = "Stack Manipulation",
   description = "Duplicates the current filter"
 )

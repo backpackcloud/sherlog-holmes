@@ -26,11 +26,11 @@ package com.backpackcloud.sherlogholmes.commands.stack;
 
 import com.backpackcloud.cli.annotations.Action;
 import com.backpackcloud.cli.annotations.CommandDefinition;
+import com.backpackcloud.cli.annotations.Event;
 import com.backpackcloud.sherlogholmes.model.FilterStack;
 
 @CommandDefinition(
   name = "not",
-  event = "stack",
   type = "Stack Manipulation",
   description = "Applies the boolean NOT operation to the current filter"
 )
@@ -43,6 +43,7 @@ public class NotOperationCommand {
   }
 
   @Action
+  @Event("stack")
   public FilterStack execute() {
     stack.apply(FilterStack.Operation.NOT);
     return stack;

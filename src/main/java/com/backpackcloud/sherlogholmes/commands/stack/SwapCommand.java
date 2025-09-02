@@ -27,12 +27,12 @@ package com.backpackcloud.sherlogholmes.commands.stack;
 import com.backpackcloud.UnbelievableException;
 import com.backpackcloud.cli.annotations.Action;
 import com.backpackcloud.cli.annotations.CommandDefinition;
+import com.backpackcloud.cli.annotations.Event;
 import com.backpackcloud.sherlogholmes.model.DataFilter;
 import com.backpackcloud.sherlogholmes.model.FilterStack;
 
 @CommandDefinition(
   name = "swap",
-  event = "stack",
   type = "Stack Manipulation",
   description = "Swaps the current and second filters at the top of the stack"
 )
@@ -45,6 +45,7 @@ public class SwapCommand {
   }
 
   @Action
+  @Event("stack")
   public FilterStack execute() {
     if (stack.size() < 2) {
       throw new UnbelievableException("Stack size < 2");

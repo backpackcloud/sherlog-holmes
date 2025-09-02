@@ -26,11 +26,11 @@ package com.backpackcloud.sherlogholmes.commands.stack;
 
 import com.backpackcloud.cli.annotations.Action;
 import com.backpackcloud.cli.annotations.CommandDefinition;
+import com.backpackcloud.cli.annotations.Event;
 import com.backpackcloud.sherlogholmes.model.FilterStack;
 
 @CommandDefinition(
   name = "or",
-  event = "stack",
   type = "Stack Manipulation",
   description = "Applies the boolean OR operation with the first filters at the top of the stack"
 )
@@ -43,8 +43,10 @@ public class OrOperationCommand {
   }
 
   @Action
-  public void execute() {
+  @Event("stack")
+  public FilterStack execute() {
     stack.apply(FilterStack.Operation.OR);
+    return stack;
   }
 
 }

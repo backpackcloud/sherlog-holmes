@@ -26,11 +26,11 @@ package com.backpackcloud.sherlogholmes.commands.stack;
 
 import com.backpackcloud.cli.annotations.Action;
 import com.backpackcloud.cli.annotations.CommandDefinition;
+import com.backpackcloud.cli.annotations.Event;
 import com.backpackcloud.sherlogholmes.model.FilterStack;
 
 @CommandDefinition(
   name = "and",
-  event = "stack",
   type = "Stack Manipulation",
   description = "Applies the boolean AND operation with the first filters at the top of the stack"
 )
@@ -43,6 +43,7 @@ public class AndOperationCommand {
   }
 
   @Action
+  @Event("stack")
   public void execute() {
     stack.apply(FilterStack.Operation.AND);
   }

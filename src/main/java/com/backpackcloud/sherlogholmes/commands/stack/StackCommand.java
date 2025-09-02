@@ -26,24 +26,38 @@ package com.backpackcloud.sherlogholmes.commands.stack;
 
 import com.backpackcloud.cli.annotations.Action;
 import com.backpackcloud.cli.annotations.CommandDefinition;
+import com.backpackcloud.cli.annotations.Event;
+import com.backpackcloud.cli.annotations.InputParameter;
 import com.backpackcloud.sherlogholmes.model.FilterStack;
 
 @CommandDefinition(
   name = "stack",
-  event = "print-stack",
   type = "Stack Manipulation",
   description = "Shows the stacked filters"
 )
-public class ShowStackCommand {
+public class StackCommand {
 
   private final FilterStack stack;
 
-  public ShowStackCommand(FilterStack stack) {
+  public StackCommand(FilterStack stack) {
     this.stack = stack;
   }
 
   @Action
-  public FilterStack execute() {
+  public FilterStack show() {
+    return stack;
+  }
+
+  @Action
+  public FilterStack save(@InputParameter String name) {
+    stack.save(name);
+    return stack;
+  }
+
+  @Action
+  @Event("stack")
+  public FilterStack load(@InputParameter String name) {
+    stack.load(name);
     return stack;
   }
 
