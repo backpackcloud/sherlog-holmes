@@ -57,13 +57,6 @@ public final class Preferences {
     "0"
   );
 
-  public static final PreferenceSpec<String> STACK_OPERATION = new PreferenceSpec<>(
-    "stack-operation",
-    "sets the stack operation for creating the filter (and/or)",
-    PreferenceType.TEXT,
-    "and"
-  );
-
   public static final PreferenceSpec<Boolean> REMOVE_ANSI_COLORS = new PreferenceSpec<>(
     "remove-ansi-colors",
     "removes the ansi colors from the readed content",
