@@ -13,6 +13,7 @@ icon-data:         blue
 icon-attribute:    teal
 icon-time-range:   yellow
 icon-stack:        orange
+icon-limit:        purple
 
 attribute-$source: purple
 attribute-$line:   purple

@@ -6,6 +6,8 @@ preferences:
   remove-ansi-colors: true
   # The charset to use for reading the inputs
   input-charset:      UTF-8
+  # The charset to use for writing
+  output-charset:     UTF-8
   # Enables data paging for commands that displays data
   result-paging:      true
   # Sets the number of entries shown on each page
@@ -23,7 +25,8 @@ models:
     # - '#' uses the attribute's value and its correspondent icon
     # - '@' uses just the attribute's icon (if the attribute holds a value)
     # - '|' passes the attribute's value through a String.format() call using the given arguments in the right
-    format: '{@exception}{#$source}:{$line} {#timestamp} {#level|%-5s} {#category} {#thread} {#message}'
+    format:        '{@exception}{#$source}:{$line} {#timestamp} {#level|%-5s} {#category} {#thread} {#message}'
+    export-format: '{timestamp} {level|%-5s} [{category}] ({thread}) {message}'
     # The list of attributes for this data model
     #
     # Attributes can be of the following types:
@@ -42,16 +45,14 @@ models:
     #
     # For attributes requiring configuration, it's passed with an '|' after the type, followed by the configuration
     #
-    # Attributes of a "datetime" variant may have an "*" at the end to add a fallback "time" attribute. Sometimes, the
-    # log only contains the time information (when it's a console log, for example). So you add a datetime pattern, but
-    # enclose part of it with "()" and that part will be used as a time pattern for fallback.
-    #
     # The order in which the attributes are declared is also the order that will be used to sort the entries. Attributes
     # from the metadata ($line and $source) will always be added, but without declaring, they will fall into the last
     # positions.
     attributes:
       # The console log often doesn't have full timestamps
-      timestamp: datetime* | yyyy-MM-dd (HH:mm:ss,SSS)
+      timestamp:
+        - datetime | yyyy-MM-dd HH:mm:ss,SSS
+        - time     | HH:mm:ss,SSS
       # Line and source should come next to timestamp for better sorting
       $line:     number
       $source:   text
@@ -67,7 +68,7 @@ models:
             {#user}
             {@decision} {#verb} {#object} {#name} {#version}
     attributes:
-      timestamp: offset-datetime | yyyy-MM-dd'T'HH:mm:ss.SSSSSSX
+      timestamp: offset-datetime
       cluster:   text
       decision:  enum | forbid,allow
       verb:      text
@@ -77,9 +78,9 @@ models:
       version:   text
       user:      text
 
-# The registry will keep track of all assigned values and which entries hold the values. Indexed attributes that also
-# have an icon will appear in the prompt together with a counter for how many different values were indexed.
-index:
+# The registry will keep track of how many entries hold each value. Counted attributes that also
+# have an icon assigned will appear in the prompt.
+counters:
   - $source
   - level
   - category
