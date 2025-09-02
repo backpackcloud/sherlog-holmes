@@ -54,7 +54,7 @@ public enum Operation {
     }
   },
 
-  EQUAL("=") {
+  EQUAL("==") {
     @Override
     public boolean execute(Attribute<?> attribute, Object reference) {
       return attribute.values().anyMatch(value -> value.equals(reference));
