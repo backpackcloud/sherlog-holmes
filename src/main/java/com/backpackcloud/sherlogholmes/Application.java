@@ -69,7 +69,7 @@ public class Application {
       .addComponent(FilterFactory.class)
       .addComponent(FileSuggester.class)
 
-      .registerPreferences(Preferences.class);
+      .register(Preferences.class);
 
     ConfigurationSupplier configSupplier = new ConfigurationSupplier("sherlog");
 
