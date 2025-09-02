@@ -35,23 +35,25 @@ import java.util.HashMap;
 import java.util.Map;
 
 public record DataModelConfig(String format,
+                              String exportFormat,
                               String modelsToInclude,
                               Map<String, DataAttributeConfig> attributes) implements ConfigObject<DataModel> {
 
   @JsonCreator
   public DataModelConfig(@JsonProperty("format") String format,
+                         @JsonProperty("export-format") String exportFormat,
                          @JsonProperty("include") String modelsToInclude,
                          @JsonProperty("attributes") Map<String, DataAttributeConfig> attributes) {
     this.format = format;
+    this.exportFormat = exportFormat == null ? format : exportFormat;
     this.modelsToInclude = modelsToInclude;
     this.attributes = attributes != null ? attributes : new HashMap<>();
   }
 
   public DataModel get(Config config) {
-    DataModel model = new DataModel(format);
-    attributes.forEach((name, attrConfig) -> {
-      model.add(name, attrConfig.get(config));
-    });
+    DataModel model = new DataModel(format, exportFormat);
+    attributes.forEach((name, attrConfig) ->
+      model.add(name, attrConfig.get(config)));
     if (modelsToInclude != null) {
       Arrays.stream(modelsToInclude.split("\\s*,\\s*"))
         .forEach(additionalModel -> model.addFrom(config.dataModelFor(additionalModel)));

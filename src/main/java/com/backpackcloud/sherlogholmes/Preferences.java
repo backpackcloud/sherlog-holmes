@@ -43,6 +43,13 @@ public final class Preferences {
     "UTF-8"
   );
 
+  public static final PreferenceSpec<String> OUTPUT_CHARSET = new PreferenceSpec<>(
+    "output-charset",
+    "sets the charset to use for writing to output files",
+    PreferenceType.TEXT,
+    "UTF-8"
+  );
+
   public static final PreferenceSpec<Integer> FILE_READER_SKIP_LINES = new PreferenceSpec<>(
     "file-reader-skip-lines",
     "sets how many lines should be skipped when reading files (useful for CSVs with headers)",

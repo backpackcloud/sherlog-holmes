@@ -33,14 +33,16 @@ import java.util.function.Supplier;
 public class DataModel {
 
   private final Map<String, AttributeSpec<?>> attributes = new LinkedHashMap<>();
-  private final String format;
+  private final String displayFormat;
+  private final String exportFormat;
 
   public DataModel() {
-    this(null);
+    this(null, null);
   }
 
-  public DataModel(String format) {
-    this.format = format;
+  public DataModel(String displayFormat, String exportFormat) {
+    this.displayFormat = displayFormat;
+    this.exportFormat = exportFormat;
   }
 
   public DataModel add(String name, AttributeSpec<?> spec) {
@@ -66,7 +68,7 @@ public class DataModel {
 
   public Supplier<DataEntry> dataSupplier() {
     return () -> {
-      DataEntry dataEntry = new DataEntry(format);
+      DataEntry dataEntry = new DataEntry(displayFormat, exportFormat);
       attributes.forEach(dataEntry::addAttribute);
       return dataEntry;
     };

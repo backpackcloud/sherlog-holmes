@@ -42,6 +42,7 @@ public class ModelCommand {
 
   private String name;
   private String format;
+  private String exportFormat;
   private String modelsToInclude;
   private Map<String, DataAttributeConfig> attributes;
   private List<Consumer<DataModelConfig>> actions;
@@ -62,6 +63,11 @@ public class ModelCommand {
   @Action("format")
   public void setFormat(@InputParameter String format) {
     this.format = format;
+  }
+
+  @Action("export-format")
+  public void setExportFormat(@InputParameter String format) {
+    this.exportFormat = format;
   }
 
   @Action("include")
@@ -107,6 +113,7 @@ public class ModelCommand {
   public void saveModel(Writer writer) {
     DataModelConfig modelConfig = new DataModelConfig(
       this.format,
+      this.exportFormat,
       this.modelsToInclude,
       this.attributes
     );

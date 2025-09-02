@@ -41,19 +41,22 @@ public class DataEntry implements Comparable<DataEntry>, Displayable {
 
   private final Map<String, Attribute> attributes;
   private final String displayFormat;
+  private final String exportFormat;
 
   public DataEntry() {
-    this(null);
+    this(null, null);
   }
 
-  public DataEntry(String displayFormat) {
+  public DataEntry(String displayFormat, String exportFormat) {
     this.displayFormat = displayFormat;
+    this.exportFormat = exportFormat;
     this.attributes = new LinkedHashMap<>();
   }
 
-  public DataEntry(Map<String, Attribute> attributes, String displayFormat) {
+  public DataEntry(Map<String, Attribute> attributes, String displayFormat, String exportFormat) {
     this.attributes = attributes;
     this.displayFormat = displayFormat;
+    this.exportFormat = exportFormat;
   }
 
   public boolean hasAttribute(String name) {
@@ -108,19 +111,15 @@ public class DataEntry implements Comparable<DataEntry>, Displayable {
     return new ArrayList<>(this.attributes.values());
   }
 
-  public String displayFormat() {
-    return displayFormat;
-  }
-
-  public DataEntry displayFormat(String format) {
-    return new DataEntry(attributes, format);
-  }
-
   public void toDisplay(Writer writer) {
-    toDisplay(writer, displayFormat);
+    write(writer, displayFormat);
   }
 
-  public void toDisplay(Writer writer, String outputFormat) {
+  public void export(Writer writer) {
+    write(writer, exportFormat);
+  }
+
+  public void write(Writer writer, String outputFormat) {
     StringWalker walker = new StringWalker(writer::write, token -> {
       String name;
       String format;
