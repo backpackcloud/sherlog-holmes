@@ -26,6 +26,9 @@ package com.backpackcloud.sherlogholmes.commands.data;
 
 import com.backpackcloud.cli.annotations.Action;
 import com.backpackcloud.cli.annotations.CommandDefinition;
+import com.backpackcloud.cli.annotations.Observe;
+import com.backpackcloud.preferences.UserPreferences;
+import com.backpackcloud.sherlogholmes.Preferences;
 import com.backpackcloud.sherlogholmes.model.DataRegistry;
 import com.backpackcloud.sherlogholmes.model.FilterStack;
 
@@ -38,10 +41,12 @@ public class FilterCommand {
 
   private final DataRegistry registry;
   private final FilterStack filterStack;
+  private final UserPreferences preferences;
 
-  public FilterCommand(DataRegistry registry, FilterStack filterStack) {
+  public FilterCommand(DataRegistry registry, FilterStack filterStack, UserPreferences preferences) {
     this.registry = registry;
     this.filterStack = filterStack;
+    this.preferences = preferences;
   }
 
   @Action
@@ -50,6 +55,13 @@ public class FilterCommand {
       registry.removeFilter();
     } else {
       registry.apply(filterStack.filter());
+    }
+  }
+
+  @Observe("stack")
+  public void onStackManipulation() {
+    if (preferences.isEnabled(Preferences.AUTO_FILTER)) {
+      execute();
     }
   }
 
