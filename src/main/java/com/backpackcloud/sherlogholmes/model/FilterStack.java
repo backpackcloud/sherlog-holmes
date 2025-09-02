@@ -28,36 +28,47 @@ import com.backpackcloud.UnbelievableException;
 import com.backpackcloud.cli.Displayable;
 import com.backpackcloud.cli.Registry;
 import com.backpackcloud.cli.Writer;
-import com.backpackcloud.preferences.UserPreferences;
-import com.backpackcloud.sherlogholmes.Preferences;
 
 import java.util.ArrayDeque;
 import java.util.Deque;
+import java.util.HashMap;
 import java.util.Iterator;
-import java.util.function.BinaryOperator;
+import java.util.Map;
+import java.util.function.Predicate;
 import java.util.stream.Stream;
 
-public class FilterStack implements Registry, Displayable {
+public class FilterStack implements Registry, Displayable, Predicate<DataEntry> {
 
-  private final Deque<DataFilter> stack;
+  private final Map<String, Deque<DataFilter>> filters;
+  private Deque<DataFilter> stack;
 
-  private BinaryOperator<DataFilter> stackOperation;
-
-  public FilterStack(UserPreferences preferences) {
+  public FilterStack() {
     this.stack = new ArrayDeque<>();
-    preferences.watch(Preferences.STACK_OPERATION, s -> stackOperation = switch (s) {
-      case "and" -> DataFilter::and;
-      case "or" -> DataFilter::or;
-      default -> throw new UnbelievableException("Invalid preference");
-    });
+    this.filters = new HashMap<>();
   }
 
-  public DataFilter peek() {
-    return stack.isEmpty() ? null : stack.peek();
+  public void save(String name) {
+    this.filters.put(name, new ArrayDeque<>(stack));
+  }
+
+  public void load(String name) {
+    if (!this.filters.containsKey(name)) {
+      throw new UnbelievableException(name + " not found");
+    }
+    this.stack = new ArrayDeque<>(this.filters.get(name));
+  }
+
+  public boolean test(DataEntry entry) {
+    for (DataFilter filter : this.stack) {
+      if (!filter.test(entry)) {
+        return false;
+      }
+    }
+    return true;
   }
 
   public DataFilter filter() {
-    return stack.stream().reduce(DataFilter.ALLOW_ALL, stackOperation);
+    return stack.stream().reduce(DataFilter.ALLOW_ALL, DataFilter::and);
   }
 
   public FilterStack push(DataFilter filter) {
