@@ -38,13 +38,11 @@ public class LimitPromptWriter implements PromptWriter {
 
   @Override
   public void addTo(Prompt prompt, PromptSide side) {
-    registry.limit().ifPresent(limit -> {
-      Prompt.PromptSegmentBuilder segment = prompt.newSegment()
-        .addIcon("data", "icon-limit")
-        .add(registry.entries().count())
-        .addIcon("limit", "icon-limit")
-        .add(limit.toString());
-    });
+    registry.limit().ifPresent(limit -> prompt.newSegment()
+      .addIcon("data", "icon-limit")
+      .add(registry.entries().count())
+      .addIcon("limit", "icon-limit")
+      .add(limit.toString()));
   }
 
 }
