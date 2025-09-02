@@ -31,7 +31,9 @@ public class Main {
   public static void main(String[] args) throws IOException {
     System.out.println(new String(Main.class.getResourceAsStream("/META-INF/banner.txt").readAllBytes()));
 
-    new Application().run();
+    int status = new Application().run(args);
+
+    System.exit(status);
   }
 
 }

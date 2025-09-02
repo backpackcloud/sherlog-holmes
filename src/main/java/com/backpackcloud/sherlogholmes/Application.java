@@ -63,10 +63,11 @@ import com.backpackcloud.sherlogholmes.ui.prompt.DataTimeRangePromptWriter;
 import com.backpackcloud.sherlogholmes.ui.prompt.FilterStackPromptWriter;
 
 import java.util.function.Consumer;
+import java.util.stream.Stream;
 
 public class Application {
 
-  public int run() {
+  public int run(String... args) {
     SerialBitter serialBitter = SerialBitter.YAML();
 
     CLIBuilder builder = new CLIBuilder(serialBitter)
@@ -129,6 +130,9 @@ public class Application {
     CLI cli = builder.build();
 
     cli.execute(config.commands().toArray(String[]::new));
+
+    Stream.of(args).forEach(cli::execute);
+
     cli.start();
 
     return 0;
