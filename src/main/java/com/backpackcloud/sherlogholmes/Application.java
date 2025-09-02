@@ -37,22 +37,14 @@ import com.backpackcloud.sherlogholmes.commands.config.MapperCommand;
 import com.backpackcloud.sherlogholmes.commands.config.ModelCommand;
 import com.backpackcloud.sherlogholmes.commands.config.ParserCommand;
 import com.backpackcloud.sherlogholmes.commands.config.PipelineCommand;
-import com.backpackcloud.sherlogholmes.commands.data.AssignCommand;
-import com.backpackcloud.sherlogholmes.commands.data.CountCommand;
-import com.backpackcloud.sherlogholmes.commands.data.FilterCommand;
-import com.backpackcloud.sherlogholmes.commands.data.HeadCommand;
-import com.backpackcloud.sherlogholmes.commands.data.IndexCommand;
-import com.backpackcloud.sherlogholmes.commands.data.InspectCommand;
-import com.backpackcloud.sherlogholmes.commands.data.ListDataCommand;
-import com.backpackcloud.sherlogholmes.commands.data.ListenCommand;
-import com.backpackcloud.sherlogholmes.commands.data.TailCommand;
+import com.backpackcloud.sherlogholmes.commands.data.*;
 import com.backpackcloud.sherlogholmes.commands.stack.AndOperationCommand;
 import com.backpackcloud.sherlogholmes.commands.stack.DupCommand;
 import com.backpackcloud.sherlogholmes.commands.stack.NotOperationCommand;
 import com.backpackcloud.sherlogholmes.commands.stack.OrOperationCommand;
 import com.backpackcloud.sherlogholmes.commands.stack.PopCommand;
 import com.backpackcloud.sherlogholmes.commands.stack.PushCommand;
-import com.backpackcloud.sherlogholmes.commands.stack.ShowStackCommand;
+import com.backpackcloud.sherlogholmes.commands.stack.StackCommand;
 import com.backpackcloud.sherlogholmes.commands.stack.SwapCommand;
 import com.backpackcloud.sherlogholmes.config.Config;
 import com.backpackcloud.sherlogholmes.model.DataRegistry;
@@ -61,6 +53,7 @@ import com.backpackcloud.sherlogholmes.model.FilterStack;
 import com.backpackcloud.sherlogholmes.ui.prompt.DataCountPromptWriter;
 import com.backpackcloud.sherlogholmes.ui.prompt.DataTimeRangePromptWriter;
 import com.backpackcloud.sherlogholmes.ui.prompt.FilterStackPromptWriter;
+import com.backpackcloud.sherlogholmes.ui.prompt.LimitPromptWriter;
 
 import java.util.function.Consumer;
 import java.util.stream.Stream;
@@ -97,10 +90,12 @@ public class Application {
         CountCommand.class,
         FilterCommand.class,
         HeadCommand.class,
-        IndexCommand.class,
+        CounterCommand.class,
         InspectCommand.class,
         ListDataCommand.class,
+        ExportDataCommand.class,
         ListenCommand.class,
+        LimitCommand.class,
         TailCommand.class,
         AndOperationCommand.class,
         DupCommand.class,
@@ -108,7 +103,7 @@ public class Application {
         OrOperationCommand.class,
         PopCommand.class,
         PushCommand.class,
-        ShowStackCommand.class,
+        StackCommand.class,
         SwapCommand.class,
         ModelCommand.class,
         ParserCommand.class,
@@ -125,7 +120,10 @@ public class Application {
         CloseSegmentsWriter.class,
         NewLineWriter.class,
         PromptCharWriter.class
-      );
+      )
+
+      .addRightPrompt(LimitPromptWriter.class)
+      .addDefaultRightPrompts();
 
     CLI cli = builder.build();
 
