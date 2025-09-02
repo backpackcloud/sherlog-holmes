@@ -31,6 +31,7 @@ import com.backpackcloud.sherlogholmes.model.Operation;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 public class AttributeSuggester {
@@ -41,28 +42,38 @@ public class AttributeSuggester {
     this.registry = registry;
   }
 
+  public List<Suggestion> suggestAllAttributes() {
+    Set<String> strings = registry.attributeNames();
+    strings.addAll(registry.countedAttributes());
+    return strings
+      .stream()
+      .map(PromptSuggestion::suggest)
+      .distinct()
+      .collect(Collectors.toList());
+  }
+
   public List<Suggestion> suggestAttributeNames() {
     return registry.attributeNames().stream()
       .map(PromptSuggestion::suggest)
       .collect(Collectors.toList());
   }
 
-  public List<Suggestion> suggestNonIndexedAttributeNames() {
+  public List<Suggestion> suggestNonCountedAttributeNames() {
     return registry.attributeNames().stream()
-      .filter(attr -> !registry.hasIndex(attr))
+      .filter(attr -> !registry.hasCounter(attr))
       .map(PromptSuggestion::suggest)
       .collect(Collectors.toList());
   }
 
-  public List<Suggestion> suggestAllIndexedAttributes() {
-    return registry.indexedAttributes().stream()
+  public List<Suggestion> suggestAllCountedAttributes() {
+    return registry.countedAttributes().stream()
       .map(PromptSuggestion::suggest)
       .collect(Collectors.toList());
   }
 
-  public List<Suggestion> suggestIndexedAttributes() {
-    return registry.indexedAttributes().stream()
-      .filter(attr -> !registry.index(attr).isEmpty())
+  public List<Suggestion> suggestCountedAttributes() {
+    return registry.countedAttributes().stream()
+      .filter(attr -> !registry.counter(attr).isEmpty())
       .map(PromptSuggestion::suggest)
       .collect(Collectors.toList());
   }

@@ -36,43 +36,43 @@ import com.backpackcloud.sherlogholmes.ui.suggestions.AttributeSuggester;
 import java.util.List;
 
 @CommandDefinition(
-  name = "index",
-  description = "shows index information",
+  name = "counter",
+  description = "shows counter information",
   type = "Data Visualization"
 )
-public class IndexCommand {
+public class CounterCommand {
 
   private final DataRegistry registry;
   private final AttributeSuggester suggester;
 
-  public IndexCommand(DataRegistry registry) {
+  public CounterCommand(DataRegistry registry) {
     this.registry = registry;
     this.suggester = new AttributeSuggester(registry);
   }
 
   @Action("add")
   public void add(@InputParameter String attribute) {
-    this.registry.addIndex(attribute);
+    this.registry.addCounter(attribute);
   }
 
   @Action("remove")
   public void remove(@InputParameter String attribute) {
-    this.registry.removeIndex(attribute);
+    this.registry.removeCounter(attribute);
   }
 
   @Action("list")
   public void execute(Writer writer) {
-    registry.indexedAttributes().forEach(writer::writeln);
+    registry.countedAttributes().forEach(writer::writeln);
   }
 
   @ParameterSuggestion(action = "remove")
   public List<Suggestion> suggestAttributesToRemove() {
-    return suggester.suggestAllIndexedAttributes();
+    return suggester.suggestAllCountedAttributes();
   }
 
   @ParameterSuggestion(action = "add")
   public List<Suggestion> suggestAttributesToAdd() {
-    return suggester.suggestNonIndexedAttributeNames();
+    return suggester.suggestNonCountedAttributeNames();
   }
 
 }

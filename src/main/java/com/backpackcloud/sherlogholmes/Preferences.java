@@ -36,13 +36,6 @@ public final class Preferences {
     "timestamp"
   );
 
-  public static final PreferenceSpec<String> COUNT_ATTRIBUTE = new PreferenceSpec<>(
-    "count-attribute",
-    "which attribute should be used for counting entries",
-    PreferenceType.TEXT,
-    ""
-  );
-
   public static final PreferenceSpec<String> INPUT_CHARSET = new PreferenceSpec<>(
     "input-charset",
     "sets the charset to use for reading input files",

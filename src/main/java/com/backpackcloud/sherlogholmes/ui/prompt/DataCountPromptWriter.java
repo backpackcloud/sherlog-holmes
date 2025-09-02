@@ -49,10 +49,18 @@ public class DataCountPromptWriter implements PromptWriter {
       .addIcon("data", "icon-data")
       .add(registry.size());
 
-    registry.indexedAttributes().forEach(index -> {
+    if (registry.hasFilter()) {
+      segment.addIcon("filter", "icon-data");
+    }
+
+    if (registry.limit().isPresent()) {
+      segment.addIcon("limit", "icon-data");
+    }
+
+    registry.countedAttributes().forEach(index -> {
       String key = "attribute-" + index;
       if (icons.contains(key)) {
-        int size = registry.index(index).size();
+        int size = registry.counter(index).size();
         if (size > 0) {
           segment.addIcon(key, "icon-attribute").add(size);
         }

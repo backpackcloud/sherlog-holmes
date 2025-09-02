@@ -48,7 +48,7 @@ public class ListDataCommand {
   @Action
   @Paginate
   public Stream<DataEntry> execute() {
-    return registry.stream();
+    return registry.entries();
   }
 
 }

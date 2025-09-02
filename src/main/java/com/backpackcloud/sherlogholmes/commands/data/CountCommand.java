@@ -31,20 +31,16 @@ import com.backpackcloud.cli.annotations.InputParameter;
 import com.backpackcloud.cli.annotations.ParameterSuggestion;
 import com.backpackcloud.cli.ui.Paginator;
 import com.backpackcloud.cli.ui.Suggestion;
-import com.backpackcloud.preferences.UserPreferences;
-import com.backpackcloud.sherlogholmes.Preferences;
-import com.backpackcloud.sherlogholmes.model.Attribute;
 import com.backpackcloud.sherlogholmes.model.Count;
-import com.backpackcloud.sherlogholmes.model.DataEntry;
+import com.backpackcloud.sherlogholmes.model.Counter;
 import com.backpackcloud.sherlogholmes.model.DataRegistry;
 import com.backpackcloud.sherlogholmes.ui.suggestions.AttributeSuggester;
 
-import java.util.Collection;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.NavigableSet;
 import java.util.concurrent.atomic.AtomicInteger;
 
 @CommandDefinition(
@@ -56,57 +52,40 @@ public class CountCommand {
 
   private final DataRegistry registry;
   private final AttributeSuggester attributeSuggester;
-  private final UserPreferences preferences;
 
-  public CountCommand(DataRegistry registry, UserPreferences preferences) {
+  public CountCommand(DataRegistry registry) {
     this.registry = registry;
     this.attributeSuggester = new AttributeSuggester(registry);
-    this.preferences = preferences;
-  }
-
-  private int count(Collection<DataEntry> set, String countAttribute) {
-    if (countAttribute == null || countAttribute.isEmpty()) {
-      return set.size();
-    }
-    AtomicInteger count = new AtomicInteger();
-
-    set.forEach(entry -> {
-      entry.attribute(countAttribute)
-        .flatMap(Attribute::value)
-        .map(value -> {
-          if (value instanceof Integer i) {
-            return i;
-          }
-          return Integer.parseInt(value.toString());
-        })
-        .ifPresent(count::addAndGet);
-    });
-
-    return count.get();
   }
 
   @Action
   public void execute(CommandContext context,
                       Paginator paginator,
-                      @InputParameter String attribute,
-                      @InputParameter String counter) {
-    Map<?, NavigableSet<DataEntry>> valuesMap = registry.index(attribute);
-    String countAttribute = counter != null ? counter : preferences.get(Preferences.COUNT_ATTRIBUTE).value();
+                      @InputParameter String attribute) {
+    Map<?, AtomicInteger> valuesMap;
+
+    if (registry.hasCounter(attribute)) {
+      valuesMap = registry.counter(attribute);
+    } else {
+      Counter counter = new Counter();
+      registry.entries().parallel().forEach(counter);
+      valuesMap = counter.counterFor(attribute).orElse(Collections.emptyMap());
+    }
 
     Map<String, Count<?>> countMap = new HashMap<>();
     AtomicInteger total = new AtomicInteger();
     AtomicInteger nameLength = new AtomicInteger();
 
     valuesMap.entrySet().stream()
-      .peek(entry -> total.addAndGet(count(entry.getValue(), countAttribute)))
-      .map(entry -> new Count<>(entry.getKey(), count(entry.getValue(), countAttribute)))
+      .peek(entry -> total.addAndGet(entry.getValue().intValue()))
+      .map(entry -> new Count<>(entry.getKey(), entry.getValue().intValue()))
       .peek(count -> nameLength.set((Math.max(nameLength.get(), count.object().toString().length()))))
       .forEach(count -> countMap.put(count.object().toString(), count));
 
     if (total.get() > 0) {
       int valueLength = Integer.toString(total.get()).length();
 
-      boolean subset = countAttribute == null && total.get() < registry.size();
+      boolean subset = total.get() < registry.size();
 
       paginator.from(
         countMap.values().stream()
@@ -138,29 +117,13 @@ public class CountCommand {
         .withStyle("count//b")
         .write(total.get());
 
-      if (subset && !countMap.isEmpty()) {
-        Integer totalCount = countMap.values().stream()
-          .map(Count::value)
-          .reduce(0, Integer::sum, Integer::sum);
-
-        context.writer().write(String.format("%-" + Math.min(3, nameLength.get()) + "s ", "="))
-          .withStyle("count//b")
-          .write(total.get())
-
-          // we're not adding any number to the table
-          .write(" ".repeat(10))
-
-          .withStyle("percentage//b")
-          .write(String.format("%7.3f%%", 100.0 * totalCount / registry.size()));
-      }
-
       context.writer().newLine();
     }
   }
 
   @ParameterSuggestion(parameter = "attribute")
   public List<Suggestion> execute() {
-    return attributeSuggester.suggestIndexedAttributes();
+    return attributeSuggester.suggestCountedAttributes();
   }
 
 }

@@ -51,7 +51,7 @@ public class DataRegistryTest {
 
   @Test
   public void testAdd() {
-    DataRegistry registry = new DataRegistry(new UserPreferences());
+    DataRegistry registry = new DataRegistry(new UserPreferences(), new FilterStack());
 
     assertEquals(0, registry.size());
     assertTrue(registry.isEmpty());
@@ -65,10 +65,10 @@ public class DataRegistryTest {
   }
 
   @Test
-  public void testIndex() {
-    DataRegistry registry = new DataRegistry(new UserPreferences());
+  public void testCounter() {
+    DataRegistry registry = new DataRegistry(new UserPreferences(), new FilterStack());
 
-    registry.addIndex("fooBar");
+    registry.addCounter("fooBar");
 
     for (int i = 0; i < 100; i++) {
       registry.add(newEntry());
@@ -76,7 +76,7 @@ public class DataRegistryTest {
 
     assertEquals(2, registry.valuesFor("fooBar").size());
 
-    registry.removeIndex("fooBar");
+    registry.removeCounter("fooBar");
 
     assertEquals(0, registry.valuesFor("fooBar").size());
 
@@ -84,7 +84,7 @@ public class DataRegistryTest {
       registry.add(newEntry());
     }
 
-    registry.addIndex("fooBar");
+    registry.addCounter("fooBar");
     assertEquals(0, registry.valuesFor("fooBar").size());
   }
 

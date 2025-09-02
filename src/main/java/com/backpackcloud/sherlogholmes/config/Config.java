@@ -80,7 +80,7 @@ public class Config {
                 @JsonProperty("mappers") Map<String, DataMapperConfig> mappers,
                 @JsonProperty("steps") Map<String, List<PipelineStep>> steps,
                 @JsonProperty("pipelines") Map<String, PipelineConfig> pipelines,
-                @JsonProperty("index") List<String> index) {
+                @JsonProperty("counters") List<String> counters) {
     this(userPreferences, patterns, commands, macros, models, parsers, mappers, steps, pipelines);
 
     if (icons != null) {
@@ -98,8 +98,8 @@ public class Config {
       styles.forEach(styleMap::put);
     }
 
-    if (index != null) {
-      index.forEach(registry::addIndex);
+    if (counters != null) {
+      counters.forEach(registry::addCounter);
     }
 
     userPreferences.register(Preferences.class);
