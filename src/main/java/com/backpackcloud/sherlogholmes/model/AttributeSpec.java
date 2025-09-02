@@ -25,7 +25,6 @@
 package com.backpackcloud.sherlogholmes.model;
 
 import com.backpackcloud.UnbelievableException;
-import com.backpackcloud.sherlogholmes.model.types.FallbackType;
 import com.backpackcloud.sherlogholmes.model.types.TemporalType;
 import com.backpackcloud.sherlogholmes.model.types.UriType;
 import com.backpackcloud.sherlogholmes.model.types.UrlType;
@@ -38,7 +37,6 @@ import java.time.LocalTime;
 import java.time.OffsetDateTime;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
-import java.time.temporal.TemporalQuery;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -60,23 +58,25 @@ public record AttributeSpec<E>(@JsonProperty AttributeType<E> type,
         case "decimal" -> new AttributeSpec<>(AttributeType.decimal(), multivalued);
         case "enum" -> new AttributeSpec<>(AttributeType.enumOf(configuration.split(",")), multivalued);
         case "time" -> new AttributeSpec<>(
-          new TemporalType<>(DateTimeFormatter.ofPattern(configuration), LocalTime::from), multivalued
+          configuration == null ? AttributeType.time() : new TemporalType<>(DateTimeFormatter.ofPattern(configuration), LocalTime::from),
+          multivalued
         );
         case "date" -> new AttributeSpec<>(
-          new TemporalType<>(DateTimeFormatter.ofPattern(configuration), LocalDate::from), multivalued
+          configuration == null ? AttributeType.date() : new TemporalType<>(DateTimeFormatter.ofPattern(configuration), LocalDate::from),
+          multivalued
         );
         case "datetime" -> new AttributeSpec<>(
-          new TemporalType<>(DateTimeFormatter.ofPattern(configuration), LocalDateTime::from), multivalued
+          configuration == null ? AttributeType.datetime() : new TemporalType<>(DateTimeFormatter.ofPattern(configuration), LocalDateTime::from),
+          multivalued
         );
-        case "datetime*" -> new AttributeSpec<>(fallbackTemporal(configuration, LocalDateTime::from), multivalued);
         case "zoned-datetime" -> new AttributeSpec<>(
-          new TemporalType<>(DateTimeFormatter.ofPattern(configuration), ZonedDateTime::from), multivalued
+          configuration == null ? AttributeType.zonedDatetime() : new TemporalType<>(DateTimeFormatter.ofPattern(configuration), ZonedDateTime::from),
+          multivalued
         );
-        case "zoned-datetime*" -> new AttributeSpec<>(fallbackTemporal(configuration, ZonedDateTime::from), multivalued);
         case "offset-datetime" -> new AttributeSpec<>(
-          new TemporalType<>(DateTimeFormatter.ofPattern(configuration), OffsetDateTime::from), multivalued
+          configuration == null ? AttributeType.offsetDatetime() : new TemporalType<>(DateTimeFormatter.ofPattern(configuration), OffsetDateTime::from),
+          multivalued
         );
-        case "offset-datetime*" -> new AttributeSpec<>(fallbackTemporal(configuration, OffsetDateTime::from), multivalued);
         case "flag" -> new AttributeSpec<>(AttributeType.flag(), multivalued);
         case "version" -> new AttributeSpec<>(new VersionType(), false);
         case "url" -> new AttributeSpec<>(new UrlType(), false);
@@ -85,24 +85,6 @@ public record AttributeSpec<E>(@JsonProperty AttributeType<E> type,
       };
     }
     throw new UnbelievableException("Illegal spec");
-  }
-
-  private static AttributeType fallbackTemporal(String configuration, TemporalQuery query) {
-    return new FallbackType<>(
-      new TemporalType<>(
-        DateTimeFormatter.ofPattern(
-          configuration.replace("(", "").replace(")", "")
-        ),
-        query
-      ),
-      new TemporalType<>(
-        DateTimeFormatter.ofPattern(
-          configuration.replaceFirst("^.*\\(", "")
-            .replaceFirst("\\).*$", "")
-        ),
-        LocalTime::from
-      )
-    );
   }
 
 }

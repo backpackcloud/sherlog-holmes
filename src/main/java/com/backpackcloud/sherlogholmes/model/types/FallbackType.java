@@ -30,7 +30,6 @@ import com.backpackcloud.sherlogholmes.model.AttributeType;
 public class FallbackType<E> implements AttributeType<E> {
 
   private final AttributeType[] types;
-  private int index = -1;
 
   public FallbackType(AttributeType... types) {
     this.types = types;
@@ -43,36 +42,26 @@ public class FallbackType<E> implements AttributeType<E> {
 
   @Override
   public String format(E value) {
-    if (index == -1) {
-      for (int i = 0; i < types.length; i++) {
-        try {
-          String result = types[i].format(value);
-          index = i;
-          return result;
-        } catch (Exception e) {
-          // try the next one
-        }
+    for (int i = 0; i < types.length; i++) {
+      try {
+        return types[i].format(value);
+      } catch (Exception e) {
+        // try the next one
       }
-      throw new UnbelievableException("No more attributes available");
     }
-    return types[index].format(value);
+    throw new UnbelievableException("No more types available");
   }
 
   @Override
   public E convert(String input) {
-    if (index == -1) {
-      for (int i = 0; i < types.length; i++) {
-        try {
-          E result = (E) types[i].convert(input);
-          index = i;
-          return result;
-        } catch (Exception e) {
-          // try the next one
-        }
+    for (int i = 0; i < types.length; i++) {
+      try {
+        return (E) types[i].convert(input);
+      } catch (Exception e) {
+        // try the next one
       }
-      throw new UnbelievableException("No more attributes available");
     }
-    return (E) types[index].convert(input);
+    throw new UnbelievableException("No more types available to convert: " + input);
   }
 
 }

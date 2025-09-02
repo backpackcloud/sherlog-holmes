@@ -31,6 +31,8 @@ import com.fasterxml.jackson.annotation.JsonValue;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.time.OffsetDateTime;
+import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Comparator;
 
@@ -60,6 +62,8 @@ public interface AttributeType<E> extends Converter<E>, Formatter<E>, Validator<
   AttributeType<LocalTime> TIME = new TemporalType<>(DateTimeFormatter.ISO_TIME, LocalTime::from);
   AttributeType<LocalDate> DATE = new TemporalType<>(DateTimeFormatter.ISO_DATE, LocalDate::from);
   AttributeType<LocalDateTime> DATETIME = new TemporalType<>(DateTimeFormatter.ISO_DATE_TIME, LocalDateTime::from);
+  AttributeType<OffsetDateTime> OFFSET_DATETIME = new TemporalType<>(DateTimeFormatter.ISO_OFFSET_DATE_TIME, OffsetDateTime::from);
+  AttributeType<ZonedDateTime> ZONED_DATETIME = new TemporalType<>(DateTimeFormatter.ISO_ZONED_DATE_TIME, ZonedDateTime::from);
   AttributeType<Boolean> FLAG = create("flag", Boolean::parseBoolean);
 
   static <E> AttributeType<E> create(String name, Converter<E> converter) {
@@ -102,6 +106,14 @@ public interface AttributeType<E> extends Converter<E>, Formatter<E>, Validator<
 
   static AttributeType<LocalDateTime> datetime() {
     return DATETIME;
+  }
+
+  static AttributeType<OffsetDateTime> offsetDatetime() {
+    return OFFSET_DATETIME;
+  }
+
+  static AttributeType<ZonedDateTime> zonedDatetime() {
+    return ZONED_DATETIME;
   }
 
   static AttributeType<Boolean> flag() {

@@ -27,9 +27,14 @@ package com.backpackcloud.sherlogholmes.config.model;
 import com.backpackcloud.sherlogholmes.config.Config;
 import com.backpackcloud.sherlogholmes.config.ConfigObject;
 import com.backpackcloud.sherlogholmes.model.AttributeSpec;
-import com.fasterxml.jackson.annotation.JsonValue;
+import com.backpackcloud.sherlogholmes.model.AttributeType;
+import com.backpackcloud.sherlogholmes.model.types.FallbackType;
+import com.fasterxml.jackson.annotation.JsonCreator;
 
-public record DataAttributeConfig(@JsonValue String spec) implements ConfigObject<AttributeSpec> {
+import java.util.List;
+import java.util.stream.Collectors;
+
+public record DataAttributeConfig(String spec) implements ConfigObject<AttributeSpec> {
 
   public String spec() {
     return spec;
@@ -37,7 +42,25 @@ public record DataAttributeConfig(@JsonValue String spec) implements ConfigObjec
 
   @Override
   public AttributeSpec get(Config config) {
-    return AttributeSpec.create(spec);
+    List<AttributeSpec> specs = spec.lines().map(AttributeSpec::create).collect(Collectors.toList());
+
+    if (specs.size() == 1) {
+      return specs.getFirst();
+    }
+
+    AttributeType fallbackType = new FallbackType(specs.stream().map(AttributeSpec::type).toArray(AttributeType[]::new));
+
+    return new AttributeSpec(fallbackType, false);
+  }
+
+  @JsonCreator
+  public static DataAttributeConfig create(String value) {
+    return new DataAttributeConfig(value);
+  }
+
+  @JsonCreator
+  public static DataAttributeConfig create(List<String> values) {
+    return new DataAttributeConfig(String.join("\n", values));
   }
 
 }
