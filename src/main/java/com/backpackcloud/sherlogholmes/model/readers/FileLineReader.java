@@ -38,11 +38,9 @@ import java.util.function.BiConsumer;
 public class FileLineReader implements DataReader<String> {
 
   private final Charset charset;
-  private final int skipLines;
 
-  public FileLineReader(Charset charset, int skipLines) {
+  public FileLineReader(Charset charset) {
     this.charset = charset;
-    this.skipLines = skipLines;
   }
 
   @Override
@@ -51,11 +49,8 @@ public class FileLineReader implements DataReader<String> {
     AtomicInteger count = new AtomicInteger(0);
     try {
       Files.lines(path, charset)
-        .forEach(line -> {
-          if (count.get() >= skipLines) {
-            consumer.accept(new Metadata(path.getFileName().toString(), count.incrementAndGet()), line);
-          }
-        });
+        .forEach(line ->
+          consumer.accept(new Metadata(path.getFileName().toString(), count.incrementAndGet()), line));
     } catch (IOException e) {
       throw new UnbelievableException(e);
     }

@@ -68,10 +68,9 @@ public class InspectCommand {
 
   @Action
   public void execute(@PreferenceValue("input-charset") String inputCharset,
-                      @PreferenceValue("file-reader-skip-lines") Integer skipLines,
                       @InputParameter String pipelineId,
                       @InputParameter String location) throws InterruptedException {
-    DataReader dataReader = new FileLineReader(Charset.forName(inputCharset), skipLines);
+    DataReader dataReader = new FileLineReader(Charset.forName(inputCharset));
     Pipeline pipeline = config.pipelineFor(pipelineId);
 
     Path locationPath = Path.of(location);
