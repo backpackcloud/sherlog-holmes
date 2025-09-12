@@ -165,11 +165,7 @@ public class Application implements Callable<Integer> {
         PopCommand.class,
         PushCommand.class,
         StackCommand.class,
-        SwapCommand.class,
-        ModelCommand.class,
-        ParserCommand.class,
-        MapperCommand.class,
-        PipelineCommand.class
+        SwapCommand.class
       )
 
       .addMacros(config.macros())
