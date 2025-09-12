@@ -24,7 +24,6 @@
 
 package com.backpackcloud.sherlogholmes.model;
 
-import com.backpackcloud.preferences.UserPreferences;
 import org.junit.jupiter.api.Test;
 
 import java.time.LocalDateTime;
@@ -51,7 +50,7 @@ public class DataRegistryTest {
 
   @Test
   public void testAdd() {
-    DataRegistry registry = new DataRegistry(new UserPreferences(), new FilterStack());
+    DataRegistry registry = new DataRegistry(new FilterStack());
 
     assertEquals(0, registry.size());
     assertTrue(registry.isEmpty());
@@ -66,7 +65,7 @@ public class DataRegistryTest {
 
   @Test
   public void testCounter() {
-    DataRegistry registry = new DataRegistry(new UserPreferences(), new FilterStack());
+    DataRegistry registry = new DataRegistry(new FilterStack());
 
     registry.addCounter("fooBar");
 

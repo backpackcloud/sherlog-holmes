@@ -25,8 +25,6 @@
 package com.backpackcloud.sherlogholmes.model;
 
 import com.backpackcloud.cli.Registry;
-import com.backpackcloud.preferences.UserPreferences;
-import com.backpackcloud.sherlogholmes.Preferences;
 
 import java.time.Duration;
 import java.time.temporal.ChronoUnit;
@@ -45,14 +43,12 @@ import java.util.stream.Stream;
 public class DataRegistry implements Registry {
 
   private final InternalStorage total = new InternalStorage();
-  private final UserPreferences preferences;
   private final FilterStack filterStack;
   private InternalStorage filtered;
 
   private Limit limit;
 
-  public DataRegistry(UserPreferences preferences, FilterStack filterStack) {
-    this.preferences = preferences;
+  public DataRegistry(FilterStack filterStack) {
     this.filterStack = filterStack;
   }
 
@@ -167,18 +163,16 @@ public class DataRegistry implements Registry {
       return Stream.empty();
     }
 
-    String timestampAttribute = preferences.get(Preferences.TIMESTAMP_ATTRIBUTE).value();
-
     Temporal reference = entries.getFirst()
-      .attribute(timestampAttribute, Temporal.class)
+      .attribute("timestamp", Temporal.class)
       .flatMap(Attribute::value)
       .map(temporal -> temporal.plus(amount, unit))
       .orElseThrow();
     return entries.stream()
       .filter(entry ->
-        entry.attribute(timestampAttribute, Temporal.class)
+        entry.attribute("timestamp", Temporal.class)
           .flatMap(Attribute::value)
-          .map(timestamp -> typeOf(timestampAttribute)
+          .map(timestamp -> typeOf("timestamp")
             .orElseThrow()
             .compare(timestamp, reference) <= 0)
           .orElse(false));
@@ -206,18 +200,17 @@ public class DataRegistry implements Registry {
     if (entries.isEmpty()) {
       return Stream.empty();
     }
-    String timestampAttribute = preferences.get(Preferences.TIMESTAMP_ATTRIBUTE).value();
 
     Temporal reference = entries.getLast()
-      .attribute(timestampAttribute, Temporal.class)
+      .attribute("timestamp", Temporal.class)
       .flatMap(Attribute::value)
       .map(temporal -> temporal.minus(amount, unit))
       .orElseThrow();
     return entries.stream()
       .filter(entry ->
-        entry.attribute(timestampAttribute, Temporal.class)
+        entry.attribute("timestamp", Temporal.class)
           .flatMap(Attribute::value)
-          .map(timestamp -> typeOf(timestampAttribute)
+          .map(timestamp -> typeOf("timestamp")
             .orElseThrow()
             .compare(timestamp, reference) >= 0)
           .orElse(false));
@@ -237,6 +230,10 @@ public class DataRegistry implements Registry {
 
   public Duration durationOf(String attribute) {
     return registry().durationOf(attribute);
+  }
+
+  public Duration duration() {
+    return durationOf("timestamp");
   }
 
   @Override

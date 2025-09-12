@@ -25,7 +25,7 @@ models:
     # - '#' uses the attribute's value and its correspondent icon
     # - '@' uses just the attribute's icon (if the attribute holds a value)
     # - '|' passes the attribute's value through a String.format() call using the given arguments in the right
-    format:        '{@exception}{#$source}:{$line} {#timestamp} {#level|%-5s} {#category} {#thread} {#message}'
+    format:        '{@exception}{#source}:{line} {#timestamp} {#level|%-5s} {#category} {#thread} {#message}'
     export-format: '{timestamp} {level|%-5s} [{category}] ({thread}) {message}'
     # The list of attributes for this data model
     #
@@ -44,22 +44,16 @@ models:
     # where you need a collection of values like exceptions that are shown in a stacktrace.
     #
     # For attributes requiring configuration, it's passed with an '|' after the type, followed by the configuration
-    #
-    # The order in which the attributes are declared is also the order that will be used to sort the entries. Attributes
-    # from the metadata ($line and $source) will always be added, but without declaring, they will fall into the last
-    # positions.
     attributes:
       # The console log often doesn't have full timestamps
       timestamp:
         - datetime | yyyy-MM-dd HH:mm:ss,SSS
         - time     | HH:mm:ss,SSS
-      # Line and source should come next to timestamp for better sorting
-      $line:     number
-      $source:   text
       level:     enum | TRACE,DEBUG,FINE,INFO,WARN,WARNING,ERROR,SEVERE,FATAL
       category:  text
       thread:    text
       message:   text
+      # One entry might have multiple exceptions
       exception: text[]
 
   ocp-audit:
@@ -81,7 +75,7 @@ models:
 # The registry will keep track of how many entries hold each value. Counted attributes that also
 # have an icon assigned will appear in the prompt.
 counters:
-  - $source
+  - source
   - level
   - category
   - thread
@@ -108,10 +102,10 @@ parsers:
     type:    regex
     # You can reuse patterns across the configuration by enclosing the names with '{{ }}'
     # the names enclosed must be defined in the 'patterns' section
-    pattern: '{{timestamp}} {{level}}\s+{{category}} {{thread}} {{message}}'
+    pattern: '{{ timestamp }} {{ level }}\s+{{ category }} {{ thread }} {{ message }}'
   infinispan:
     type:    regex
-    pattern: '{{timestamp}} {{level}}\s+{{thread}} {{category}} {{message}}'
+    pattern: '{{ timestamp }} {{ level }}\s+{{ thread }} {{ category }} {{ message }}'
   ocp-audit:
     type: json
 
@@ -219,9 +213,6 @@ pipelines:
 # Icons are from Nerd Fonts, you can see more at
 # https://www.nerdfonts.com/cheat-sheet
 icons:
-  # timestamp is not indexed, so this icon will only appear in the output
-  attribute-timestamp:       ""
-  # level is indexed, so this icon will appear in the prompt
   attribute-level:           "󰒢"
   attribute-category:        "󰓹"
   attribute-thread:          "󰓁"
@@ -249,48 +240,27 @@ icons:
 # k - blink
 # c - crossedOut
 styles:
-  attribute-timestamp:           grey//i
+  attribute-level:           yellow
+  attribute-level-TRACE:     cyan
+  attribute-level-DEBUG:     cyan
+  attribute-level-FINE:      cyan
+  attribute-level-INFO:      orange
+  attribute-level-WARN:      yellow
+  attribute-level-ERROR:     red//b
+  attribute-level-SEVERE:    red//b
+  attribute-level-FATAL:     red//b
 
-  attribute-level:               yellow
-  attribute-level-TRACE:         cyan
-  attribute-level-DEBUG:         cyan
-  attribute-level-FINE:          cyan
-  attribute-level-INFO:          orange
-  attribute-level-WARN:          yellow
-  attribute-level-ERROR:         red//b
-  attribute-level-SEVERE:        red//b
-  attribute-level-FATAL:         red//b
+  attribute-category:        blue
+  attribute-thread:          grey
+  attribute-message:         white
+  attribute-exception:       red
 
-  attribute-category:            blue
-  attribute-thread:              grey
-  attribute-message:             white
-  attribute-exception:           red
-
-  attribute-cluster:             yellow
-  attribute-verb:                blue
-  attribute-object:              orange
-  attribute-name:                cyan
-  attribute-namespace:           teal
-  attribute-user:                purple
-  attribute-decision-allow:      green
-  attribute-decision-forbid:     red
-  attribute-version:             gray//i
-
-  model-property:                white//b
-  model-name:                    blue//b
-  model-attribute-name:          yellow//b
-
-  model-attribute-type-text:     purple
-  model-attribute-type-number:   blue
-  model-attribute-type-decimal:  blue
-  model-attribute-type-enum:     orange
-  model-attribute-type-temporal: teal
-  model-attribute-type-fallback: teal
-  model-attribute-type-flag:     green
-  model-attribute-type-version:  red
-  model-attribute-type-url:      cyan
-  model-attribute-type-uri:      cyan
-
-  pipeline-name:                 blue//b
-  pipeline-property-name:        yellow//b
-  pipeline-property-value:       orange
+  attribute-cluster:         yellow
+  attribute-verb:            blue
+  attribute-object:          orange
+  attribute-name:            cyan
+  attribute-namespace:       teal
+  attribute-user:            purple
+  attribute-decision-allow:  green
+  attribute-decision-forbid: red
+  attribute-version:         gray//i

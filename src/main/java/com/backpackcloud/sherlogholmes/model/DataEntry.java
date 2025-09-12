@@ -39,6 +39,8 @@ import java.util.stream.Stream;
 
 public class DataEntry implements Comparable<DataEntry>, Displayable {
 
+  private static final String[] NATURAL_ATTRIBUTE_ORDER = {"timestamp", "source", "line"};
+
   private final Map<String, Attribute> attributes;
   private final String displayFormat;
   private final String exportFormat;
@@ -155,9 +157,25 @@ public class DataEntry implements Comparable<DataEntry>, Displayable {
     walker.walk(outputFormat);
   }
 
-  public int compareTo(DataEntry dataEntry) {
+  public int compareTo(DataEntry other) {
+    // ideally, the entries will have at least the source and the line attributes,
+    // so the chances of this comparison to yield zero is really low
+    for (String attributeName : NATURAL_ATTRIBUTE_ORDER) {
+      if (this.hasAttribute(attributeName) && other.hasAttribute(attributeName)) {
+        int result = this.attribute(attributeName)
+          .map(attribute -> other.attribute(attributeName)
+            .map(attribute::compareTo)
+            .orElse(1))
+          .orElse(0);
+
+        if (result != 0) {
+          return result;
+        }
+      }
+    }
+
     for (Attribute attribute : attributes.values()) {
-      int result = dataEntry.attribute(attribute.name())
+      int result = other.attribute(attribute.name())
         .map(otherAttribute -> attribute.compareTo(otherAttribute))
         .orElse(1);
       if (result != 0) {

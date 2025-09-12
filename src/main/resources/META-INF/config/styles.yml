@@ -1,0 +1,18 @@
+model-property:                white//b
+model-name:                    blue//b
+model-attribute-name:          yellow//b
+
+model-attribute-type-text:     purple
+model-attribute-type-number:   blue
+model-attribute-type-decimal:  blue
+model-attribute-type-enum:     orange
+model-attribute-type-temporal: teal
+model-attribute-type-fallback: teal
+model-attribute-type-flag:     green
+model-attribute-type-version:  red
+model-attribute-type-url:      cyan
+model-attribute-type-uri:      cyan
+
+pipeline-name:                 blue//b
+pipeline-property-name:        yellow//b
+pipeline-property-value:       orange
