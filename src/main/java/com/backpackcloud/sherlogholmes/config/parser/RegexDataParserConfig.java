@@ -36,7 +36,7 @@ import java.util.regex.Pattern;
 
 public record RegexDataParserConfig(@JsonProperty("pattern") String pattern) implements DataParserConfig {
 
-  private static final Pattern INTERPOLATION_PATTERN = Pattern.compile("\\{\\{\\s*(?<pattern>[^}]+)\\s*}}");
+  private static final Pattern INTERPOLATION_PATTERN = Pattern.compile("\\{\\{(?<pattern>\\s*[^}]+\\s*)}}");
 
   @Override
   public DataParser<Function<String, String>> get(Config config) {
@@ -45,7 +45,7 @@ public record RegexDataParserConfig(@JsonProperty("pattern") String pattern) imp
     Matcher matcher = INTERPOLATION_PATTERN.matcher(pattern);
 
     String result = matcher.replaceAll(
-      matchResult -> patterns.getOrDefault(matchResult.group("pattern"), "")
+      matchResult -> patterns.getOrDefault(matchResult.group("pattern").trim(), "")
     );
 
     return new RegexDataParser(Pattern.compile(result, Pattern.DOTALL));
