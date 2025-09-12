@@ -30,11 +30,9 @@ import com.backpackcloud.sherlogholmes.model.steps.AttributeReplaceStep;
 import com.backpackcloud.sherlogholmes.model.steps.AttributeSetStep;
 import com.backpackcloud.sherlogholmes.model.steps.BasicPipelineStep;
 import com.backpackcloud.sherlogholmes.model.steps.RegexMapperStep;
-import com.fasterxml.jackson.annotation.JacksonInject;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.function.Predicate;
@@ -55,8 +53,7 @@ public interface PipelineStep {
   };
 
   @JsonCreator
-  static PipelineStep create(@JacksonInject FilterFactory filterFactory,
-                             @JsonProperty("when") String filter,
+  static PipelineStep create(@JsonProperty("when") DataFilter filter,
                              @JsonProperty("assign") AttributeSetStep attributeSetStep,
                              @JsonProperty("extract") AttributeExtractStep attributeExtractStep,
                              @JsonProperty("map") RegexMapperStep regexMapperStep,
@@ -64,16 +61,6 @@ public interface PipelineStep {
                              @JsonProperty("replace") AttributeReplaceStep attributeReplaceStep,
                              @JsonProperty("do") List<PipelineStep> nestedSteps,
                              @JsonProperty("else") PipelineStep alternativeStep) {
-    List<Predicate<DataEntry>> predicates = new ArrayList<>();
-
-    if (filter != null) {
-      filter.lines()
-        .map(filterFactory::create)
-        .forEach(predicates::add);
-    }
-
-    Predicate<DataEntry> predicate = predicates.stream().reduce(o -> true, Predicate::and);
-
     PipelineStep steps = Stream.of(
         attributeSetStep,
         attributeExtractStep,
@@ -87,6 +74,8 @@ public interface PipelineStep {
       steps = Stream.concat(Stream.of(steps), nestedSteps.stream())
         .reduce(NOTHING, PipelineStep::andThen);
     }
+
+    Predicate<DataEntry> predicate = filter != null ? filter : DataFilter.ALLOW_ALL;
 
     return new BasicPipelineStep(predicate, steps, alternativeStep != null ? alternativeStep : NOTHING);
   }
