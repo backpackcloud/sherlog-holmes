@@ -33,23 +33,21 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
+import java.util.function.Supplier;
 
 public class Pipeline {
 
   private final DataModel dataModel;
-  private final DataParser<Object> dataParser;
-  private final DataMapper<Object> dataMapper;
+  private final DataParser dataParser;
   private final List<PipelineStep> analysisSteps;
   private final UserPreferences preferences;
 
   public Pipeline(DataModel dataModel,
                   DataParser dataParser,
-                  DataMapper dataMapper,
                   List<PipelineStep> analysisSteps,
                   UserPreferences preferences) {
     this.dataModel = dataModel;
     this.dataParser = dataParser;
-    this.dataMapper = dataMapper;
     this.analysisSteps = analysisSteps;
     this.preferences = preferences;
   }
@@ -65,11 +63,18 @@ public class Pipeline {
     StagingArea stagingArea = new StagingArea(consumer);
 
     dataReader.read(location, (metadata, content) ->
-      dataParser.parse(metadata, normalize(content))
+    {
+      Supplier<DataEntry> supplier = () -> {
+        DataEntry entry = dataModel.dataSupplier().get();
+        metadata.attachTo(entry);
+        return entry;
+      };
+      dataParser.parse(supplier, metadata, normalize(content))
         .ifPresentOrElse(
-          structure -> stagingArea.push(content, metadata, structure),
-          () -> stagingArea.push(content, metadata)
-        ));
+          stagingArea::push,
+          () -> stagingArea.push(content)
+        );
+    });
 
     stagingArea.push();
     stagingArea.close();
@@ -77,9 +82,8 @@ public class Pipeline {
 
   private class StagingArea {
 
-    private StringBuilder content;
-    private Object structure;
-    private Metadata metadata;
+    private StringBuilder extraLines;
+    private DataEntry entry;
     private final Consumer<DataEntry> consumer;
     private final ExecutorService pusher;
     private final ExecutorService pushChecker;
@@ -116,41 +120,38 @@ public class Pipeline {
     }
 
     public void push() {
-      if (this.structure != null) {
-        Object struct = this.structure;
-        Metadata metadata = this.metadata;
-        pusher.execute(() -> dataMapper.map(dataModel.dataSupplier(), struct)
-          .stream()
-          .peek(metadata::attachTo)
-          .peek(entry -> analysisSteps.forEach(step -> step.analyze(entry)))
-          .forEach(consumer));
-        this.structure = null;
-        this.content = null;
-      }
-    }
-
-    public void push(String content, Metadata metadata) {
-      this.structure = null;
-      this.lastPush = System.currentTimeMillis();
-      if (this.content == null) {
-        if (metadata.line() > 1) {
-          this.content = new StringBuilder(content);
-          this.metadata = metadata;
+      if (this.entry != null) {
+        DataEntry struct = this.entry;
+        if (!analysisSteps.isEmpty()) {
+          pusher.execute(() -> {
+            analysisSteps.forEach(step -> step.analyze(struct));
+            consumer.accept(struct);
+          });
         }
-      } else {
-        this.content.append("\n").append(content);
+        this.entry = null;
+        this.extraLines = null;
+        this.lastPush = System.currentTimeMillis();
       }
     }
 
-    public void push(String content, Metadata metadata, Object structure) {
-      if (this.structure == null && this.content != null) {
-        dataParser.parse(metadata, this.content.toString())
-          .ifPresent(struct -> this.structure = struct);
+    public void push(String content) {
+      if (this.extraLines == null) {
+        this.extraLines = new StringBuilder(content);
+      } else {
+        this.extraLines.append("\n").append(content);
+      }
+    }
+
+    public void push(DataEntry dataEntry) {
+      if (this.entry != null && this.extraLines != null) {
+        if (this.entry.hasAttribute("message")) {
+          Attribute<String> message = this.entry.attribute("message", String.class).get();
+          message.value().ifPresent(value -> this.extraLines.insert(0, "\n").insert(0, value));
+          message.assignFromInput(this.extraLines.toString());
+        }
       }
       push();
-      this.content = new StringBuilder(content);
-      this.structure = structure;
-      this.metadata = metadata;
+      this.entry = dataEntry;
     }
 
   }

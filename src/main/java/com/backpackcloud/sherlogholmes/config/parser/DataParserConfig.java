@@ -34,8 +34,7 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
   @JsonSubTypes.Type(name = "regex", value = RegexDataParserConfig.class),
   @JsonSubTypes.Type(name = "csv", value = CsvDataParserConfig.class),
   @JsonSubTypes.Type(name = "json", value = JsonDataParserConfig.class),
-  @JsonSubTypes.Type(name = "split", value = SplitDataParserConfig.class),
 })
-public interface DataParserConfig extends ConfigObject<DataParser<?>> {
+public interface DataParserConfig extends ConfigObject<DataParser> {
 
 }

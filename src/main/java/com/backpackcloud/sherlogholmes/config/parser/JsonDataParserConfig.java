@@ -28,18 +28,24 @@ import com.backpackcloud.io.SerialBitter;
 import com.backpackcloud.sherlogholmes.config.Config;
 import com.backpackcloud.sherlogholmes.model.DataParser;
 import com.backpackcloud.sherlogholmes.model.parsers.JsonDataParser;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
-import java.util.function.Function;
+import java.util.Map;
 
 public class JsonDataParserConfig implements DataParserConfig {
 
-  @Override
-  public DataParser<Function<String, String>> get(Config config) {
-    return new JsonDataParser(SerialBitter.JSON());
+  private final SerialBitter serialBitter;
+  private final Map<String, String> attributeMappings;
+
+  public JsonDataParserConfig(@JsonProperty("attributes") Map<String, String> attributeMappings) {
+    this.attributeMappings = attributeMappings;
+    this.serialBitter = SerialBitter.JSON();
   }
 
+
   @Override
-  public String toString() {
-    return "json";
+  public DataParser get(Config config) {
+    return new JsonDataParser(serialBitter, attributeMappings);
   }
+
 }

@@ -30,23 +30,21 @@ import com.backpackcloud.sherlogholmes.model.parsers.CsvDataParser;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-public record CsvDataParserConfig(boolean skipFirstLine) implements DataParserConfig {
+public class CsvDataParserConfig implements DataParserConfig {
+
+  private final boolean hasHeader;
+  private final String[] attributes;
 
   @JsonCreator
-  public CsvDataParserConfig(@JsonProperty("skipFirstLine") boolean skipFirstLine) {
-    this.skipFirstLine = skipFirstLine;
+  public CsvDataParserConfig(@JsonProperty("header") boolean hasHeader,
+                             @JsonProperty("attributes") String attributes) {
+    this.hasHeader = hasHeader;
+    this.attributes = attributes.split("\\s*,\\s*");
   }
 
   @Override
-  public DataParser<String[]> get(Config config) {
-    return new CsvDataParser(skipFirstLine);
+  public DataParser get(Config config) {
+    return new CsvDataParser(hasHeader, attributes);
   }
 
-  @Override
-  public String toString() {
-    if (skipFirstLine) {
-      return "csv";
-    }
-    return "csv (skip first line)";
-  }
 }

@@ -62,7 +62,7 @@ import java.util.stream.Stream;
   name = "sherlog-holmes",
   mixinStandardHelpOptions = true,
   description = "Summons your companion for logging errands.",
-  version = "1.3.0"
+  version = "2.0.0"
 )
 public class Application implements Callable<Integer> {
 

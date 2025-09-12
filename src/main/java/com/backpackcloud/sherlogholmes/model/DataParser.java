@@ -25,9 +25,10 @@
 package com.backpackcloud.sherlogholmes.model;
 
 import java.util.Optional;
+import java.util.function.Supplier;
 
-public interface DataParser<T> {
+public interface DataParser {
 
-  Optional<T> parse(Metadata metadata, String content);
+  Optional<DataEntry> parse(Supplier<DataEntry> entrySupplier, Metadata metadata, String content);
 
 }

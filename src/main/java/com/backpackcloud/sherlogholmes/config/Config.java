@@ -33,11 +33,9 @@ import com.backpackcloud.cli.ui.Theme;
 import com.backpackcloud.configuration.Configuration;
 import com.backpackcloud.preferences.UserPreferences;
 import com.backpackcloud.sherlogholmes.Preferences;
-import com.backpackcloud.sherlogholmes.config.mapper.DataMapperConfig;
 import com.backpackcloud.sherlogholmes.config.model.DataModelConfig;
 import com.backpackcloud.sherlogholmes.config.parser.DataParserConfig;
 import com.backpackcloud.sherlogholmes.model.DataFilter;
-import com.backpackcloud.sherlogholmes.model.DataMapper;
 import com.backpackcloud.sherlogholmes.model.DataModel;
 import com.backpackcloud.sherlogholmes.model.DataParser;
 import com.backpackcloud.sherlogholmes.model.DataRegistry;
@@ -60,7 +58,6 @@ public class Config {
   private final List<String> commands;
   private final Map<String, DataModelConfig> models;
   private final Map<String, DataParserConfig> parsers;
-  private final Map<String, DataMapperConfig> mappers;
   private final Map<String, List<PipelineStep>> steps;
   private final Map<String, PipelineConfig> pipelines;
   private final Map<String, DataFilter> filters;
@@ -80,11 +77,10 @@ public class Config {
                 @JsonProperty("filters") Map<String, DataFilter> filters,
                 @JsonProperty("models") Map<String, DataModelConfig> models,
                 @JsonProperty("parsers") Map<String, DataParserConfig> parsers,
-                @JsonProperty("mappers") Map<String, DataMapperConfig> mappers,
                 @JsonProperty("steps") Map<String, List<PipelineStep>> steps,
                 @JsonProperty("pipelines") Map<String, PipelineConfig> pipelines,
                 @JsonProperty("counters") List<String> counters) {
-    this(userPreferences, patterns, commands, macros, filters, models, parsers, mappers, steps, pipelines);
+    this(userPreferences, patterns, commands, macros, filters, models, parsers, steps, pipelines);
 
     if (icons != null) {
       IconMap iconMap = theme.iconMap();
@@ -116,7 +112,7 @@ public class Config {
 
     if (models != null) {
       models.forEach((id, map) -> {
-        if (this.parsers.containsKey(id) && this.mappers.containsKey(id) && !this.pipelines.containsKey(id)) {
+        if (this.parsers.containsKey(id) && !this.pipelines.containsKey(id)) {
           this.pipelines.put(id, new PipelineConfig(id, id, id, new String[]{id}));
         }
       });
@@ -130,7 +126,6 @@ public class Config {
                  Map<String, DataFilter> filters,
                  Map<String, DataModelConfig> models,
                  Map<String, DataParserConfig> parsers,
-                 Map<String, DataMapperConfig> mappers,
                  Map<String, List<PipelineStep>> steps,
                  Map<String, PipelineConfig> pipelines) {
     this.userPreferences = userPreferences;
@@ -138,7 +133,6 @@ public class Config {
     this.macros = macros != null ? macros : new ArrayList<>();
     this.models = models != null ? models : new HashMap<>();
     this.parsers = parsers != null ? parsers : new HashMap<>();
-    this.mappers = mappers != null ? mappers : new HashMap<>();
     this.steps = steps != null ? steps : new HashMap<>();
     this.pipelines = pipelines != null ? pipelines : new HashMap<>();
     this.patterns = patterns != null ? patterns : new HashMap<>();
@@ -176,10 +170,6 @@ public class Config {
     return getObject(parsers, id);
   }
 
-  public DataMapper dataMapperFor(String id) {
-    return getObject(mappers, id);
-  }
-
   public List<PipelineStep> stepsFor(String id) {
     return steps.getOrDefault(id, Collections.emptyList());
   }
@@ -194,10 +184,6 @@ public class Config {
 
   public Map<String, DataParserConfig> parsers() {
     return parsers;
-  }
-
-  public Map<String, DataMapperConfig> mappers() {
-    return mappers;
   }
 
   public Map<String, List<PipelineStep>> steps() {
@@ -228,7 +214,6 @@ public class Config {
     this.macros.addAll(other.macros);
     this.models.putAll(other.models);
     this.parsers.putAll(other.parsers);
-    this.mappers.putAll(other.mappers);
     this.steps.putAll(other.steps);
     this.pipelines.putAll(other.pipelines);
     this.filters.putAll(other.filters);

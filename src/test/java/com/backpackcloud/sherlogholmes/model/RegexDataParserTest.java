@@ -25,12 +25,10 @@
 package com.backpackcloud.sherlogholmes.model;
 
 import com.backpackcloud.UnbelievableException;
-import com.backpackcloud.sherlogholmes.model.mappers.FunctionDataMapper;
 import com.backpackcloud.sherlogholmes.model.parsers.RegexDataParser;
 import org.junit.jupiter.api.Test;
 
 import java.time.LocalDateTime;
-import java.util.function.Function;
 import java.util.regex.Pattern;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -47,8 +45,6 @@ public class RegexDataParserTest {
     .add("message", new AttributeSpec<>(AttributeType.text(), false));
 
   private final RegexDataParser parser = new RegexDataParser(Pattern.compile(pattern, Pattern.DOTALL));
-
-  private final DataMapper<Function<String, String>> mapper = FunctionDataMapper.attributesFrom(model);
 
   @Test
   public void testSingleLineParsing() {
@@ -76,8 +72,7 @@ public class RegexDataParserTest {
 
   private void entryFrom(String content) {
     Metadata metadata = new Metadata("test", 1);
-    Function<String, String> function = parser.parse(metadata, content).orElseThrow();
-    data = mapper.map(model.dataSupplier(), function).orElseThrow();
+    data = parser.parse(model.dataSupplier(), metadata, content).orElseThrow();
   }
 
   private Object attribute(String name) {

@@ -108,26 +108,7 @@ parsers:
     pattern: '{{ timestamp }} {{ level }}\s+{{ thread }} {{ category }} {{ message }}'
   ocp-audit:
     type: json
-
-# Next in the chain are the Mappers, responsible for taking values from the parsed structure
-# to form an entry defined in a data model
-#
-# Mappers can be:
-# - function: passes a string as an argument an expects to get a value from the structure in return
-#             (useful for json and regex parsed data)
-# - column: passes the attributes in the order they appear in the given array structure
-#           (useful for csv parsed data)
-mappers:
-  java:
-    type: function
-    # The given names would be directly passed to the data structure and the result
-    # will be assigned to an attribute with the same name.
-    # This is useful to map regex named groups to a data model
-    copy: timestamp,level,category,thread,message
-
-  ocp-audit:
-    type: function
-    map:
+    attributes:
       timestamp: /_source/@timestamp
       cluster:   /_source/openshift/cluster_id
       decision:  /_source/annotations/authorization.k8s.io~1decision
@@ -195,12 +176,10 @@ pipelines:
   infinispan:
     model:  java
     parser: infinispan
-    mapper: java
     steps:  java-analyze-messages
   java:
     model:  java
     parser: java
-    mapper: java
     steps:  java-analyze-messages
 
 # If you define an icon with a prefix of "attribute-" and an attribute name, the icon

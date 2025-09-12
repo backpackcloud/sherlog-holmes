@@ -24,27 +24,37 @@
 
 package com.backpackcloud.sherlogholmes.model.parsers;
 
+import com.backpackcloud.sherlogholmes.model.DataEntry;
 import com.backpackcloud.sherlogholmes.model.DataParser;
 import com.backpackcloud.sherlogholmes.model.Metadata;
 
 import java.util.Optional;
-import java.util.function.Function;
+import java.util.Set;
+import java.util.function.Supplier;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class RegexDataParser implements DataParser<Function<String, String>> {
+public class RegexDataParser implements DataParser {
 
   private final Pattern pattern;
+  private final Set<String> attributes;
 
   public RegexDataParser(Pattern pattern) {
     this.pattern = pattern;
+    this.attributes = pattern.namedGroups().keySet();
   }
 
   @Override
-  public Optional<Function<String, String>> parse(Metadata metadata, String content) {
+  public Optional<DataEntry> parse(Supplier<DataEntry> entrySupplier, Metadata metadata, String content) {
     Matcher matcher = pattern.matcher(content);
     if (matcher.find()) {
-      return Optional.of(matcher::group);
+      DataEntry entry = entrySupplier.get();
+      attributes.forEach(name ->
+        entry.attribute(name)
+          .ifPresent(attr ->
+            attr.assignFromInput(matcher.group(name)))
+      );
+      return Optional.of(entry);
     }
     return Optional.empty();
   }

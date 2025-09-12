@@ -55,7 +55,6 @@ public record PipelineConfig(String modelId,
     return new Pipeline(
       config.dataModelFor(modelId),
       config.dataParserFor(parserId),
-      config.dataMapperFor(mapperId),
       Arrays.stream(stepsIds)
         .map(config::stepsFor)
         .flatMap(List::stream)

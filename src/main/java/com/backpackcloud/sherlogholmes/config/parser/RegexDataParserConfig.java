@@ -30,7 +30,6 @@ import com.backpackcloud.sherlogholmes.model.parsers.RegexDataParser;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.util.Map;
-import java.util.function.Function;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -39,7 +38,7 @@ public record RegexDataParserConfig(@JsonProperty("pattern") String pattern) imp
   private static final Pattern INTERPOLATION_PATTERN = Pattern.compile("\\{\\{(?<pattern>\\s*[^}]+\\s*)}}");
 
   @Override
-  public DataParser<Function<String, String>> get(Config config) {
+  public DataParser get(Config config) {
     Map<String, String> patterns = config.patterns();
 
     Matcher matcher = INTERPOLATION_PATTERN.matcher(pattern);

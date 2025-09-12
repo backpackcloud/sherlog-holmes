@@ -25,6 +25,8 @@
 package com.backpackcloud.sherlogholmes.model.parsers;
 
 import com.backpackcloud.UnbelievableException;
+import com.backpackcloud.sherlogholmes.model.Attribute;
+import com.backpackcloud.sherlogholmes.model.DataEntry;
 import com.backpackcloud.sherlogholmes.model.DataParser;
 import com.backpackcloud.sherlogholmes.model.Metadata;
 import com.opencsv.CSVReader;
@@ -33,25 +35,42 @@ import com.opencsv.exceptions.CsvValidationException;
 import java.io.IOException;
 import java.io.StringReader;
 import java.util.Optional;
+import java.util.function.Supplier;
 
-public class CsvDataParser implements DataParser<String[]> {
+public class CsvDataParser implements DataParser {
 
-  private final boolean skipFirstLine;
+  private final boolean hasHeader;
+  private final String[] attributeOrder;
 
-  public CsvDataParser(boolean skipFirstLine) {
-    this.skipFirstLine = skipFirstLine;
+  public CsvDataParser(boolean hasHeader, String[] attributeOrder) {
+    this.hasHeader = hasHeader;
+    this.attributeOrder = attributeOrder;
   }
 
   @Override
-  public Optional<String[]> parse(Metadata metadata, String content) {
-    if (skipFirstLine && metadata.line() == 1) {
+  public Optional<DataEntry> parse(Supplier<DataEntry> entrySupplier, Metadata metadata, String content) {
+    if (this.hasHeader && metadata.line() == 1) {
       return Optional.empty();
     }
 
     CSVReader csvReader = new CSVReader(new StringReader(content));
 
     try {
-      return Optional.ofNullable(csvReader.readNext());
+      String[] strings = csvReader.readNext();
+
+      DataEntry entry = entrySupplier.get();
+
+      for (int i = 0; i < attributeOrder.length; i++) {
+        String name = attributeOrder[i];
+
+        Optional<Attribute<Object>> attribute = entry.attribute(name);
+
+        if (attribute.isPresent()) {
+          attribute.get().assignFromInput(strings[i]);
+        }
+      }
+
+      return Optional.of(entry);
     } catch (IOException | CsvValidationException e) {
       throw new UnbelievableException(e);
     }
