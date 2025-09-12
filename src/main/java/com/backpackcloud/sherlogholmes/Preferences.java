@@ -29,13 +29,6 @@ import com.backpackcloud.preferences.PreferenceType;
 
 public final class Preferences {
 
-  public static final PreferenceSpec<String> TIMESTAMP_ATTRIBUTE = new PreferenceSpec<>(
-    "timestamp-attribute",
-    "which attribute holds a timestamp for time bound calculations",
-    PreferenceType.TEXT,
-    "timestamp"
-  );
-
   public static final PreferenceSpec<String> INPUT_CHARSET = new PreferenceSpec<>(
     "input-charset",
     "sets the charset to use for reading input files",
@@ -50,13 +43,6 @@ public final class Preferences {
     "UTF-8"
   );
 
-  public static final PreferenceSpec<Integer> FILE_READER_SKIP_LINES = new PreferenceSpec<>(
-    "file-reader-skip-lines",
-    "sets how many lines should be skipped when reading files (useful for CSVs with headers)",
-    PreferenceType.NUMBER,
-    "0"
-  );
-
   public static final PreferenceSpec<Boolean> REMOVE_ANSI_COLORS = new PreferenceSpec<>(
     "remove-ansi-colors",
     "removes the ansi colors from the readed content",
@@ -68,7 +54,7 @@ public final class Preferences {
     "auto-filter",
     "applies filter on every stack manipulation",
     PreferenceType.FLAG,
-    "true"
+    "false"
   );
 
   private Preferences() {
