@@ -1,19 +1,20 @@
-filter_grouping:   white
-filter_operation:  purple
+filter_grouping:     white
+filter_operation:    purple
 
-filter:            white
+filter:              white
 
-name:              white
-count:             blue
-percentage:        orange
-separator:         white
-total:             white
+name:                white
+count:               blue
+percentage:          orange
+separator:           white
+total:               white
 
-icon-data:         blue
-icon-attribute:    teal
-icon-time-range:   yellow
-icon-stack:        orange
-icon-limit:        purple
+icon-data:           blue
+icon-attribute:      teal
+icon-time-range:     yellow
+icon-stack:          orange
+icon-limit:          purple
 
-attribute-$source: purple
-attribute-$line:   purple
+attribute-source:    grey
+attribute-line:      grey
+attribute-timestamp: purple
