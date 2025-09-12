@@ -33,10 +33,6 @@ import com.backpackcloud.cli.ui.prompt.PromptCharWriter;
 import com.backpackcloud.configuration.Configuration;
 import com.backpackcloud.configuration.ConfigurationSupplier;
 import com.backpackcloud.io.SerialBitter;
-import com.backpackcloud.sherlogholmes.commands.config.MapperCommand;
-import com.backpackcloud.sherlogholmes.commands.config.ModelCommand;
-import com.backpackcloud.sherlogholmes.commands.config.ParserCommand;
-import com.backpackcloud.sherlogholmes.commands.config.PipelineCommand;
 import com.backpackcloud.sherlogholmes.commands.data.*;
 import com.backpackcloud.sherlogholmes.commands.stack.AndOperationCommand;
 import com.backpackcloud.sherlogholmes.commands.stack.DupCommand;
@@ -54,33 +50,98 @@ import com.backpackcloud.sherlogholmes.ui.prompt.DataCountPromptWriter;
 import com.backpackcloud.sherlogholmes.ui.prompt.DataTimeRangePromptWriter;
 import com.backpackcloud.sherlogholmes.ui.prompt.FilterStackPromptWriter;
 import com.backpackcloud.sherlogholmes.ui.prompt.LimitPromptWriter;
+import picocli.CommandLine;
 
-import java.util.function.Consumer;
+import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.Callable;
 import java.util.stream.Stream;
 
-public class Application {
+@CommandLine.Command(
+  name = "sherlog-holmes",
+  mixinStandardHelpOptions = true,
+  description = "Summons your companion for logging errands.",
+  version = "1.3.0"
+)
+public class Application implements Callable<Integer> {
 
-  public int run(String... args) {
+  @CommandLine.Option(
+    names = {"-c", "--config"},
+    description = "The config files to use."
+  )
+  File[] configFiles;
+
+  @CommandLine.Option(
+    names = {"-p", "--preference"},
+    description = "Sets a user preference."
+  )
+  String[] preferences;
+
+  @CommandLine.Option(
+    names = {"-d", "--default"},
+    description = "Adds the default config file."
+  )
+  boolean useDefaultConfig;
+
+  @CommandLine.Parameters(
+    description = "Additional commands to run as soon as the CLI is ready."
+  )
+  String[] commands;
+
+  public Integer call() {
+    Configuration banner = Configuration.resource("META-INF/banner.txt");
+    System.out.println(banner.read());
+
     SerialBitter serialBitter = SerialBitter.YAML();
 
+    FilterFactory filterFactory = new FilterFactory();
+    FilterStack filterStack = new FilterStack();
+
     CLIBuilder builder = new CLIBuilder(serialBitter)
-      .addComponent(FilterStack.class)
+      .addComponent(filterStack, FilterStack.class)
+      .addComponent(filterFactory, FilterFactory.class)
       .addComponent(DataRegistry.class)
-      .addComponent(FilterFactory.class)
       .addComponent(FileSuggester.class)
 
-      .register(Preferences.class);
+      .registerPreferences(Preferences.class);
 
     ConfigurationSupplier configSupplier = new ConfigurationSupplier("sherlog");
+    List<Configuration> configurations = new ArrayList<>();
 
-    Config config = serialBitter.deserialize(configSupplier.getDefault().read(), Config.class);
+    Config config = null;
 
-    Consumer<Configuration> merge = configuration -> config.mergeWith(
-      serialBitter.deserialize(configuration.read(), Config.class)
-    );
+    if (configFiles != null && configFiles.length > 0) {
+      if (useDefaultConfig) {
+        addDefaults(configurations, configSupplier);
+      }
 
-    configSupplier.fromUserHome().ifSet(merge);
-    configSupplier.fromWorkingDir().ifSet(merge);
+      Stream.of(configFiles)
+        .filter(File::exists)
+        .map(File::getPath)
+        .map(Configuration::file)
+        .forEach(configurations::add);
+
+    } else {
+      if (useDefaultConfig) {
+        addDefaults(configurations, configSupplier);
+      }
+    }
+
+    if (configurations.isEmpty()) {
+      addDefaults(configurations, configSupplier);
+    }
+
+    for (Configuration configuration : configurations) {
+      if (configuration.isSet()) {
+        Config parsedConfiguration = serialBitter.deserialize(configuration.read(), Config.class);
+        if (config == null) {
+          config = parsedConfiguration;
+        } else {
+          config.mergeWith(parsedConfiguration);
+        }
+      }
+    }
 
     builder
       .addComponent(config, Config.class)
@@ -125,15 +186,35 @@ public class Application {
       .addRightPrompt(LimitPromptWriter.class)
       .addDefaultRightPrompts();
 
+    if (preferences != null) {
+      for (String preferenceExpression : preferences) {
+        String[] tokens = preferenceExpression.split("=", 2);
+        builder.setPreference(tokens[0], tokens[1]);
+      }
+    }
+
+    config.filters().forEach((name, filter) -> {
+      filterStack.save(name, filter);
+    });
+
     CLI cli = builder.build();
 
     cli.execute(config.commands().toArray(String[]::new));
 
-    Stream.of(args).forEach(cli::execute);
+    if (commands != null) {
+      Stream.of(commands).forEach(cli::execute);
+    }
 
     cli.start();
 
     return 0;
+  }
+
+  private static void addDefaults(List<Configuration> configurations, ConfigurationSupplier configSupplier) {
+    configurations.add(configSupplier.getDefault());
+
+    configSupplier.fromUserHome().ifSet(configurations::add);
+    configSupplier.fromWorkingDir().ifSet(configurations::add);
   }
 
 }
