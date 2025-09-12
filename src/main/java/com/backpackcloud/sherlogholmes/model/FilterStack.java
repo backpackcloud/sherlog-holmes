@@ -30,16 +30,20 @@ import com.backpackcloud.cli.Registry;
 import com.backpackcloud.cli.Writer;
 
 import java.util.ArrayDeque;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Comparator;
 import java.util.Deque;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
 
 public class FilterStack implements Registry, Displayable, Predicate<DataEntry> {
 
-  private final Map<String, Deque<DataFilter>> filters;
+  private final Map<String, SavedFilter> filters;
   private Deque<DataFilter> stack;
 
   public FilterStack() {
@@ -48,14 +52,20 @@ public class FilterStack implements Registry, Displayable, Predicate<DataEntry> 
   }
 
   public void save(String name) {
-    this.filters.put(name, new ArrayDeque<>(stack));
+    this.filters.put(name, new SavedFilter(name, new ArrayDeque<>(stack)));
+  }
+
+  public void save(String name, DataFilter filter) {
+    ArrayDeque<DataFilter> deque = new ArrayDeque<>();
+    deque.add(filter);
+    this.filters.put(name, new SavedFilter(name, deque));
   }
 
   public void load(String name) {
     if (!this.filters.containsKey(name)) {
       throw new UnbelievableException(name + " not found");
     }
-    this.stack = new ArrayDeque<>(this.filters.get(name));
+    this.stack = new ArrayDeque<>(this.filters.get(name).filter());
   }
 
   public boolean test(DataEntry entry) {
@@ -65,6 +75,14 @@ public class FilterStack implements Registry, Displayable, Predicate<DataEntry> 
       }
     }
     return true;
+  }
+
+  public List<SavedFilter> savedFilters() {
+    List<SavedFilter> result = new ArrayList<>(filters.values());
+
+    result.sort(Comparator.comparing(SavedFilter::name));
+
+    return result;
   }
 
   public DataFilter filter() {
@@ -124,26 +142,7 @@ public class FilterStack implements Registry, Displayable, Predicate<DataEntry> 
 
   public void toDisplay(Writer writer) {
     if (!isEmpty()) {
-      Iterator<DataFilter> iterator = stack.iterator();
-      int size = stack.size();
-      DataFilter filter;
-      for (int i = 1; iterator.hasNext(); i++) {
-        filter = iterator.next();
-        if (size > 1) {
-          if (i == size) {
-            writer.write("╰─ ");
-          } else if (i == 1) {
-            writer.write("╭─ ");
-          } else {
-            writer.write("|– ");
-          }
-        }
-        writer
-          .writeIcon("filter")
-          .write(" ")
-          .write(filter)
-          .newLine();
-      }
+      print(writer, this.stack);
     }
   }
 
@@ -151,8 +150,41 @@ public class FilterStack implements Registry, Displayable, Predicate<DataEntry> 
     return "stack";
   }
 
+  private static void print(Writer writer, Collection<DataFilter> stack) {
+    Iterator<DataFilter> iterator = stack.iterator();
+    int size = stack.size();
+    DataFilter filter;
+    for (int i = 1; iterator.hasNext(); i++) {
+      filter = iterator.next();
+      if (size > 1) {
+        if (i == size) {
+          writer.write("╰─ ");
+        } else if (i == 1) {
+          writer.write("╭─ ");
+        } else {
+          writer.write("|– ");
+        }
+      }
+      writer
+        .writeIcon("filter")
+        .write(" ")
+        .write(filter)
+        .newLine();
+    }
+  }
+
   public enum Operation {
     AND, OR, NOT, DUP
+  }
+
+  public record SavedFilter(String name, Deque<DataFilter> filter) implements Displayable {
+
+    @Override
+    public void toDisplay(Writer writer) {
+      writer.withStyle("name").writeln(name());
+      print(writer, filter);
+    }
+
   }
 
 }

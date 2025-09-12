@@ -26,9 +26,11 @@ package com.backpackcloud.sherlogholmes.model;
 
 import com.backpackcloud.cli.Displayable;
 import com.backpackcloud.cli.Writer;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
 import java.util.function.Predicate;
 
+@JsonDeserialize(using = DataFilterDeserializer.class)
 public interface DataFilter extends Displayable, Predicate<DataEntry> {
 
   boolean test(DataEntry entry);

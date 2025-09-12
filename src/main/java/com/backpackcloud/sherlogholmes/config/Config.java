@@ -36,6 +36,7 @@ import com.backpackcloud.sherlogholmes.Preferences;
 import com.backpackcloud.sherlogholmes.config.mapper.DataMapperConfig;
 import com.backpackcloud.sherlogholmes.config.model.DataModelConfig;
 import com.backpackcloud.sherlogholmes.config.parser.DataParserConfig;
+import com.backpackcloud.sherlogholmes.model.DataFilter;
 import com.backpackcloud.sherlogholmes.model.DataMapper;
 import com.backpackcloud.sherlogholmes.model.DataModel;
 import com.backpackcloud.sherlogholmes.model.DataParser;
@@ -62,6 +63,7 @@ public class Config {
   private final Map<String, DataMapperConfig> mappers;
   private final Map<String, List<PipelineStep>> steps;
   private final Map<String, PipelineConfig> pipelines;
+  private final Map<String, DataFilter> filters;
   private final List<Macro> macros;
 
   @JsonCreator
@@ -75,13 +77,14 @@ public class Config {
                 @JsonProperty("styles") Map<String, String> styles,
                 @JsonProperty("commands") List<String> commands,
                 @JsonProperty("macros") List<Macro> macros,
+                @JsonProperty("filters") Map<String, DataFilter> filters,
                 @JsonProperty("models") Map<String, DataModelConfig> models,
                 @JsonProperty("parsers") Map<String, DataParserConfig> parsers,
                 @JsonProperty("mappers") Map<String, DataMapperConfig> mappers,
                 @JsonProperty("steps") Map<String, List<PipelineStep>> steps,
                 @JsonProperty("pipelines") Map<String, PipelineConfig> pipelines,
                 @JsonProperty("counters") List<String> counters) {
-    this(userPreferences, patterns, commands, macros, models, parsers, mappers, steps, pipelines);
+    this(userPreferences, patterns, commands, macros, filters, models, parsers, mappers, steps, pipelines);
 
     if (icons != null) {
       IconMap iconMap = theme.iconMap();
@@ -124,6 +127,7 @@ public class Config {
                  Map<String, String> patterns,
                  List<String> commands,
                  List<Macro> macros,
+                 Map<String, DataFilter> filters,
                  Map<String, DataModelConfig> models,
                  Map<String, DataParserConfig> parsers,
                  Map<String, DataMapperConfig> mappers,
@@ -137,7 +141,8 @@ public class Config {
     this.mappers = mappers != null ? mappers : new HashMap<>();
     this.steps = steps != null ? steps : new HashMap<>();
     this.pipelines = pipelines != null ? pipelines : new HashMap<>();
-    this.patterns = patterns == null ? new HashMap<>() : patterns;
+    this.patterns = patterns != null ? patterns : new HashMap<>();
+    this.filters = filters != null ? filters : new HashMap<>();
   }
 
   public List<String> commands() {
@@ -207,6 +212,10 @@ public class Config {
     return macros;
   }
 
+  public Map<String, DataFilter> filters() {
+    return filters;
+  }
+
   /**
    * Combines this configuration with the given one. The given configuration takes
    * precedence.
@@ -222,6 +231,7 @@ public class Config {
     this.mappers.putAll(other.mappers);
     this.steps.putAll(other.steps);
     this.pipelines.putAll(other.pipelines);
+    this.filters.putAll(other.filters);
   }
 
 }
