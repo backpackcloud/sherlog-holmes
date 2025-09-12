@@ -24,14 +24,12 @@
 
 package com.backpackcloud.sherlogholmes;
 
-import java.io.IOException;
+import picocli.CommandLine;
 
 public class Main {
 
-  public static void main(String[] args) throws IOException {
-    System.out.println(new String(Main.class.getResourceAsStream("/META-INF/banner.txt").readAllBytes()));
-
-    int status = new Application().run(args);
+  public static void main(String[] args) {
+    int status = new CommandLine(new Application()).execute(args);
 
     System.exit(status);
   }
