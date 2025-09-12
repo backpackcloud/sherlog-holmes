@@ -30,6 +30,8 @@ import com.backpackcloud.cli.annotations.Event;
 import com.backpackcloud.cli.annotations.InputParameter;
 import com.backpackcloud.sherlogholmes.model.FilterStack;
 
+import java.util.List;
+
 @CommandDefinition(
   name = "stack",
   type = "Stack Manipulation",
@@ -52,6 +54,11 @@ public class StackCommand {
   public FilterStack save(@InputParameter String name) {
     stack.save(name);
     return stack;
+  }
+
+  @Action
+  public List<FilterStack.SavedFilter> list() {
+    return stack.savedFilters();
   }
 
   @Action
