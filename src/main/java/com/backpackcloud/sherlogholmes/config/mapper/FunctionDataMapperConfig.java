@@ -30,7 +30,6 @@ import com.backpackcloud.sherlogholmes.model.mappers.FunctionDataMapper;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -55,23 +54,6 @@ public record FunctionDataMapperConfig(Map<String, String> attributesToMap,
     Map<String, String> attributesMap = new HashMap<>(attributesToMap);
     attributesToCopy.forEach(attr -> attributesMap.put(attr, attr));
     return new FunctionDataMapper(attributesMap);
-  }
-
-  public static FunctionDataMapperConfig from(String spec) {
-    List<String> attributesToCopy = new ArrayList<>();
-    Map<String, String> attributesToMap = new HashMap<>();
-    if (spec != null) {
-      String[] split = spec.trim().split(",");
-      for (String attr : split) {
-        if (attr.contains("=>")) {
-          String[] map = attr.split("=>", 2);
-          attributesToMap.put(map[0], map[1]);
-        } else {
-          attributesToCopy.add(attr);
-        }
-      }
-    }
-    return new FunctionDataMapperConfig(attributesToMap, attributesToCopy);
   }
 
   @Override
