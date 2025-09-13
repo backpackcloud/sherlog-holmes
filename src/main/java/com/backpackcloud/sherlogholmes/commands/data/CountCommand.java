@@ -68,6 +68,7 @@ public class CountCommand {
       valuesMap = registry.counter(attribute);
     } else {
       Counter counter = new Counter();
+      counter.add(attribute);
       registry.entries().parallel().forEach(counter);
       valuesMap = counter.counterFor(attribute).orElse(Collections.emptyMap());
     }
