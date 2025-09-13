@@ -37,7 +37,7 @@ import java.util.regex.Pattern;
 
 public class AttributeSetStep implements PipelineStep {
 
-  private static final Pattern INTERPOLATION_PATTERN = Pattern.compile("\\{\\s*(?<name>[^}]+)\\s*}");
+  private static final Pattern INTERPOLATION_PATTERN = Pattern.compile("\\{(?<name>\\s*[^}]+\\s*)}");
 
   private final Map<String, String> assigners;
   private final BiConsumer<Attribute<?>, String> assignAction;
@@ -53,7 +53,7 @@ public class AttributeSetStep implements PipelineStep {
     assigners.forEach((targetAttribute, format) -> {
       Matcher matcher = INTERPOLATION_PATTERN.matcher(format);
       try {
-        String result = matcher.replaceAll(matchResult -> dataEntry.attribute(matchResult.group("name"))
+        String result = matcher.replaceAll(matchResult -> dataEntry.attribute(matchResult.group("name").trim())
           .flatMap(Attribute::formattedValue)
           .orElseThrow(UnbelievableException::new));
         dataEntry.attribute(targetAttribute)
