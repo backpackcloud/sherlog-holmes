@@ -25,30 +25,40 @@
 package com.backpackcloud.sherlogholmes.model.parsers;
 
 import com.backpackcloud.sherlogholmes.model.DataEntry;
+import com.backpackcloud.sherlogholmes.model.DataModel;
 import com.backpackcloud.sherlogholmes.model.DataParser;
 import com.backpackcloud.sherlogholmes.model.Metadata;
 
 import java.util.Optional;
 import java.util.Set;
-import java.util.function.Supplier;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class RegexDataParser implements DataParser {
 
+  private final DataModel dataModel;
   private final Pattern pattern;
   private final Set<String> attributes;
+  private final boolean multiline;
 
-  public RegexDataParser(Pattern pattern) {
+  public RegexDataParser(DataModel dataModel, Pattern pattern, boolean multiline) {
+    this.dataModel = dataModel;
     this.pattern = pattern;
     this.attributes = pattern.namedGroups().keySet();
+    this.multiline = multiline;
   }
 
   @Override
-  public Optional<DataEntry> parse(Supplier<DataEntry> entrySupplier, Metadata metadata, String content) {
+  public boolean multiline() {
+    return multiline;
+  }
+
+  @Override
+  public Optional<DataEntry> parse(Metadata metadata, String content) {
     Matcher matcher = pattern.matcher(content);
     if (matcher.find()) {
-      DataEntry entry = entrySupplier.get();
+      DataEntry entry = dataModel.create();
+      metadata.attachTo(entry);
       attributes.forEach(name ->
         entry.attribute(name)
           .ifPresent(attr ->

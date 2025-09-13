@@ -27,24 +27,15 @@ package com.backpackcloud.sherlogholmes.config.parser;
 import com.backpackcloud.sherlogholmes.config.Config;
 import com.backpackcloud.sherlogholmes.model.DataParser;
 import com.backpackcloud.sherlogholmes.model.parsers.CsvDataParser;
-import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-public class CsvDataParserConfig implements DataParserConfig {
-
-  private final boolean hasHeader;
-  private final String[] attributes;
-
-  @JsonCreator
-  public CsvDataParserConfig(@JsonProperty("header") boolean hasHeader,
-                             @JsonProperty("attributes") String attributes) {
-    this.hasHeader = hasHeader;
-    this.attributes = attributes.split("\\s*,\\s*");
-  }
+public record CsvDataParserConfig(@JsonProperty("model") String modelId,
+                                  @JsonProperty("header") boolean hasHeader,
+                                  @JsonProperty("attributes") String attributes) implements DataParserConfig {
 
   @Override
   public DataParser get(Config config) {
-    return new CsvDataParser(hasHeader, attributes);
+    return new CsvDataParser(config.dataModel(modelId), hasHeader, attributes.split("\\s*,\\s*"));
   }
 
 }

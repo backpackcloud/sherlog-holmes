@@ -56,7 +56,7 @@ public record DataModelConfig(String format,
       model.add(name, attrConfig.get(config)));
     if (modelsToInclude != null) {
       Arrays.stream(modelsToInclude.split("\\s*,\\s*"))
-        .forEach(additionalModel -> model.addFrom(config.dataModelFor(additionalModel)));
+        .forEach(additionalModel -> model.addFrom(config.dataModel(additionalModel)));
     }
     return model;
   }

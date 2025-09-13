@@ -25,10 +25,13 @@
 package com.backpackcloud.sherlogholmes.model;
 
 import java.util.Optional;
-import java.util.function.Supplier;
 
 public interface DataParser {
 
-  Optional<DataEntry> parse(Supplier<DataEntry> entrySupplier, Metadata metadata, String content);
+  default boolean multiline() {
+    return false;
+  }
+
+  Optional<DataEntry> parse(Metadata metadata, String content);
 
 }

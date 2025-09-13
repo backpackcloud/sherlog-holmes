@@ -33,20 +33,16 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
-import java.util.function.Supplier;
 
 public class Pipeline {
 
-  private final DataModel dataModel;
   private final DataParser dataParser;
   private final List<PipelineStep> analysisSteps;
   private final UserPreferences preferences;
 
-  public Pipeline(DataModel dataModel,
-                  DataParser dataParser,
+  public Pipeline(DataParser dataParser,
                   List<PipelineStep> analysisSteps,
                   UserPreferences preferences) {
-    this.dataModel = dataModel;
     this.dataParser = dataParser;
     this.analysisSteps = analysisSteps;
     this.preferences = preferences;
@@ -60,24 +56,39 @@ public class Pipeline {
   }
 
   public <T> void run(DataReader<T> dataReader, T location, Consumer<DataEntry> consumer) {
-    StagingArea stagingArea = new StagingArea(consumer);
+    if (dataParser.multiline()) {
+      StagingArea stagingArea = new StagingArea(consumer);
 
-    dataReader.read(location, (metadata, content) ->
-    {
-      Supplier<DataEntry> supplier = () -> {
-        DataEntry entry = dataModel.dataSupplier().get();
-        metadata.attachTo(entry);
-        return entry;
-      };
-      dataParser.parse(supplier, metadata, normalize(content))
-        .ifPresentOrElse(
-          stagingArea::push,
-          () -> stagingArea.push(content)
+      // by using a single thread, new lines will be sequentially added to an internal queue
+      //
+      // this will make sure the order of the multilines is not only preserved, but also that
+      // the content gets attached to the correct entry
+      try (ExecutorService executorService = Executors.newSingleThreadExecutor()) {
+        dataReader.read(location, (metadata, content) ->
+          executorService.submit(() ->
+            dataParser.parse(metadata, normalize(content))
+              .ifPresentOrElse(
+                stagingArea::push,
+                () -> stagingArea.push(content)
+              )
+          )
         );
-    });
+      }
 
-    stagingArea.push();
-    stagingArea.close();
+      stagingArea.push();
+      stagingArea.close();
+    } else {
+      // if we can discard the lines that can't be parsed, we can be more
+      // aggressive and process each line in its own virtual thread
+      try (ExecutorService executorService = Executors.newVirtualThreadPerTaskExecutor()) {
+        dataReader.read(location, (metadata, content) ->
+          executorService.submit(() ->
+            dataParser.parse(metadata, normalize(content))
+              .ifPresent(consumer)
+          )
+        );
+      }
+    }
   }
 
   private class StagingArea {
@@ -85,52 +96,35 @@ public class Pipeline {
     private StringBuilder extraLines;
     private DataEntry entry;
     private final Consumer<DataEntry> consumer;
-    private final ExecutorService pusher;
-    private final ExecutorService pushChecker;
-    private boolean closed = false;
-    private long lastPush;
+    private final ExecutorService analyzer;
 
     private StagingArea(Consumer<DataEntry> consumer) {
       this.consumer = consumer;
-      this.pusher = Executors.newVirtualThreadPerTaskExecutor();
-      this.pushChecker = Executors.newSingleThreadExecutor();
-      this.pushChecker.submit(() -> {
-        while (!closed) {
-          if (System.currentTimeMillis() - lastPush >= 1000) {
-            push();
-          }
-          try {
-            Thread.sleep(500);
-          } catch (InterruptedException e) {
-            throw new UnbelievableException(e);
-          }
-        }
-      });
+      this.analyzer = Executors.newVirtualThreadPerTaskExecutor();
     }
 
     public void close() {
-      this.pusher.shutdown();
+      this.analyzer.shutdown();
       try {
-        this.pusher.awaitTermination(Long.MAX_VALUE, TimeUnit.MILLISECONDS);
+        this.analyzer.awaitTermination(Long.MAX_VALUE, TimeUnit.MILLISECONDS);
       } catch (InterruptedException e) {
         throw new UnbelievableException(e);
       }
-      this.closed = true;
-      this.pushChecker.close();
     }
 
     public void push() {
       if (this.entry != null) {
         DataEntry struct = this.entry;
         if (!analysisSteps.isEmpty()) {
-          pusher.execute(() -> {
+          analyzer.submit(() -> {
             analysisSteps.forEach(step -> step.analyze(struct));
             consumer.accept(struct);
           });
+        } else {
+          consumer.accept(struct);
         }
         this.entry = null;
         this.extraLines = null;
-        this.lastPush = System.currentTimeMillis();
       }
     }
 

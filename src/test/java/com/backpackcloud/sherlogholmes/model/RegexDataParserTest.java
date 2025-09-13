@@ -44,7 +44,7 @@ public class RegexDataParserTest {
     .add("origin", new AttributeSpec<>(AttributeType.text(), false))
     .add("message", new AttributeSpec<>(AttributeType.text(), false));
 
-  private final RegexDataParser parser = new RegexDataParser(Pattern.compile(pattern, Pattern.DOTALL));
+  private final RegexDataParser parser = new RegexDataParser(model, Pattern.compile(pattern, Pattern.DOTALL), true);
 
   @Test
   public void testSingleLineParsing() {
@@ -72,7 +72,7 @@ public class RegexDataParserTest {
 
   private void entryFrom(String content) {
     Metadata metadata = new Metadata("test", 1);
-    data = parser.parse(model.dataSupplier(), metadata, content).orElseThrow();
+    data = parser.parse(metadata, content).orElseThrow();
   }
 
   private Object attribute(String name) {

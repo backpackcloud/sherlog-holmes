@@ -26,31 +26,34 @@ package com.backpackcloud.sherlogholmes.model.parsers;
 
 import com.backpackcloud.io.SerialBitter;
 import com.backpackcloud.sherlogholmes.model.DataEntry;
+import com.backpackcloud.sherlogholmes.model.DataModel;
 import com.backpackcloud.sherlogholmes.model.DataParser;
 import com.backpackcloud.sherlogholmes.model.Metadata;
 import com.fasterxml.jackson.databind.JsonNode;
 
 import java.util.Map;
 import java.util.Optional;
-import java.util.function.Supplier;
 
 public class JsonDataParser implements DataParser {
 
+  private final DataModel dataModel;
   private final SerialBitter deserializer;
   private final Map<String, String> attributeMappings;
 
-  public JsonDataParser(SerialBitter deserializer, Map<String, String> attributeMappings) {
+  public JsonDataParser(DataModel dataModel, SerialBitter deserializer, Map<String, String> attributeMappings) {
+    this.dataModel = dataModel;
     this.deserializer = deserializer;
     this.attributeMappings = attributeMappings;
   }
 
   @Override
-  public Optional<DataEntry> parse(Supplier<DataEntry> entrySupplier, Metadata metadata, String content) {
+  public Optional<DataEntry> parse(Metadata metadata, String content) {
     if (content == null || content.isBlank()) {
       return Optional.empty();
     }
     JsonNode jsonNode = deserializer.deserialize(content.trim(), JsonNode.class);
-    DataEntry entry = entrySupplier.get();
+    DataEntry entry = dataModel.create();
+    metadata.attachTo(entry);
     attributeMappings.forEach((name, path) ->
       entry.attribute(name)
         .ifPresent(attr ->

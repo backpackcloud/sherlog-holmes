@@ -66,7 +66,13 @@ public class DataModel {
     });
   }
 
-  public Supplier<DataEntry> dataSupplier() {
+  public DataEntry create() {
+    DataEntry dataEntry = new DataEntry(displayFormat, exportFormat);
+    attributes.forEach(dataEntry::addAttribute);
+    return dataEntry;
+  }
+
+  private Supplier<DataEntry> dataSupplier() {
     return () -> {
       DataEntry dataEntry = new DataEntry(displayFormat, exportFormat);
       attributes.forEach(dataEntry::addAttribute);

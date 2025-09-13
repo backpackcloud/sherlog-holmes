@@ -71,7 +71,7 @@ public class InspectCommand {
                       @InputParameter String pipelineId,
                       @InputParameter String location) throws InterruptedException {
     DataReader dataReader = new FileLineReader(Charset.forName(inputCharset));
-    Pipeline pipeline = config.pipelineFor(pipelineId);
+    Pipeline pipeline = config.pipeline(pipelineId);
 
     Path locationPath = Path.of(location);
 

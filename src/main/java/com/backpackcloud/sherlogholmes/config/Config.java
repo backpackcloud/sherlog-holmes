@@ -113,7 +113,7 @@ public class Config {
     if (models != null) {
       models.forEach((id, map) -> {
         if (this.parsers.containsKey(id) && !this.pipelines.containsKey(id)) {
-          this.pipelines.put(id, new PipelineConfig(id, id, id, new String[]{id}));
+          this.pipelines.put(id, new PipelineConfig(id, new String[]{id}));
         }
       });
     }
@@ -154,40 +154,24 @@ public class Config {
     throw new UnbelievableException("No " + key + " present");
   }
 
-  public DataModel dataModelFor(String id) {
+  public DataModel dataModel(String id) {
     return getObject(models, id);
-  }
-
-  public DataModelConfig modelConfig(String name) {
-    return models.get(name);
   }
 
   public UserPreferences userPreferences() {
     return userPreferences;
   }
 
-  public DataParser dataParserFor(String id) {
+  public DataParser dataParser(String id) {
     return getObject(parsers, id);
   }
 
-  public List<PipelineStep> stepsFor(String id) {
+  public List<PipelineStep> analysisSteps(String id) {
     return steps.getOrDefault(id, Collections.emptyList());
   }
 
-  public Pipeline pipelineFor(String id) {
+  public Pipeline pipeline(String id) {
     return getObject(pipelines, id);
-  }
-
-  public Map<String, DataModelConfig> models() {
-    return models;
-  }
-
-  public Map<String, DataParserConfig> parsers() {
-    return parsers;
-  }
-
-  public Map<String, List<PipelineStep>> steps() {
-    return steps;
   }
 
   public Map<String, PipelineConfig> pipelines() {

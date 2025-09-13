@@ -25,38 +25,21 @@
 package com.backpackcloud.sherlogholmes.config;
 
 import com.backpackcloud.sherlogholmes.model.Pipeline;
-import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public record PipelineConfig(String modelId,
-                             String parserId,
-                             String mapperId,
-                             String[] stepsIds) implements ConfigObject<Pipeline> {
-
-  @JsonCreator
-  public PipelineConfig(@JsonProperty("model") String modelId,
-                        @JsonProperty("parser") String parserId,
-                        @JsonProperty("mapper") String mapperId,
-                        @JsonProperty("steps") String stepsIds) {
-    this(
-      modelId,
-      parserId,
-      mapperId,
-      stepsIds == null ? new String[0] : stepsIds.split("\\s*,\\s*")
-    );
-  }
+public record PipelineConfig(@JsonProperty("parser") String parserId,
+                             @JsonProperty("steps") String[] steps) implements ConfigObject<Pipeline> {
 
   @Override
   public Pipeline get(Config config) {
     return new Pipeline(
-      config.dataModelFor(modelId),
-      config.dataParserFor(parserId),
-      Arrays.stream(stepsIds)
-        .map(config::stepsFor)
+      config.dataParser(parserId),
+      Arrays.stream(steps)
+        .map(config::analysisSteps)
         .flatMap(List::stream)
         .collect(Collectors.toList()),
       config.userPreferences()

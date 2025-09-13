@@ -32,20 +32,12 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.util.Map;
 
-public class JsonDataParserConfig implements DataParserConfig {
-
-  private final SerialBitter serialBitter;
-  private final Map<String, String> attributeMappings;
-
-  public JsonDataParserConfig(@JsonProperty("attributes") Map<String, String> attributeMappings) {
-    this.attributeMappings = attributeMappings;
-    this.serialBitter = SerialBitter.JSON();
-  }
-
+public record JsonDataParserConfig(@JsonProperty("model") String modelId,
+                                   @JsonProperty("attributes") Map<String, String> attributeMappings) implements DataParserConfig {
 
   @Override
   public DataParser get(Config config) {
-    return new JsonDataParser(serialBitter, attributeMappings);
+    return new JsonDataParser(config.dataModel(modelId), SerialBitter.JSON(), attributeMappings);
   }
 
 }

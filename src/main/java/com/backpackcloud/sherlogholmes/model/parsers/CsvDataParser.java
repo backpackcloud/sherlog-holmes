@@ -27,6 +27,7 @@ package com.backpackcloud.sherlogholmes.model.parsers;
 import com.backpackcloud.UnbelievableException;
 import com.backpackcloud.sherlogholmes.model.Attribute;
 import com.backpackcloud.sherlogholmes.model.DataEntry;
+import com.backpackcloud.sherlogholmes.model.DataModel;
 import com.backpackcloud.sherlogholmes.model.DataParser;
 import com.backpackcloud.sherlogholmes.model.Metadata;
 import com.opencsv.CSVReader;
@@ -35,20 +36,21 @@ import com.opencsv.exceptions.CsvValidationException;
 import java.io.IOException;
 import java.io.StringReader;
 import java.util.Optional;
-import java.util.function.Supplier;
 
 public class CsvDataParser implements DataParser {
 
+  private final DataModel dataModel;
   private final boolean hasHeader;
   private final String[] attributeOrder;
 
-  public CsvDataParser(boolean hasHeader, String[] attributeOrder) {
+  public CsvDataParser(DataModel dataModel, boolean hasHeader, String[] attributeOrder) {
+    this.dataModel = dataModel;
     this.hasHeader = hasHeader;
     this.attributeOrder = attributeOrder;
   }
 
   @Override
-  public Optional<DataEntry> parse(Supplier<DataEntry> entrySupplier, Metadata metadata, String content) {
+  public Optional<DataEntry> parse(Metadata metadata, String content) {
     if (this.hasHeader && metadata.line() == 1) {
       return Optional.empty();
     }
@@ -58,7 +60,8 @@ public class CsvDataParser implements DataParser {
     try {
       String[] strings = csvReader.readNext();
 
-      DataEntry entry = entrySupplier.get();
+      DataEntry entry = dataModel.create();
+      metadata.attachTo(entry);
 
       for (int i = 0; i < attributeOrder.length; i++) {
         String name = attributeOrder[i];
