@@ -43,7 +43,7 @@ public class RegexMapperStep implements PipelineStep {
   public RegexMapperStep(String sourceAttribute, Pattern pattern) {
     this.sourceAttribute = sourceAttribute;
     this.pattern = pattern;
-    this.namedGroups = new RegexAnalyzer(this.pattern).namedGroups();
+    this.namedGroups = pattern.namedGroups().keySet();
   }
 
   @Override
