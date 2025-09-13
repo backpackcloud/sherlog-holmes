@@ -33,7 +33,15 @@ import com.backpackcloud.cli.ui.prompt.PromptCharWriter;
 import com.backpackcloud.configuration.Configuration;
 import com.backpackcloud.configuration.ConfigurationSupplier;
 import com.backpackcloud.io.SerialBitter;
-import com.backpackcloud.sherlogholmes.commands.data.*;
+import com.backpackcloud.sherlogholmes.commands.data.AssignCommand;
+import com.backpackcloud.sherlogholmes.commands.data.CountCommand;
+import com.backpackcloud.sherlogholmes.commands.data.ExportDataCommand;
+import com.backpackcloud.sherlogholmes.commands.data.FilterCommand;
+import com.backpackcloud.sherlogholmes.commands.data.HeadCommand;
+import com.backpackcloud.sherlogholmes.commands.data.InspectCommand;
+import com.backpackcloud.sherlogholmes.commands.data.LimitCommand;
+import com.backpackcloud.sherlogholmes.commands.data.ListDataCommand;
+import com.backpackcloud.sherlogholmes.commands.data.TailCommand;
 import com.backpackcloud.sherlogholmes.commands.stack.AndOperationCommand;
 import com.backpackcloud.sherlogholmes.commands.stack.DupCommand;
 import com.backpackcloud.sherlogholmes.commands.stack.NotOperationCommand;
@@ -151,11 +159,9 @@ public class Application implements Callable<Integer> {
         CountCommand.class,
         FilterCommand.class,
         HeadCommand.class,
-        CounterCommand.class,
         InspectCommand.class,
         ListDataCommand.class,
         ExportDataCommand.class,
-        ListenCommand.class,
         LimitCommand.class,
         TailCommand.class,
         AndOperationCommand.class,
