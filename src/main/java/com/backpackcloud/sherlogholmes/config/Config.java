@@ -111,7 +111,7 @@ public class Config {
     }
 
     if (models != null) {
-      models.forEach((id, map) -> {
+      models.forEach((id, config) -> {
         if (this.parsers.containsKey(id) && !this.pipelines.containsKey(id)) {
           this.pipelines.put(id, new PipelineConfig(id, new String[]{id}));
         }
@@ -149,7 +149,7 @@ public class Config {
 
   private <E, T extends ConfigObject<E>> E getObject(Map<String, T> map, String key) {
     if (map.containsKey(key)) {
-      return map.get(key).get(this);
+      return map.get(key).get(key, this);
     }
     throw new UnbelievableException("No " + key + " present");
   }

@@ -34,6 +34,8 @@ import com.backpackcloud.cli.annotations.PreferenceValue;
 import com.backpackcloud.cli.ui.Suggestion;
 import com.backpackcloud.cli.ui.Theme;
 import com.backpackcloud.cli.ui.components.FileSuggester;
+import com.backpackcloud.sherlogholmes.config.Config;
+import com.backpackcloud.sherlogholmes.model.Attribute;
 import com.backpackcloud.sherlogholmes.model.DataRegistry;
 import org.jline.terminal.Terminal;
 import org.jline.utils.AttributedString;
@@ -53,12 +55,14 @@ import java.util.List;
 )
 public class ExportDataCommand {
 
+  private final Config config;
   private final DataRegistry registry;
   private final Terminal terminal;
   private final Theme theme;
   private final FileSuggester suggester;
 
-  public ExportDataCommand(DataRegistry registry, Terminal terminal, Theme theme, FileSuggester suggester) {
+  public ExportDataCommand(Config config, DataRegistry registry, Terminal terminal, Theme theme, FileSuggester suggester) {
+    this.config = config;
     this.registry = registry;
     this.terminal = terminal;
     this.theme = theme;
@@ -82,7 +86,11 @@ public class ExportDataCommand {
           terminal);
         registry.entries().forEach(entry -> {
           if (outputFormat == null) {
-            entry.export(builderWriter);
+            String dataModelId = entry.attribute("data-model", String.class)
+              .flatMap(Attribute::value)
+              .orElseThrow(UnbelievableException.because("Entry has no data-model associated with"));
+            String format = config.dataModel(dataModelId).exportFormat();
+            entry.write(builderWriter, format);
           } else {
             entry.write(builderWriter, outputFormat);
           }

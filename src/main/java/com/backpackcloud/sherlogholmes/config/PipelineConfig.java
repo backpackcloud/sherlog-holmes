@@ -35,8 +35,9 @@ public record PipelineConfig(@JsonProperty("parser") String parserId,
                              @JsonProperty("steps") String[] steps) implements ConfigObject<Pipeline> {
 
   @Override
-  public Pipeline get(Config config) {
+  public Pipeline get(String id, Config config) {
     return new Pipeline(
+      id,
       config.dataParser(parserId),
       Arrays.stream(steps)
         .map(config::analysisSteps)

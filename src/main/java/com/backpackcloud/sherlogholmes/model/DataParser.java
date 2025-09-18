@@ -28,6 +28,10 @@ import java.util.Optional;
 
 public interface DataParser {
 
+  String name();
+
+  DataModel dataModel();
+
   default boolean multiline() {
     return false;
   }

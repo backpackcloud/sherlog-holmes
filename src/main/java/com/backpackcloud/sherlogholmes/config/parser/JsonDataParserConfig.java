@@ -36,8 +36,8 @@ public record JsonDataParserConfig(@JsonProperty("model") String modelId,
                                    @JsonProperty("attributes") Map<String, String> attributeMappings) implements DataParserConfig {
 
   @Override
-  public DataParser get(Config config) {
-    return new JsonDataParser(config.dataModel(modelId), SerialBitter.JSON(), attributeMappings);
+  public DataParser get(String id, Config config) {
+    return new JsonDataParser(id, config.dataModel(modelId), SerialBitter.JSON(), attributeMappings);
   }
 
 }

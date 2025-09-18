@@ -27,13 +27,15 @@ package com.backpackcloud.sherlogholmes.model;
 import com.backpackcloud.cli.Registry;
 
 import java.time.Duration;
+import java.time.LocalTime;
 import java.time.temporal.ChronoUnit;
 import java.time.temporal.Temporal;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashSet;
 import java.util.Map;
-import java.util.NavigableSet;
 import java.util.Optional;
+import java.util.SequencedCollection;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.concurrent.ConcurrentHashMap;
@@ -42,7 +44,14 @@ import java.util.stream.Stream;
 
 public class DataRegistry implements Registry {
 
-  private final InternalStorage total = new InternalStorage();
+  private static final String[] FULL_TIMESTAMP_ATTRIBUTE_ORDER = {"timestamp", "source", "line"};
+  private static final String[] TIME_ONLY_ATTRIBUTE_ORDER = {"source", "line", "timestamp"};
+  private static final String[] NO_TIMESTAMP_ATTRIBUTE_ORDER = {"source", "line"};
+
+  private String[] attributeOrder;
+  private final Comparator<DataEntry> comparator;
+
+  private final InternalStorage total;
   private final FilterStack filterStack;
   private InternalStorage filtered;
 
@@ -50,6 +59,26 @@ public class DataRegistry implements Registry {
 
   public DataRegistry(FilterStack filterStack) {
     this.filterStack = filterStack;
+    this.comparator = (left, right) -> {
+      // ideally, the entries will have at least the source and the line attributes,
+      // so the chances of this comparison to yield zero are really low
+      for (String attributeName : attributeOrder) {
+        if (left.hasAttribute(attributeName) && right.hasAttribute(attributeName)) {
+          int result = left.attribute(attributeName)
+            .map(attribute -> right.attribute(attributeName)
+              .map(attribute::compareTo)
+              .orElse(1))
+            .orElse(0);
+
+          if (result != 0) {
+            return result;
+          }
+        }
+      }
+      // well... if it's indeed zero, let's just use the natural comparison between then
+      return left.compareTo(right);
+    };
+    this.total = new InternalStorage();
   }
 
   private InternalStorage registry() {
@@ -67,6 +96,19 @@ public class DataRegistry implements Registry {
 
   public void add(DataEntry entry) {
     if (filterStack.test(entry)) {
+      if (attributeOrder == null) {
+        entry.attribute("timestamp").ifPresentOrElse(attribute ->
+            attribute.value().ifPresentOrElse(value -> {
+              if (value instanceof LocalTime) {
+                attributeOrder = TIME_ONLY_ATTRIBUTE_ORDER;
+              } else {
+                attributeOrder = FULL_TIMESTAMP_ATTRIBUTE_ORDER;
+              }
+            }, () -> attributeOrder = NO_TIMESTAMP_ATTRIBUTE_ORDER),
+          () -> attributeOrder = NO_TIMESTAMP_ATTRIBUTE_ORDER
+        );
+      }
+
       total.add(entry);
       filtered().ifPresent(registry -> registry.add(entry));
     }
@@ -146,7 +188,7 @@ public class DataRegistry implements Registry {
     return head(registry().entries, count);
   }
 
-  private Stream<DataEntry> head(NavigableSet<DataEntry> entries, int count) {
+  private Stream<DataEntry> head(SequencedCollection<DataEntry> entries, int count) {
     if (entries.isEmpty()) {
       return Stream.empty();
     }
@@ -158,7 +200,7 @@ public class DataRegistry implements Registry {
     return head(registry().entries, amount, unit);
   }
 
-  private Stream<DataEntry> head(NavigableSet<DataEntry> entries, int amount, ChronoUnit unit) {
+  private Stream<DataEntry> head(SequencedCollection<DataEntry> entries, int amount, ChronoUnit unit) {
     if (entries.isEmpty()) {
       return Stream.empty();
     }
@@ -182,7 +224,7 @@ public class DataRegistry implements Registry {
     return tail(registry().entries, count);
   }
 
-  private Stream<DataEntry> tail(NavigableSet<DataEntry> entries, int count) {
+  private Stream<DataEntry> tail(SequencedCollection<DataEntry> entries, int count) {
     if (entries.isEmpty()) {
       return Stream.empty();
     }
@@ -196,7 +238,7 @@ public class DataRegistry implements Registry {
     return tail(registry().entries, amount, unit);
   }
 
-  private Stream<DataEntry> tail(NavigableSet<DataEntry> entries, int amount, ChronoUnit unit) {
+  private Stream<DataEntry> tail(SequencedCollection<DataEntry> entries, int amount, ChronoUnit unit) {
     if (entries.isEmpty()) {
       return Stream.empty();
     }
@@ -250,15 +292,16 @@ public class DataRegistry implements Registry {
   public void clear() {
     total.clear();
     filtered = null;
+    attributeOrder = null;
   }
 
   private class InternalStorage {
-    private final NavigableSet<DataEntry> entries;
+    private final SequencedCollection<DataEntry> entries;
     private final Counter counter;
     private final Map<String, AttributeType> attributeTypes;
 
     public InternalStorage() {
-      this.entries = new TreeSet<>();
+      this.entries = new TreeSet<>(comparator);
       this.counter = new Counter();
       this.attributeTypes = new ConcurrentHashMap<>();
     }

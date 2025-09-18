@@ -50,10 +50,10 @@ public record DataModelConfig(String format,
     this.attributes = attributes != null ? attributes : new HashMap<>();
   }
 
-  public DataModel get(Config config) {
-    DataModel model = new DataModel(format, exportFormat);
+  public DataModel get(String id, Config config) {
+    DataModel model = new DataModel(id, format, exportFormat);
     attributes.forEach((name, attrConfig) ->
-      model.add(name, attrConfig.get(config)));
+      model.add(name, attrConfig.get(name, config)));
     if (modelsToInclude != null) {
       Arrays.stream(modelsToInclude.split("\\s*,\\s*"))
         .forEach(additionalModel -> model.addFrom(config.dataModel(additionalModel)));

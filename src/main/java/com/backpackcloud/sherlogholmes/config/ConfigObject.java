@@ -26,6 +26,6 @@ package com.backpackcloud.sherlogholmes.config;
 
 public interface ConfigObject<T> {
 
-  T get(Config config);
+  T get(String id, Config config);
 
 }

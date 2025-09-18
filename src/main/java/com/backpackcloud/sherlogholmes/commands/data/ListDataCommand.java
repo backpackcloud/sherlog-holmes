@@ -26,11 +26,9 @@ package com.backpackcloud.sherlogholmes.commands.data;
 
 import com.backpackcloud.cli.annotations.Action;
 import com.backpackcloud.cli.annotations.CommandDefinition;
-import com.backpackcloud.cli.annotations.Paginate;
-import com.backpackcloud.sherlogholmes.model.DataEntry;
+import com.backpackcloud.cli.ui.Paginator;
 import com.backpackcloud.sherlogholmes.model.DataRegistry;
-
-import java.util.stream.Stream;
+import com.backpackcloud.sherlogholmes.ui.DataPrinter;
 
 @CommandDefinition(
   name = "ls",
@@ -40,15 +38,18 @@ import java.util.stream.Stream;
 public class ListDataCommand {
 
   private final DataRegistry registry;
+  private final DataPrinter printer;
 
-  public ListDataCommand(DataRegistry registry) {
+  public ListDataCommand(DataRegistry registry, DataPrinter printer) {
     this.registry = registry;
+    this.printer = printer;
   }
 
   @Action
-  @Paginate
-  public Stream<DataEntry> execute() {
-    return registry.entries();
+  public void execute(Paginator paginator) {
+    paginator.from(registry.entries())
+      .print(printer::print)
+      .paginate();
   }
 
 }

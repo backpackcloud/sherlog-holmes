@@ -36,14 +36,26 @@ import java.util.Optional;
 
 public class JsonDataParser implements DataParser {
 
+  private final String name;
   private final DataModel dataModel;
   private final SerialBitter deserializer;
   private final Map<String, String> attributeMappings;
 
-  public JsonDataParser(DataModel dataModel, SerialBitter deserializer, Map<String, String> attributeMappings) {
+  public JsonDataParser(String name, DataModel dataModel, SerialBitter deserializer, Map<String, String> attributeMappings) {
+    this.name = name;
     this.dataModel = dataModel;
     this.deserializer = deserializer;
     this.attributeMappings = attributeMappings;
+  }
+
+  @Override
+  public String name() {
+    return name;
+  }
+
+  @Override
+  public DataModel dataModel() {
+    return dataModel;
   }
 
   @Override

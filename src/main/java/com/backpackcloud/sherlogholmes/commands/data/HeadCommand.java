@@ -27,12 +27,13 @@ package com.backpackcloud.sherlogholmes.commands.data;
 import com.backpackcloud.cli.annotations.Action;
 import com.backpackcloud.cli.annotations.CommandDefinition;
 import com.backpackcloud.cli.annotations.InputParameter;
-import com.backpackcloud.cli.annotations.Paginate;
 import com.backpackcloud.cli.annotations.ParameterSuggestion;
+import com.backpackcloud.cli.ui.Paginator;
 import com.backpackcloud.cli.ui.Suggestion;
 import com.backpackcloud.cli.ui.components.PromptSuggestion;
 import com.backpackcloud.sherlogholmes.model.DataEntry;
 import com.backpackcloud.sherlogholmes.model.DataRegistry;
+import com.backpackcloud.sherlogholmes.ui.DataPrinter;
 
 import java.time.temporal.ChronoUnit;
 import java.util.List;
@@ -46,23 +47,29 @@ import java.util.stream.Stream;
 public class HeadCommand {
 
   private final DataRegistry registry;
+  private final DataPrinter printer;
 
-  public HeadCommand(DataRegistry registry) {
+  public HeadCommand(DataRegistry registry, DataPrinter printer) {
     this.registry = registry;
+    this.printer = printer;
   }
 
   @Action
-  @Paginate
-  public Stream<DataEntry> execute(@InputParameter Integer amount, @InputParameter ChronoUnit unit) {
+  public void execute(Paginator paginator, @InputParameter Integer amount, @InputParameter ChronoUnit unit) {
     if (registry.isEmpty()) {
-      return Stream.empty();
+      return;
     }
 
+    Stream<DataEntry> stream;
     if (unit == null) {
-      return registry.head(amount);
+      stream = registry.head(amount);
     } else {
-      return registry.head(amount, unit);
+      stream = registry.head(amount, unit);
     }
+
+    paginator.from(stream)
+      .print(printer::print)
+      .paginate();
   }
 
   @ParameterSuggestion(parameter = "unit")

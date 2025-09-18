@@ -27,12 +27,13 @@ package com.backpackcloud.sherlogholmes.commands.data;
 import com.backpackcloud.cli.annotations.Action;
 import com.backpackcloud.cli.annotations.CommandDefinition;
 import com.backpackcloud.cli.annotations.InputParameter;
-import com.backpackcloud.cli.annotations.Paginate;
 import com.backpackcloud.cli.annotations.ParameterSuggestion;
+import com.backpackcloud.cli.ui.Paginator;
 import com.backpackcloud.cli.ui.Suggestion;
 import com.backpackcloud.cli.ui.components.PromptSuggestion;
 import com.backpackcloud.sherlogholmes.model.DataEntry;
 import com.backpackcloud.sherlogholmes.model.DataRegistry;
+import com.backpackcloud.sherlogholmes.ui.DataPrinter;
 
 import java.time.temporal.ChronoUnit;
 import java.util.List;
@@ -46,22 +47,27 @@ import java.util.stream.Stream;
 public class TailCommand {
 
   private final DataRegistry registry;
+  private final DataPrinter printer;
 
-  public TailCommand(DataRegistry registry) {
+  public TailCommand(DataRegistry registry, DataPrinter printer) {
     this.registry = registry;
+    this.printer = printer;
   }
 
-  @Paginate
   @Action
-  public Stream<DataEntry> execute(@InputParameter Integer amount, @InputParameter ChronoUnit unit) {
+  public void execute(Paginator paginator, @InputParameter Integer amount, @InputParameter ChronoUnit unit) {
     if (registry.isEmpty()) {
-      return Stream.empty();
+      return;
     }
+    Stream<DataEntry> stream;
     if (unit == null) {
-      return registry.tail(amount);
+      stream = registry.tail(amount);
     } else {
-      return registry.tail(amount, unit);
+      stream = registry.tail(amount, unit);
     }
+    paginator.from(stream)
+      .print(printer::print)
+      .paginate();
   }
 
   @ParameterSuggestion(parameter = "unit")

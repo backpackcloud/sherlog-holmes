@@ -36,16 +36,23 @@ import java.util.function.Consumer;
 
 public class Pipeline {
 
+  private final String id;
   private final DataParser dataParser;
   private final List<PipelineStep> analysisSteps;
   private final UserPreferences preferences;
 
-  public Pipeline(DataParser dataParser,
+  public Pipeline(String id,
+                  DataParser dataParser,
                   List<PipelineStep> analysisSteps,
                   UserPreferences preferences) {
+    this.id = id;
     this.dataParser = dataParser;
     this.analysisSteps = analysisSteps;
     this.preferences = preferences;
+  }
+
+  public String id() {
+    return id;
   }
 
   private String normalize(String content) {
@@ -56,9 +63,11 @@ public class Pipeline {
   }
 
   public <T> void run(DataReader<T> dataReader, T location, Consumer<DataEntry> consumer) {
+    Consumer<DataEntry> addMetadata = entry -> {
+      entry.addAttribute("data-model", dataParser.dataModel().name());
+    };
     if (dataParser.multiline()) {
       StagingArea stagingArea = new StagingArea(consumer);
-
       // by using a single thread, new lines will be sequentially added to an internal queue
       //
       // this will make sure the order of the multilines is not only preserved, but also that
@@ -68,13 +77,12 @@ public class Pipeline {
           executorService.submit(() ->
             dataParser.parse(metadata, normalize(content))
               .ifPresentOrElse(
-                stagingArea::push,
+                addMetadata.andThen(stagingArea::push),
                 () -> stagingArea.push(content)
               )
           )
         );
       }
-
       stagingArea.push();
       stagingArea.close();
     } else {
@@ -84,7 +92,7 @@ public class Pipeline {
         dataReader.read(location, (metadata, content) ->
           executorService.submit(() ->
             dataParser.parse(metadata, normalize(content))
-              .ifPresent(consumer)
+              .ifPresent(addMetadata.andThen(consumer))
           )
         );
       }

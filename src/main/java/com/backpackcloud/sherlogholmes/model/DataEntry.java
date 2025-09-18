@@ -24,7 +24,6 @@
 
 package com.backpackcloud.sherlogholmes.model;
 
-import com.backpackcloud.cli.Displayable;
 import com.backpackcloud.cli.Writer;
 import com.backpackcloud.sherlogholmes.util.StringWalker;
 
@@ -34,31 +33,18 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
-public class DataEntry implements Comparable<DataEntry>, Displayable {
-
-  private static final String[] NATURAL_ATTRIBUTE_ORDER = {"timestamp", "source", "line"};
+public class DataEntry implements Comparable<DataEntry> {
 
   private final Map<String, Attribute> attributes;
-  private final String displayFormat;
-  private final String exportFormat;
+
+  public DataEntry(DataModel dataModel) {
+    this();
+    dataModel.attributes().forEach(this::addAttribute);
+  }
 
   public DataEntry() {
-    this(null, null);
-  }
-
-  public DataEntry(String displayFormat, String exportFormat) {
-    this.displayFormat = displayFormat;
-    this.exportFormat = exportFormat;
     this.attributes = new LinkedHashMap<>();
-  }
-
-  public DataEntry(Map<String, Attribute> attributes, String displayFormat, String exportFormat) {
-    this.attributes = attributes;
-    this.displayFormat = displayFormat;
-    this.exportFormat = exportFormat;
   }
 
   public boolean hasAttribute(String name) {
@@ -113,14 +99,6 @@ public class DataEntry implements Comparable<DataEntry>, Displayable {
     return new ArrayList<>(this.attributes.values());
   }
 
-  public void toDisplay(Writer writer) {
-    write(writer, displayFormat);
-  }
-
-  public void export(Writer writer) {
-    write(writer, exportFormat);
-  }
-
   public void write(Writer writer, String outputFormat) {
     StringWalker walker = new StringWalker(writer::write, token -> {
       String name;
@@ -151,29 +129,12 @@ public class DataEntry implements Comparable<DataEntry>, Displayable {
             styledWriter.write(format != null ? String.format(format, value) : value);
           }
         });
-
     });
 
     walker.walk(outputFormat);
   }
 
   public int compareTo(DataEntry other) {
-    // ideally, the entries will have at least the source and the line attributes,
-    // so the chances of this comparison to yield zero is really low
-    for (String attributeName : NATURAL_ATTRIBUTE_ORDER) {
-      if (this.hasAttribute(attributeName) && other.hasAttribute(attributeName)) {
-        int result = this.attribute(attributeName)
-          .map(attribute -> other.attribute(attributeName)
-            .map(attribute::compareTo)
-            .orElse(1))
-          .orElse(0);
-
-        if (result != 0) {
-          return result;
-        }
-      }
-    }
-
     for (Attribute attribute : attributes.values()) {
       int result = other.attribute(attribute.name())
         .map(otherAttribute -> attribute.compareTo(otherAttribute))
@@ -204,22 +165,6 @@ public class DataEntry implements Comparable<DataEntry>, Displayable {
 
   public int hashCode() {
     return Objects.hash(attributes);
-  }
-
-  public <E> E valueOf(String attributeName) {
-    return (E) valueOf(attributeName, Object.class);
-  }
-
-  public <E> E valueOf(String attributeName, Class<E> type) {
-    if (attributeName.contains(":")) {
-      return (E) Stream.of(attributeName.split(":"))
-        .map(attr -> valueOf(attr, String.class))
-        .collect(Collectors.joining(":"));
-    }
-    if (type.equals(String.class)) {
-      return (E) attribute(attributeName).flatMap(Attribute::formattedValue).orElse(null);
-    }
-    return attribute(attributeName, type).flatMap(Attribute::value).orElse(null);
   }
 
 }

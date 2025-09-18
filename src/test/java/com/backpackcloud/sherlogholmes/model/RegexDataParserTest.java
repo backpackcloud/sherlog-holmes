@@ -37,14 +37,14 @@ public class RegexDataParserTest {
 
   private final String pattern = "(?<timestamp>\\d{2,4}-\\d{2}-\\d{2,4}T\\d{2}:\\d{2}:\\d{2}) (?<level>\\w+) \\[(?<category>[^]]+)] \\((?<origin>[^)]+)\\) (?<message>.+)";
 
-  private final DataModel model = new DataModel()
+  private final DataModel model = new DataModel("test", null, null)
     .add("timestamp", new AttributeSpec<>(AttributeType.datetime(), false))
     .add("level", new AttributeSpec<>(AttributeType.enumOf("TRACE", "DEBUG", "INFO", "WARN", "ERROR", "FATAL"), false))
     .add("category", new AttributeSpec<>(AttributeType.text(), false))
     .add("origin", new AttributeSpec<>(AttributeType.text(), false))
     .add("message", new AttributeSpec<>(AttributeType.text(), false));
 
-  private final RegexDataParser parser = new RegexDataParser(model, Pattern.compile(pattern, Pattern.DOTALL), true);
+  private final RegexDataParser parser = new RegexDataParser("test", model, Pattern.compile(pattern, Pattern.DOTALL), true);
 
   @Test
   public void testSingleLineParsing() {

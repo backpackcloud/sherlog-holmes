@@ -34,8 +34,8 @@ public record CsvDataParserConfig(@JsonProperty("model") String modelId,
                                   @JsonProperty("attributes") String attributes) implements DataParserConfig {
 
   @Override
-  public DataParser get(Config config) {
-    return new CsvDataParser(config.dataModel(modelId), hasHeader, attributes.split("\\s*,\\s*"));
+  public DataParser get(String id, Config config) {
+    return new CsvDataParser(id, config.dataModel(modelId), hasHeader, attributes.split("\\s*,\\s*"));
   }
 
 }

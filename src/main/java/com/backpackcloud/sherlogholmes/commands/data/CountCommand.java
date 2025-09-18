@@ -24,7 +24,7 @@
 
 package com.backpackcloud.sherlogholmes.commands.data;
 
-import com.backpackcloud.cli.CommandContext;
+import com.backpackcloud.cli.Writer;
 import com.backpackcloud.cli.annotations.Action;
 import com.backpackcloud.cli.annotations.CommandDefinition;
 import com.backpackcloud.cli.annotations.InputParameter;
@@ -59,7 +59,7 @@ public class CountCommand {
   }
 
   @Action
-  public void execute(CommandContext context,
+  public void execute(Writer writer,
                       Paginator paginator,
                       @InputParameter String attribute) {
     Map<?, AtomicInteger> valuesMap;
@@ -91,8 +91,8 @@ public class CountCommand {
       paginator.from(
         countMap.values().stream()
           .sorted(Comparator.reverseOrder())
-      ).print((writer, count) -> {
-        writer
+      ).print((paginatorWriter, count) -> {
+        paginatorWriter
           .withStyle("name")
           .write(String.format("%-" + nameLength + "s", count.object()))
           .write(" ")
@@ -106,19 +106,17 @@ public class CountCommand {
           .write(" ");
 
         if (subset) {
-          writer.withStyle("percentage//b")
+          paginatorWriter.withStyle("percentage//b")
             .write(String.format("%7.3f%%", count.percentageOf(registry.size())))
             .write(" ");
         }
-
-        writer.newLine();
       }).paginate();
 
-      context.writer().write(String.format("%-" + Math.min(3, nameLength.get()) + "s ", "="))
+      writer.write(String.format("%-" + Math.min(3, nameLength.get()) + "s ", "="))
         .withStyle("count//b")
         .write(total.get());
 
-      context.writer().newLine();
+      writer.newLine();
     }
   }
 

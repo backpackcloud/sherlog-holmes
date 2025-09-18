@@ -28,21 +28,23 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Optional;
-import java.util.function.Supplier;
 
 public class DataModel {
 
-  private final Map<String, AttributeSpec<?>> attributes = new LinkedHashMap<>();
+  private final String name;
+  private final Map<String, AttributeSpec<?>> attributes;
   private final String displayFormat;
   private final String exportFormat;
 
-  public DataModel() {
-    this(null, null);
-  }
-
-  public DataModel(String displayFormat, String exportFormat) {
+  public DataModel(String name, String displayFormat, String exportFormat) {
+    this.name = name;
     this.displayFormat = displayFormat;
     this.exportFormat = exportFormat;
+    this.attributes = new LinkedHashMap<>();
+  }
+
+  public String name() {
+    return name;
   }
 
   public DataModel add(String name, AttributeSpec<?> spec) {
@@ -66,18 +68,16 @@ public class DataModel {
     });
   }
 
-  public DataEntry create() {
-    DataEntry dataEntry = new DataEntry(displayFormat, exportFormat);
-    attributes.forEach(dataEntry::addAttribute);
-    return dataEntry;
+  public String displayFormat() {
+    return displayFormat;
   }
 
-  private Supplier<DataEntry> dataSupplier() {
-    return () -> {
-      DataEntry dataEntry = new DataEntry(displayFormat, exportFormat);
-      attributes.forEach(dataEntry::addAttribute);
-      return dataEntry;
-    };
+  public String exportFormat() {
+    return exportFormat;
+  }
+
+  public DataEntry create() {
+    return new DataEntry(this);
   }
 
 }

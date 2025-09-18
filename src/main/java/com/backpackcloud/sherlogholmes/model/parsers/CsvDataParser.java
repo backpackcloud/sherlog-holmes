@@ -39,14 +39,26 @@ import java.util.Optional;
 
 public class CsvDataParser implements DataParser {
 
+  private final String name;
   private final DataModel dataModel;
   private final boolean hasHeader;
   private final String[] attributeOrder;
 
-  public CsvDataParser(DataModel dataModel, boolean hasHeader, String[] attributeOrder) {
+  public CsvDataParser(String name, DataModel dataModel, boolean hasHeader, String[] attributeOrder) {
+    this.name = name;
     this.dataModel = dataModel;
     this.hasHeader = hasHeader;
     this.attributeOrder = attributeOrder;
+  }
+
+  @Override
+  public String name() {
+    return name;
+  }
+
+  @Override
+  public DataModel dataModel() {
+    return dataModel;
   }
 
   @Override

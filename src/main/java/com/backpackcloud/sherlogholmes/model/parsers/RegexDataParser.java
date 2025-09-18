@@ -36,16 +36,28 @@ import java.util.regex.Pattern;
 
 public class RegexDataParser implements DataParser {
 
+  private final String name;
   private final DataModel dataModel;
   private final Pattern pattern;
   private final Set<String> attributes;
   private final boolean multiline;
 
-  public RegexDataParser(DataModel dataModel, Pattern pattern, boolean multiline) {
+  public RegexDataParser(String name, DataModel dataModel, Pattern pattern, boolean multiline) {
+    this.name = name;
     this.dataModel = dataModel;
     this.pattern = pattern;
     this.attributes = pattern.namedGroups().keySet();
     this.multiline = multiline;
+  }
+
+  @Override
+  public String name() {
+    return name;
+  }
+
+  @Override
+  public DataModel dataModel() {
+    return dataModel;
   }
 
   @Override

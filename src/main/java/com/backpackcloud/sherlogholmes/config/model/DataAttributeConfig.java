@@ -41,8 +41,10 @@ public record DataAttributeConfig(String spec) implements ConfigObject<Attribute
   }
 
   @Override
-  public AttributeSpec get(Config config) {
-    List<AttributeSpec> specs = spec.lines().map(AttributeSpec::create).collect(Collectors.toList());
+  public AttributeSpec get(String id, Config config) {
+    List<AttributeSpec> specs = spec.lines()
+      .map(AttributeSpec::create)
+      .collect(Collectors.toList());
 
     if (specs.size() == 1) {
       return specs.getFirst();
