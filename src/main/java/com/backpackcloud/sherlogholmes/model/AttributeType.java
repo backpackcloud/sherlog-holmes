@@ -26,8 +26,14 @@ package com.backpackcloud.sherlogholmes.model;
 
 import com.backpackcloud.sherlogholmes.model.types.EnumType;
 import com.backpackcloud.sherlogholmes.model.types.TemporalType;
+import com.backpackcloud.sherlogholmes.model.types.UriType;
+import com.backpackcloud.sherlogholmes.model.types.UrlType;
+import com.backpackcloud.sherlogholmes.model.types.VersionType;
+import com.backpackcloud.versiontm.Version;
 import com.fasterxml.jackson.annotation.JsonValue;
 
+import java.net.URI;
+import java.net.URL;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -55,7 +61,7 @@ public interface AttributeType<E> extends Converter<E>, Formatter<E>, Validator<
   default int compare(E o1, E o2) {
     return ((Comparable) o1).compareTo(o2);
   }
-  
+
   AttributeType<String> TEXT = create("text", input -> input);
   AttributeType<Integer> NUMBER = create("number", Integer::parseInt);
   AttributeType<Double> DECIMAL = create("decimal", Double::parseDouble);
@@ -65,6 +71,9 @@ public interface AttributeType<E> extends Converter<E>, Formatter<E>, Validator<
   AttributeType<OffsetDateTime> OFFSET_DATETIME = new TemporalType<>(DateTimeFormatter.ISO_OFFSET_DATE_TIME, OffsetDateTime::from);
   AttributeType<ZonedDateTime> ZONED_DATETIME = new TemporalType<>(DateTimeFormatter.ISO_ZONED_DATE_TIME, ZonedDateTime::from);
   AttributeType<Boolean> FLAG = create("flag", Boolean::parseBoolean);
+  AttributeType<Version> VERSION = new VersionType();
+  AttributeType<URL> URL = new UrlType();
+  AttributeType<URI> URI = new UriType();
 
   static <E> AttributeType<E> create(String name, Converter<E> converter) {
     return new AttributeType<>() {
