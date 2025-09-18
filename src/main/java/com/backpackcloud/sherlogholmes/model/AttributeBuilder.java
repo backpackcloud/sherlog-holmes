@@ -45,6 +45,9 @@ public class AttributeBuilder<T> {
     put(LocalDate.class, AttributeType.DATE);
     put(LocalDateTime.class, AttributeType.DATETIME);
     put(Boolean.class, AttributeType.FLAG);
+    put(Version.class, AttributeType.VERSION);
+    put(URL.class, AttributeType.URL);
+    put(URI.class, AttributeType.URI);
   }};
 
   private final String name;
