@@ -26,10 +26,6 @@ package com.backpackcloud.sherlogholmes.model;
 
 import com.backpackcloud.UnbelievableException;
 import com.backpackcloud.sherlogholmes.model.types.TemporalType;
-import com.backpackcloud.sherlogholmes.model.types.UriType;
-import com.backpackcloud.sherlogholmes.model.types.UrlType;
-import com.backpackcloud.sherlogholmes.model.types.VersionType;
-import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -40,8 +36,8 @@ import java.time.format.DateTimeFormatter;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public record AttributeSpec<E>(@JsonProperty AttributeType<E> type,
-                               @JsonProperty boolean multivalued) {
+public record AttributeSpec<E>(AttributeType<E> type,
+                               boolean multivalued) {
 
   public static AttributeSpec<?> create(String spec) {
     Matcher matcher = Pattern.compile("^(?<type>[0-9a-zA-Z\\-_]+\\*?)(?<multivalued>\\[\\])?\\s*\\|?\\s*(?<config>.+)?$")
@@ -78,9 +74,9 @@ public record AttributeSpec<E>(@JsonProperty AttributeType<E> type,
           multivalued
         );
         case "flag" -> new AttributeSpec<>(AttributeType.flag(), multivalued);
-        case "version" -> new AttributeSpec<>(new VersionType(), false);
-        case "url" -> new AttributeSpec<>(new UrlType(), false);
-        case "uri" -> new AttributeSpec<>(new UriType(), false);
+        case "version" -> new AttributeSpec<>(AttributeType.VERSION, false);
+        case "url" -> new AttributeSpec<>(AttributeType.URL, false);
+        case "uri" -> new AttributeSpec<>(AttributeType.URI, false);
         default -> throw new UnbelievableException("Invalid type: " + type);
       };
     }
