@@ -1,11 +1,11 @@
 # Sherlog Holmes
 
-Sherlog Holmes is an application that helps you dig into log files. It offers a command line that enables
-filtering and displaying entries, as well as a basic web chart for better visualization.
+Sherlog Holmes is an application that helps you dig into log files. It offers a command line that enables filtering and
+displaying entries, as well as a basic exporting functions and listening.
 
-Sherlog Holmes aims to solve the problem of ad-hoc troubleshooting and analysis operations. If you have some
-log files and need to get a better understanding of what's going on without having to toss them on indexing
-services and visualization tools, then Sherlog Holmes will probably suit you well.
+Sherlog Holmes aims to solve the problem of ad-hoc troubleshooting and analysis operations. If you have some log files
+and need to get a better understanding of what's going on without having to toss them on indexing services and
+visualization tools, then Sherlog Holmes will probably suit you well.
 
 ## Pre requisites
 
@@ -17,7 +17,7 @@ To use Sherlog Holmes, you will need:
 To build Sherlog Holmes, you will need:
 
 - Java 21
-- Maven 3.8
+- Maven 3.9+
 
 ## How to build
 
@@ -27,42 +27,169 @@ Easier than falling off a skateboard... drunk... blindfolded...
 mvn package
 ```
 
-After the process, you should see a file `sherlog-holmes-runner.jar` inside the `target` folder. Just run it with your
-`java -jar` command and you're good to go.
+After the process, you should see a file `sherlog-jar-with-dependencies.jar` inside the `target` folder. Just run it
+with your `java -jar` command and you're good to go.
 
 ## How it works
 
 Before allowing you to work with the log entries, Sherlog Holmes needs to pass them through a simple pipeline:
 
 1- The data is read from the source
-2- The read contents are parsed into a mid-layer structure representing each entry
-3- Each structure is then mapped to the data structure Sherlog Holmes understands and can work with
-4- Any additional process to the data structure are executed in order to enhance the data
+2- The read contents are parsed into the data structure Sherlog Holmes understands and can work with
+3- Executes any additional process to enhance the data
 
 ## How to configure
 
-Please take a look at the `examples` folder. It contains a dummy file explaining how to configure each step
-of the pipeline, as well as some ready-to-use examples.
+The configuration file may contain the following sections.
+
+### Preferences
+
+Under the key `preferences`, you set how Sherlog will behave, the preferences are:
+
+```yaml
+preferences:
+  # Removes the ANSI colors from the content before parsing it
+  remove-ansi-colors: true
+  # The charset to use for reading the inputs
+  input-charset:      UTF-8
+  # The charset to use for writing
+  output-charset:     UTF-8
+  # Enables data paging for commands that displays data
+  result-paging:      true
+  # Sets the number of entries shown on each page
+  results-per-page:   15
+  # Clears the console before changing pages
+  clear-on-paging:    true
+```
+
+For a list of all the preferences and their current value, use the command `preferences list`.
+
+### Models
+
+Under the key `models`, you set the data models that Sherlog will use. Each entry needs to match a data model structure.
+
+```yaml
+models:
+  # all data models should have an id for reference
+  java:
+    # Defines how this data model will be rendered in the command line
+    # Attributes should be enclosed with "{ }", with the optional features as follows:
+    #
+    # - '#' uses the attribute's value and its correspondent icon
+    # - '@' uses just the attribute's icon (if the attribute holds a value)
+    # - '|' passes the attribute's value through a String.format() call using the given arguments in the right
+    format:        '{@exception}{#$source}:{$line} {#timestamp} {#level|%-5s} {#category} {#thread} {#message}'
+    export-format: '{timestamp} {level|%-5s} [{category}] ({thread}) {message}'
+    # The list of attributes for this data model
+    #
+    # Attributes can be of the following types:
+    # - time:            a java LocalTime (requires format configuration)
+    # - datetime:        a java LocalDateTime (requires format configuration)
+    # - zoned-datetime:  a java ZonedDateTime (requires format configuration)
+    # - offset-datetime: a java OffsetDateTime (requires format configuration)
+    # - text:            a java String
+    # - number:          a java Integer
+    # - decimal:         a java Double
+    # - flag:            a java Boolean
+    # - enum:            a set of possible String values
+    #
+    # Attributes might have multiple values (indicated with an '[]' after the type), which can be useful in situations
+    # where you need a collection of values like exceptions that are shown in a stacktrace.
+    #
+    # For attributes requiring configuration, it's passed with an '|' after the type, followed by the configuration
+    #
+    # The order in which the attributes are declared is also the order that will be used to sort the entries. Attributes
+    # from the metadata ($line and $source) will always be added, but without declaring, they will fall into the last
+    # positions.
+    attributes:
+      # The console log often doesn't have full timestamps
+      timestamp:
+        - datetime | yyyy-MM-dd HH:mm:ss,SSS
+        - time     | HH:mm:ss,SSS
+      level:     enum | TRACE,DEBUG,FINE,INFO,WARN,WARNING,ERROR,SEVERE,FATAL
+      category:  text
+      thread:    text
+      message:   text
+      # One entry might have multiple exceptions
+      exception: text[]
+```
+
+### Counters
+
+Under the key `counters`, you define which attributes (from any model) Sherlog will keep a counter for each value
+inspected. The memory impact of adding a counter would depend on how many different values were assigned to that
+attribute.
+
+```yaml
+counters:
+  - source
+  - level
+  - category
+  - thread
+  - exception
+```
+
+When an attribute is added to the counter, its count can appear in the prompt if the attribute has an icon assigned to
+it. The counters are also used by the command `count` as a cache.
+
+### Parsers
+
+Under the key `parsers`, you define how to parse an input. There are 4 different ways of parsing an input:
+
+- `csv`: parses each line as a CSV row
+- `json`: parses each line as a JSON data
+- `split`: splits each line using a specific regular expression
+- `regex`: uses a regular expression to capture the data via its defined named capture groups
+
+```yaml
+parsers:
+  java:
+    # A regex parser exposes the named groups found in the pattern
+    type:    regex
+    # You can reuse patterns across the configuration by enclosing the names with '{{ }}'
+    # the names enclosed must be defined in the 'patterns' section
+    pattern: '{{ timestamp }} {{ level }}\s+{{ category }} {{ thread }} {{ message }}'
+  infinispan:
+    type:    regex
+    pattern: '{{ timestamp }} {{ level }}\s+{{ thread }} {{ category }} {{ message }}'
+```
+
+Notice from the example the appearance of names around `{{` and `}}`. These are a reference to external defined patterns
+that can be reused to compose the expressions. The external patterns are defined in its own key `patterns`:
+
+```yaml
+patterns:
+  timestamp: '(?<$timestamp>(\\d{2,4}-\\d{2}-\\d{2,4} )?\\d{2}:\\d{2}:\\d{2},\\d{3})'
+  level:     '(?<level>\\w+)'
+  category:  '\\[(?<category>[^]]+]*)]'
+  thread:    '\\((?<thread>[^)]+\\)*)\\)'
+  message:   '(?<message>.+)'
+```
+
+Notice also how the `timestamp` capture group can capture both types defined in the `java` model above.
 
 ## How to use
 
-Sherlog Holmes expects a configuration file, which can be:
+Sherlog Holmes expects configuration files. Use the option `-c` to add a configuration file. Multiple files can be
+added, and their configuration will be merged.
 
-- From the `SHERLOG_CONFIG_FILE` environment variable
-- From the `sherlog.config.file` system property
-- At `./sherlog.yml`
+There's a default configuration, which is included by default if none is given or if you pass the plag `-d`, useful in
+case you want to extend it. The default configuration includes the built-in one plus the following (if present):
+
+- At `./sherlog.yml` (current working directory)
 - At `$HOME/sherlog.yml`
-- Passed via argument
+
+If no configuration is supplied, the default ones are used by default.
 
 ### Inspecting Logs
 
 The primary command for inspecting files is... `inspect`:
 
 ```shell
-inspect <reader> <pipeline> <location>
+inspect <pipeline> <log-file>
 ```
 
-Both `reader` and `pipeline` should be defined in the configuration file. The `location` might represent
+The `pipeline` should be defined in the configuration file. The `location` might represent
 different things depending on the reader. A `socket` reader expects it to be a port to receive the contents,
 whereas a `file` reader expects a local file to read its contents.
 
