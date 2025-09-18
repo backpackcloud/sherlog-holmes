@@ -59,12 +59,13 @@ models:
   k8s-audit:
     format: |
             {#timestamp} {#cluster} {#namespace}
-            {#user}
-            {@decision} {#verb} {#object} {#name} {#version}
+            {#verb} {#object} {#name} {#version}
+            {#decision} {#user} {#reason}
     attributes:
       timestamp: offset-datetime
       cluster:   text
       decision:  enum | forbid,allow
+      reason:    text
       verb:      text
       object:    text
       namespace: text
@@ -125,6 +126,7 @@ parsers:
       timestamp: /_source/@timestamp
       cluster:   /_source/openshift/cluster_id
       decision:  /_source/annotations/authorization.k8s.io~1decision
+      reason:    /_source/annotations/authorization.k8s.io~1reason
       verb:      /_source/verb
       object:    /_source/objectRef/resource
       namespace: /_source/objectRef/namespace
@@ -133,7 +135,7 @@ parsers:
       user:      /_source/user/username
 
 patterns:
-  timestamp: '(?<timestamp>(\\d{2,4}-\\d{2}-\\d{2,4} )?\\d{2}:\\d{2}:\\d{2},\\d{3})'
+  timestamp: '(?<timestamp>(\\d{2,4}-\\d{2}-\\d{2,4} )?\\d{2}:\\d{2}:\\d{2},\\d{3}([-+0-9]+)?)'
   level:     '(?<level>\\w+)'
   category:  '\\[(?<category>[^]]+]*)]'
   thread:    '\\((?<thread>[^)]+\\)*)\\)'
@@ -187,17 +189,14 @@ steps:
 # fallback mode will be applied.
 pipelines:
   infinispan:
-    model:  java
     parser: infinispan
     steps: [ java-analyze-messages ]
 
   wildfly:
-    model:  java
     parser: wildfly
     steps: [ java-analyze-messages ]
 
   quarkus:
-    model:  java
     parser: quarkus
     steps: [ java-analyze-messages ]
 
@@ -221,6 +220,7 @@ icons:
   attribute-verb:            ""
   attribute-decision-allow:  ""
   attribute-decision-forbid: ""
+  attribute-reason:          "󰍧"
   attribute-cluster:         "󰛳"
   attribute-exception:       ""
 
@@ -240,9 +240,9 @@ styles:
   attribute-level-TRACE:     cyan
   attribute-level-DEBUG:     cyan
   attribute-level-FINE:      cyan
-  attribute-level-INFO:      orange
-  attribute-level-WARN:      yellow
-  attribute-level-ERROR:     red//b
+  attribute-level-INFO:      green
+  attribute-level-WARN:      orange
+  attribute-level-ERROR:     red
   attribute-level-SEVERE:    red//b
   attribute-level-FATAL:     red//b
 
@@ -255,7 +255,7 @@ styles:
   attribute-object:          orange
   attribute-name:            cyan
   attribute-namespace:       teal
-  attribute-user:            purple
+  attribute-user:            blue
   attribute-decision-allow:  green
   attribute-decision-forbid: red
-  attribute-version:         gray//i
+  attribute-version:         white//i
