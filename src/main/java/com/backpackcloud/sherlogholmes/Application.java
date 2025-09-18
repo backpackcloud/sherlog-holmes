@@ -54,6 +54,7 @@ import com.backpackcloud.sherlogholmes.config.Config;
 import com.backpackcloud.sherlogholmes.model.DataRegistry;
 import com.backpackcloud.sherlogholmes.model.FilterFactory;
 import com.backpackcloud.sherlogholmes.model.FilterStack;
+import com.backpackcloud.sherlogholmes.ui.DataPrinter;
 import com.backpackcloud.sherlogholmes.ui.prompt.DataCountPromptWriter;
 import com.backpackcloud.sherlogholmes.ui.prompt.DataTimeRangePromptWriter;
 import com.backpackcloud.sherlogholmes.ui.prompt.FilterStackPromptWriter;
@@ -153,6 +154,7 @@ public class Application implements Callable<Integer> {
 
     builder
       .addComponent(config, Config.class)
+      .addComponent(DataPrinter.class)
 
       .addCommands(
         AssignCommand.class,
