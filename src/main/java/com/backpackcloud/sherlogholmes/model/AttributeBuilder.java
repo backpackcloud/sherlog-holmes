@@ -24,6 +24,10 @@
 
 package com.backpackcloud.sherlogholmes.model;
 
+import com.backpackcloud.versiontm.Version;
+
+import java.net.URI;
+import java.net.URL;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -33,7 +37,7 @@ import java.util.function.Consumer;
 
 public class AttributeBuilder<T> {
 
-  private static final Map<Class, AttributeType> typeMap = new HashMap<>() {{
+  private static final Map<Class, AttributeType> TYPE_MAP = new HashMap<>() {{
     put(String.class, AttributeType.TEXT);
     put(Integer.class, AttributeType.NUMBER);
     put(Double.class, AttributeType.DECIMAL);
@@ -58,14 +62,14 @@ public class AttributeBuilder<T> {
 
   public AttributeBuilder(String name, Class valueType, Consumer<Attribute> outcomeConsumer) {
     this.name = name;
-    this.type = typeMap.getOrDefault(valueType, AttributeType.TEXT);
+    this.type = TYPE_MAP.getOrDefault(valueType, AttributeType.TEXT);
     this.outcomeConsumer = outcomeConsumer;
     this.outcomeConsumer.accept(build());
   }
 
   public AttributeBuilder(String name, Object value, Consumer<Attribute> outcomeConsumer) {
     this.name = name;
-    this.type = typeMap.getOrDefault(value.getClass(), AttributeType.TEXT);
+    this.type = TYPE_MAP.getOrDefault(value.getClass(), AttributeType.TEXT);
     this.value = value;
     this.outcomeConsumer = outcomeConsumer;
     this.outcomeConsumer.accept(build());
